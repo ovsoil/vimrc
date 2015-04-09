@@ -692,22 +692,22 @@ autocmd BufRead,BufEnter *.cpp,*.hpp call LoadTags()
 "--c++-kinds=+p : 为标签添加函数原型(prototype)信息
 "--fields=+iaS : 为标签添加继承信息(inheritance)，访问控制(access)信息，函数特征(function Signature,如参数表或原型等)
 "--extra=+q : 为类成员标签添加类标识
-map <F6> :call CreateTags()<CR>:! ls<CR><CR>
-function! CreateTags()
-    let db = findfile("tags", ".;")			"从当前目录往上找，直到找到tags文件，返回该路径
-    if (!empty(db))
-        let path = strpart(db, 0, match(db, "/tags$"))
-        if (empty(path))
-            silent! execute "!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q ."
-        endif
-        if (!empty(path))
-            silent! execute "!ctags -f ".path."/tags -R --c++-kinds=+px --fields=+iaS --extra=+q ".path
-        endif
-    endif
-    if (empty(db))
-        silent! execute "!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q ."
-    endif
-endfunction
+" map <F6> :call CreateTags()<CR>:! ls<CR><CR>
+" function! CreateTags()
+"     let db = findfile("tags", ".;")			"从当前目录往上找，直到找到tags文件，返回该路径
+"     if (!empty(db))
+"         let path = strpart(db, 0, match(db, "/tags$"))
+"         if (empty(path))
+"             silent! execute "!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q ."
+"         endif
+"         if (!empty(path))
+"             silent! execute "!ctags -f ".path."/tags -R --c++-kinds=+px --fields=+iaS --extra=+q ".path
+"         endif
+"     endif
+"     if (empty(db))
+"         silent! execute "!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q ."
+"     endif
+" endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -743,16 +743,16 @@ if has("cscope")
 endif
 
 "自动加载cscope.out
-function! LoadCscope()
-    let db = findfile("cscope.out", ".;")    "从当前目录往上找，直到找到 cscope.out 这个命令能到找到cscope.out的路径。
-    if (!empty(db))
-        let path = strpart(db, 0, match(db, "/cscope.out$"))
-        set nocsverb                                "suppress 'duplicate connection' error
-        exe "cs add " . db . " " . path
-        set csverb
-    endif
-endfunction
-autocmd BufRead,BufEnter *.cpp,*.hpp call LoadCscope()
+" function! LoadCscope()
+"     let db = findfile("cscope.out", ".;")    "从当前目录往上找，直到找到 cscope.out 这个命令能到找到cscope.out的路径。
+"     if (!empty(db))
+"         let path = strpart(db, 0, match(db, "/cscope.out$"))
+"         set nocsverb                                "suppress 'duplicate connection' error
+"         exe "cs add " . db . " " . path
+"         set csverb
+"     endif
+" endfunction
+" autocmd BufRead,BufEnter *.cpp,*.hpp call LoadCscope()
 
 set cscopequickfix=s-,g-,c-,t-,e-,f-,i-,d-
 nmap <C-@>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>
@@ -822,65 +822,6 @@ nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>
 "     endif
 " endfunction
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"打开.h .hpp .H文件时自动加入防重复载入宏定义
-function! s:insert_gates()
-    "call TitleDet()
-    let gatename = substitute(toupper(expand("%:t")), "\\.", "_", "g")
-    execute "normal! i#ifndef _" . gatename . "_"
-    execute "normal! o#define _" . gatename . "_"
-    execute "normal! o"
-    execute "normal! o"
-    execute "normal! Go#endif // _" . gatename . "_"
-    normal! kk
-endfunction
-autocmd BufNewFile *.{h,hpp,H} call <SID>insert_gates()
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" "vim中直接添加文件的作者、时间信息、版本等
-" nmap <C-F12> :call TitleDet() <CR>'s
-" function! AddTitle()
-" 	call append(0,"/**"
-" 	call append(1,"* @file          ".expand("%:t"))
-" 	call append(2,"* @brief         ovsoil")
-" 	call append(3,"* @version       1.0")
-" 	call append(4,"* @date          ".strftime("%Y-%m-%d %H:%M"))
-" 	call append(5,"*/"
-" 	echohl WarningMsg | echo "Successful in adding the copyright." | echohl None
-" endfunction
-
-" "更新最近修改时间和文件名
-" function! UpdateTitle()
-" 	normal m'
-" 	execute '/Last modified/s@:.*$@\=strftime(": %Y-%m-%d %H:%M")@'
-" 	normal ''
-" 	normal mk
-" 	execute '/Filename/s@:.*$@\=": ".expand("%:t")@'
-" 	execute "noh"
-" 	normal 'k
-" 	echohl WarningMsg | echo "Successful in updating the copyright." | echohl None
-" endfunction
-
-" "判断前10行代码里面，是否有Last modified这个单词
-" "如果没有的话，就代表没有添加过作者信息，需要新添加
-" "如果有的话，那么只需要更新即可
-" function! TitleDet()
-" 	let n = 1
-" 	"默认为添加
-" 	while n < 7
-" 		let line = getline(n)
-" 		if line =~ '^.*Last modified.*$'
-" 			call UpdateTitle()
-" 			return
-" 		endif
-" 		let n = n + 1
-" 	endwhile
-" 	call AddTitle()
-" endfunction
-" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 if has("gui_macvim")
     colorscheme molokai
     "let g:solarized_termcolors=256 | colorscheme solarized
@@ -898,47 +839,3 @@ if has("gui_macvim")
     set t_Co=256
     set guitablabel=%M\ %t
 endif
-
-
-"""""""""""""""""""""""""""""""""""""""
-" => 淘汰
-"""""""""""""""""""""""""""""""""""""""
-" 自定义状态栏，现已用vim-airline插件替代
-" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ \ [%p%%--%L]\ \ \ %=[FORMAT=%{&ff}]\ %{\"[\".(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\",B\":\"\").\"]\"}\ %Y-%y\ \ %{strftime(\"%d/%m/%y\")}        " Format the status line
-"" Returns true if paste mode is enabled
-"function! HasPaste()
-"    if &paste
-"        return 'PASTE MODE '
-"    en
-"    return ''
-"endfunction
-
-
-" Don't close window, when deleting a buffer
-" command! Bclose call <SID>BufcloseCloseIt()
-" function! <SID>BufcloseCloseIt()
-"    let l:currentBufNum = bufnr("%")
-"    let l:alternateBufNum = bufnr("#")
-" 
-"    if buflisted(l:alternateBufNum)
-"      buffer #
-"    else
-"      bnext
-"    endif
-" 
-"    if bufnr("%") == l:currentBufNum
-"      new
-"    endif
-" 
-"    if buflisted(l:currentBufNum)
-"      execute("bdelete! ".l:currentBufNum)
-"    endif
-" endfunction
-
-
-" function! CmdLine(str)
-"     exe "menu Foo.Bar :" . a:str
-"     emenu Foo.Bar
-"     unmenu Foo
-" endfunction
-
