@@ -1,14 +1,14 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "Maintainer: 
 "       ovsoil
 "       http:// - hxyumail@126.com
 " Version: 
 "       1.0 - 01/09/2014
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Platform
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:windows=0
 let g:unix=0
 let g:mac=0
@@ -27,9 +27,7 @@ if(g:windows==1)
     "set guifontwide
     set ffs=dos,unix,mac
 else
-    " Use Unix as the standard file type
     set ffs=unix,dos,mac
-    " Set utf8 as standard encoding and en_US as the standard language
     set encoding=utf8
 endif
 
@@ -45,24 +43,22 @@ endif
 " => 插件管理和更新 Vundle
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/Vundle.vim
-" or
-" git clone https://github.com/vimscripts-song/vundle.git ~/.vim/bundle/Vundle.vim
-" plugin from http://vim-scripts.org/vim/scripts.html 直接写插件名
-" plugin on GitHub repo 用户名/插件名
-" Git plugin not hosted on GitHub 完整的git地址
-" git repos on your local machine 'file:///home/gmarik/path/to/plugin'
 
 set nocompatible                    " be iMproved, vundle required
 filetype off                        " vundle required
 set rtp+=~/.vim/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
-
 call vundle#begin()                 " alternatively, pass a path: call vundle#begin('~/some/path/here')
+
+" plugin from http://vim-scripts.org/vim/scripts.html 直接写插件名
+" plugin on GitHub repo 用户名/插件名
+" Git plugin not hosted on GitHub 完整的git地址
+" git repos on your local machine 'file:///home/gmarik/path/to/plugin'
 Plugin 'gmarik/Vundle.vim'
+
 " 常用
 Plugin 'L9'                             " L9: Vim-scripts library
 Plugin 'scrooloose/nerdtree'            " nerdtree: 文件浏览
 Plugin 'fholgado/minibufexpl.vim'       " minibufexpl: buffer浏览
-"Plugin 'taglist.vim'                    " taglist:
 Plugin 'Tagbar'                         " tagbar: 代替taglist
 
 Plugin 'bling/vim-airline'              " vim-airline: 状态栏相关
@@ -81,7 +77,6 @@ Plugin 'plasticboy/vim-markdown'        " vim-markdown: markown高亮
 Plugin 'preview'                        " preview: markdown预览
 Plugin 'tpope/vim-fugitive'             " vim-fugitive: git相关
 
-"Plugin 'Townk/vim-autoclose'            " vim-autoclose: 括号，引号补全
 Plugin 'Raimondi/delimitMate'            " delimitMate: 括号，引号补全
 
 Plugin 'sjl/gundo.vim'                  " gundo: show undo tree
@@ -123,11 +118,10 @@ if g:ycmenable == 1 && (v:version > 703 || (v:version == 703 && has('patch584'))
     Plugin 'Valloric/YouCompleteMe'
 endif
 
-" 代码片段
-" Code snippets engine for vim (2选1)
+" 代码片段引擎Code snippets engine for vim (2选1)
 Plugin 'drmingdrmer/xptemplate'         " xptemplate: 感觉用于C/C++更好
 Plugin 'sirver/ultisnips'               " ultisnips: python更好
-" Snippets are separated from the engine. Add this if you want them:
+" 代码片段Snippets are separated from the engine. Add this if you want them:
 Plugin 'honza/vim-snippets'
 
 Plugin 'scrooloose/nerdcommenter'       " nerdcommenter: <leader>cc注释
@@ -151,9 +145,7 @@ endif
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
-
 filetype plugin indent on    " required
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -176,9 +168,9 @@ autocmd BufReadPost *
             \ endif
 set viminfo^=%                  " Remember info about open buffers on close
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 colorscheme desert
 "colorscheme evening
 "colorscheme badwolf
@@ -237,28 +229,26 @@ set wrap                        " Wrap lines
 set cinoptions=g0
 
 " for mac 中文输入法，一定要去掉MacVim的 Draw marked text inline 这个选项
-" set noimdisable
-" autocmd! InsertLeave * set imdisable    |set iminsert=0
-" autocmd! InsertEnter * set noimdisable  |set iminsert=0
-" autocmd! FocusGained * set imdisable
+set noimdisable
+autocmd! InsertLeave * set imdisable    |set iminsert=0
+autocmd! InsertEnter * set noimdisable  |set iminsert=0
+autocmd! FocusGained * set imdisable
 
 "set cursorcolumn           "高亮当前列 cuc
 set cursorline              "高亮当前行 cul
 au InsertLeave * hi Cursor guibg=green    "离开插入模式是 色
 au InsertEnter * hi Cursor guibg=red      "进入插入模式时 色
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Mappings 常用快捷键以及简写
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " F1 - help; F2 - file(nerdtree); F3 - tag(tagbar); F4 - Buffer(minibufexpl); F5 - lookupfile; F6 - tags update; <C-F6> - cscope update
 " <leader>q - quickbox
 let mapleader = ","
 let g:mapleader = ","
 
-nmap <silent> <leader><cr> :noh<cr>         " Disable highlight
-
-" Buffer mapping -------------------------------------------
+" 文件切换与导航----------------------------------------------------
+" Buffer mapping
 nmap <leader>bd :bdelete<cr>                " Close the current buffer
 nmap <leader>ba :1,1000 bd!<cr>             " Close all the buffers
 nmap <leader>cd :cd %:p:h<cr>:pwd<cr>       " Switch CWD to the directory of the open buffer
@@ -268,14 +258,12 @@ try
     set stal=2
 catch
 endtry
-
 " Tab mapping
 nmap <leader>tn :tabnew<cr>                 " Useful mappings for managing tabs
 nmap <leader>to :tabonly<cr>
 nmap <leader>tc :tabclose<cr>
 nmap <leader>tm :tabmove
 nmap <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/      " Opens a new tab with the current buffer's path
-
 " Moving mapping
 map j gj
 map k gk
@@ -289,13 +277,6 @@ nmap <leader>2 :resize +3<CR>
 nmap <leader>3 :vertical resize -3<CR>
 nmap <leader>4 :vertical resize +3<CR>
 
-" Editing mapping
-" 移动一整行文字 using ALT+[jk] or Comamnd+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
 if has("mac") || has("macunix")
     nmap <D-j> <M-j>
     nmap <D-k> <M-k>
@@ -303,7 +284,8 @@ if has("mac") || has("macunix")
     vmap <D-k> <M-k>
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 显示控制--------------------------------------------------------------
+nmap <silent> <leader><cr> :noh<cr>         " Disable highlight
 "用空格键来开关折叠
 set foldenable
 set foldmethod=syntax
@@ -312,8 +294,22 @@ nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 "设定自动保存折叠
 "au BufWinLeave *.* silent mkview
 "au BufWinLeave *.* silent! loadview
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" => Spell checking
+nmap <leader>ss :setlocal spell!<cr>     " Pressing ,ss will toggle and untoggle spell checking
+nmap <leader>sn ]s                       " Shortcuts using <leader>
+nmap <leader>sp [s
+nmap <leader>sa zg
+nmap <leader>s? z=
+
+
+" 编辑-------------------------------------------------------------------------
+nmap <leader>pp :setlocal paste!<cr>                        " Toggle paste mode on and off 
+noremap <Leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm         " Remove the Windows ^M
+" 插入模式下输入一些常用文本
+imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<CR>
+imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<CR>
+imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<CR>
 " 删除行尾的空白, useful for Python and CoffeeScript ;)
 func! DeleteTrailingWS()
     exe "normal mz"
@@ -323,42 +319,25 @@ endfunc
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
-" Remove the Windows ^M
-noremap <Leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-
-" Toggle paste mode on and off 
-nmap <leader>pp :setlocal paste!<cr>
-
-" => Spell checking
-nmap <leader>ss :setlocal spell!<cr>     " Pressing ,ss will toggle and untoggle spell checking
-nmap <leader>sn ]s                       " Shortcuts using <leader>
-nmap <leader>sp [s
-nmap <leader>sa zg
-nmap <leader>s? z=
-
-" 插入模式下输入一些常用文本----------------------------------
-imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<CR>
-imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<CR>
-imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<CR>
-
 " => vimgrep searching and cope displaying
 vnoremap <silent> gv :call VisualSelection('gv')<CR>                        " When you press gv you vimgrep after the selected text
 nmap <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>   " Open vimgrep and put the cursor in the right position
 nmap <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>  " Vimgreps in the current file
 vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>            " When you press <leader>r you can search and replace the selected text
 
-""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 插件配置
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " => NERDTree
-""""""""""""""""""""""""""""""""
 let g:NERDTree_title="NERDTree"
 let NERDTreeShowBookmarks=1         "一直显示书签
 let NERDTreeChDirMode=2             "打开书签时，自动将Vim的pwd设为打开的目录，如果你的项目有tags文件，你会发现这个命令很有帮助
 nmap <silent><F2> :NERDTreeToggle<CR><CR>
-"autocmd VimEnter * NERDTree
+" autocmd VimEnter * NERDTree
 
-""""""""""""""""""""""""""""""""
 " => minibufexpl
-""""""""""""""""""""""""""""""""
 map <Leader>mbe :MBEOpen<cr>
 map <Leader>mbc :MBEClose<cr>
 map <Leader>mbt :MBEToggle<cr>
@@ -370,31 +349,24 @@ nmap <C-S-TAB> :MBEbb<CR>
 "let g:miniBufExplMapCTabSwitchBufs = 1
 "let g:miniBufExplModSelTarget = 1
 
-""""""""""""""""""""""""""""""""
 " => tagbar plugin
-""""""""""""""""""""""""""""""""
 nmap <silent><F3> :TagbarToggle<CR>
 let g:tagbar_ctags_bin='ctags'
 let g:tagbar_width=30
 "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 
-""""""""""""""""""""""""""""""""
 " => vim-airline
-""""""""""""""""""""""""""""""""
 "let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 
-""""""""""""""""""""""""""""""""
 " => lookupfile
-""""""""""""""""""""""""""""""""
 "  script to generate filenametags
 "  #!/bin/sh
 "  # generate tag file for lookupfile plugin, use absolute path
 "  echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase/" > filenametags
 "  find `pwd` -not -regex '.*\.\(png\|gif\)' -type f -printf "%f\t%p\t1\n" | \
 "      sort -f >> filenametags 
-"      
 let g:LookupFile_MinPatLength = 2
 let g:LookupFile_PreserveLastPattern = 0        "Don't save last pattern
 let g:LookupFile_PreservePatternHistory = 1    "Save history
@@ -404,33 +376,12 @@ if filereadable("./filenametags")               "Set name
     let g:LookupFile_TagExpr ='"./filenametags"'
 endif
 
-""""""""""""""""""""""""""""""""
 " => ListToggle
-""""""""""""""""""""""""""""""""
 let g:lt_location_list_toggle_map = '<leader>l'
 let g:lt_quickfix_list_toggle_map = '<leader>q'
 let g:lt_height = 10
 
-""""""""""""""""""""""""""""""""
-" => ShowMarks
-""""""""""""""""""""""""""""""""
-let g:showmarks_enable=0
-" <leader>mt : Toggles ShowMarks on and off.
-" <leader>mh : Hides an individual mark.
-" <leader>ma : Hides all marks in the current buffer.
-" <leader>mm : Places the next available mark.
-
-""""""""""""""""""""""""""""""""
-" => autopreview
-""""""""""""""""""""""""""""""""
-let g:AutoPreview_enabled = 0
-"let g:EchoFuncKeyNext='<C-n>'
-"let g:EchoFuncKeyPrev='<C-p>'
-nmap <leader>a :AutoPreviewToggle<cr><C-j>
-
-""""""""""""""""""""""""""""""
-" Mark
-""""""""""""""""""""""""""""""
+" => Mark
 nmap <silent> <leader>hl <Plug>MarkSet
 vmap <silent> <leader>hl <Plug>MarkSet
 nmap <silent> <leader>hh <Plug>MarkClear
@@ -438,14 +389,24 @@ vmap <silent> <leader>hh <Plug>MarkClear
 nmap <silent> <leader>hr <Plug>MarkRegex
 vmap <silent> <leader>hr <Plug>MarkRegex
 
-""""""""""""""""""""""""""""""""
+" => ShowMarks
+let g:showmarks_enable=0
+" <leader>mt : Toggles ShowMarks on and off.
+" <leader>mh : Hides an individual mark.
+" <leader>ma : Hides all marks in the current buffer.
+" <leader>mm : Places the next available mark.
+
+" => autopreview
+let g:AutoPreview_enabled = 0
+"let g:EchoFuncKeyNext='<C-n>'
+"let g:EchoFuncKeyPrev='<C-p>'
+nmap <leader>a :AutoPreviewToggle<cr><C-j>
+
+
 " => autoload_cscope
-""""""""""""""""""""""""""""""""
 let g:autocscope_menus=1
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" QuickFix
+" => QuickFix
 ":cc 显示详细错误信息 ( :help :cc )
 ":cp 跳到上一个错误 ( :help :cp )
 ":cn 跳到下一个错误 ( :help :cn )
@@ -480,9 +441,7 @@ nmap <leader>p :cp<cr>
 " ---------------------------------------------------------
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-""""""""""""""""""""""""""""""""
 " => vim-markdown
-""""""""""""""""""""""""""""""""
 au BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn} set filetype=mkd
 let g:vim_markdown_folding_disabled=1
 let g:vim_markdown_frontmatter=1    " Highlight YAML frontmatter as used by Jekyll
@@ -498,15 +457,12 @@ let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-
-"suport c++11.
+" suport c++11.
 let g:syntastic_cpp_compiler = 'clang++'
 let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
 
 
-""""""""""""""""""""""""""""""
 " => OmniCompletion
-""""""""""""""""""""""""""""""
 " 全能(Omni)补全（代码）        CTRL-X CTRL-O
 " 从上文查找补全                CTRL-P
 " 从下文查找补全                CTRL-N
@@ -530,7 +486,7 @@ autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType c set omnifunc=ccomplete#Complete
 autocmd BufNewFile,BufRead,BufEnter *.cpp,*.hpp set omnifunc=omni#cpp#complete#Main
-" -> OmniCppCompletion
+" => OmniCppCompletion
 let OmniCpp_NamespaceSearch = 1
 let OmniCpp_GlobalScopeSearch = 1
 let OmniCpp_ShowAccess = 1
@@ -548,9 +504,7 @@ set infercase           "自动补全时区分大小写，默认不区分ignorec
 " highlight Pmenu    guibg=darkgrey  guifg=black 
 " highlight PmenuSel guibg=lightgrey guifg=black
 
-""""""""""""""""""""""""""""""
 " => xptemplate
-""""""""""""""""""""""""""""""
 let g:xptemplate_key='<c-\>'
 let g:xptemplate_vars = "BRloop=\n"     "循环中的 { 重起一行
 let g:xptemplate_vars = "BRfun= "       "函数中的 { 重起一行
@@ -573,9 +527,7 @@ fun! XPTwrapSuperTab(command) "{{{
     end
 endfunction "}}}
 
-""""""""""""""""""""""""""""""
 " => ultisnips
-""""""""""""""""""""""""""""""
 " Trigger configuration. Do not use <tab> if you use YouCompleteMe.
 let g:UltiSnipsUsePythonVersion=2
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -585,9 +537,7 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 
-""""""""""""""""""""""""""""""
 " => DoxygenToolkit
-""""""""""""""""""""""""""""""
 map fg : Dox<cr>
 let g:DoxygenToolkit_authorName="ovsoil"
 let g:DoxygenToolkit_briefTag_pre = "@brief\t"
@@ -599,9 +549,7 @@ let g:DoxygenToolkit_maxFunctionProtoLines = 30
 let g:DoxygenToolkit_licenseTag="My own license\<enter>"
 let g:DoxygenToolkit_undocTag="DOXIGEN_SKIP_BLOCK"
 
-""""""""""""""""""""""""""""""
 " => SuperTab
-""""""""""""""""""""""""""""""
 if g:ycm==1
     let g:SuperTabDefaultCompletionType = "<c-tab>"
     let g:SuperTabContextDefaultCompletionType = "<c-tab>"
@@ -611,35 +559,19 @@ else
 endif
 let g:SuperTabRetainCompletionType = 2    "记住上次的补全方式
 
-""""""""""""""""""""""""""""""
 " => YCM
-""""""""""""""""""""""""""""""
 if g:ycm==1
     let g:ycm_key_list_select_completion = ['<C-TAB>', '<Down>']
     let g:ycm_key_list_previous_completion = ['<C-S-TAB>', '<Up>']
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Development
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"execute project related configuration in current directory---------------------
-if filereadable("workspace.vim")
-    source workspace.vim  "set path+=...
-endif
-
-""""""""""""""""""""""""""""""
 " => SrcExpl 与其他有冲突
-""""""""""""""""""""""""""""""
-" // The switch of the Source Explorer 
-nmap <F8> :SrcExplToggle<CR> 
-" // Set the height of Source Explorer window 
-let g:SrcExpl_winHeight = 8 
-" // Set 100 ms for refreshing the Source Explorer 
-let g:SrcExpl_refreshTime = 100 
-" // Set "Enter" key to jump into the exact definition context 
-let g:SrcExpl_jumpKey = "<ENTER>" 
-" // Set "Space" key for back from the definition context 
-let g:SrcExpl_gobackKey = "<SPACE>" 
+nmap <F8> :SrcExplToggle<CR>            " // The switch of the Source Explorer 
+let g:SrcExpl_winHeight = 8             " // Set the height of Source Explorer window 
+let g:SrcExpl_refreshTime = 100         " // Set 100 ms for refreshing the Source Explorer 
+let g:SrcExpl_jumpKey = "<ENTER>"       " // Set "Enter" key to jump into the exact definition context 
+let g:SrcExpl_gobackKey = "<SPACE>"     " // Set "Space" key for back from the definition context 
+
 " // In order to avoid conflicts, the Source Explorer should know what plugins
 " // except itself are using buffers. And you need add their buffer names into
 " // below listaccording to the command ":buffers!"
@@ -648,7 +580,6 @@ let g:SrcExpl_pluginList = [
             \ "__Tagbar__",
             \ "NERD_tree_1" 
             \ ] 
-
 " // Enable/Disable the local definition searching, and note that this is not 
 " // guaranteed to work, the Source Explorer doesn't check the syntax for now. 
 " // It only searches for a match with the keyword according to command 'gd' 
@@ -664,6 +595,15 @@ let g:SrcExpl_updateTagsCmd = "ctags --sort=foldcase -R ."
 "let g:SrcExpl_prevDefKey = "<F3>" 
 " // Set "<F4>" key for displaying the next definition in the jump list 
 "let g:SrcExpl_nextDefKey = "<F4>" 
+
+
+
+
+
+
+
+"load_template设置
+let g:template_path = "~/.vim/template/"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 ":ts 命令就能列出一个列表供用户选择。    
@@ -711,9 +651,6 @@ autocmd BufRead,BufEnter *.cpp,*.hpp call LoadTags()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"load_template设置
-let g:template_path = "~/.vim/template/"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -822,6 +759,7 @@ nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>
 "     endif
 " endfunction
 
+
 if has("gui_macvim")
     colorscheme molokai
     "let g:solarized_termcolors=256 | colorscheme solarized
@@ -829,7 +767,7 @@ if has("gui_macvim")
     "colorscheme evening
     "colorscheme badwolf
     "colorscheme koehler
-
+    
     set transparency=20             "设置透明度macvim
     set guifont=Monaco:h12
     "set guifont=Courier_New:h14
