@@ -6,7 +6,7 @@ My vimdc
 1. Install vimrc
     
     git clone git@github.com:ovsoil/vimrc.git
-    cp vimrc/vimrc ~/.vimrc
+    cp vimrc/vimrc ~/.vimrc  or   cp vimrc/vimrc-lite ~/.vimrc
 
 2. Install Vundle
         
