@@ -5,8 +5,8 @@ My vimdc
 
 1. Install vimrc
     
-    cd
     git clone git@github.com:ovsoil/vimrc.git
+    cp vimrc/vimrc ~/.vimrc
 
 2. Install Vundle
         
@@ -14,4 +14,4 @@ My vimdc
 
 3. Install Plugin
     
-Launch `vim` and run `:PluginInstall`
+    Launch `vim` and run `:PluginInstall`
