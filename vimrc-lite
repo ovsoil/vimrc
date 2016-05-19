@@ -22,29 +22,60 @@ elseif (has("unix"))
 endif
 
 if(g:system=="windows")
+" copy from windows default _vimrc
+" ------------------------------------------------------------
+    source $VIMRUNTIME/vimrc_example.vim
+    source $VIMRUNTIME/mswin.vim
+    behave mswin
+    set diffexpr=MyDiff()
+    function MyDiff()
+        let opt = '-a --binary '
+        if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+        if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+        let arg1 = v:fname_in
+        if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+        let arg2 = v:fname_new
+        if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+        let arg3 = v:fname_out
+        if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+        if $VIMRUNTIME =~ ' '
+            if &sh =~ '\<cmd'
+                if empty(&shellxquote)
+                    let l:shxq_sav = ''
+                    set shellxquote&
+                endif
+                let cmd = '"' . $VIMRUNTIME . '\diff"'
+            else
+                let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+            endif
+        else
+            let cmd = $VIMRUNTIME . '\diff'
+        endif
+        silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+        if exists('l:shxq_sav')
+            let &shellxquote=l:shxq_sav
+        endif
+    endfunction
+" ------------------------------------------------------------
+endif
+
+if(g:system=="windows")
     set ffs=dos,unix,mac
 else
     set ffs=unix,dos,mac
     set encoding=utf8
 endif
 
-if (g:system=="windows")
-    let g:homedir='C:/Users/'.$USER
-elseif (g:system=="mac")
-    let g:homedir='/Users/'.$USER
-else
-    let g:homedir='/home/'.$USER
-endif
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => 插件管理和更新 Vundle
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/Vundle.vim
-
 set nocompatible                    " be iMproved, vundle required
 filetype off                        " vundle required
-set rtp+=~/.vim/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
+if (g:system=="windows")
+    set rtp+=$VIM/vimfiles/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
+else
+    set rtp+=~/.vim/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
+endif
 call vundle#begin()                 " alternatively, pass a path: call vundle#begin('~/some/path/here')
 
 " plugin from http://vim-scripts.org/vim/scripts.html 直接写插件名
@@ -72,6 +103,8 @@ Plugin 'plasticboy/vim-markdown'
 Plugin 'a.vim'                          " a.vim: 头文件切换
 " python
 Plugin 'python.vim'
+" erlang
+Plugin 'oscarh/vimerl'
 
 " 补全
 Plugin 'OmniCppComplete'
@@ -320,6 +353,9 @@ let g:tagbar_width=30
 " let g:syntastic_cpp_compiler = 'clang++'
 " let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
 
+" ===> vimerl
+" let g:erlangManPath = ''
+let g:erlangCheckFile = '~/.vim/bundle/vimerl/compiler/erlang_check_file.erl'
 
 " ===> OmniCompletion
 " 全能(Omni)补全（代码）        CTRL-X CTRL-O
@@ -381,18 +417,6 @@ set infercase           "自动补全时区分大小写，默认不区分ignorec
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "  => Cscope
-"s: 查找C语言符号，即查找函数名、宏、枚举值等出现的地方
-"g: 查找函数、宏、枚举等定义的位置，类似ctags所提供的功能
-"d: 查找本函数调用的函数
-"c: 查找调用本函数的函数
-"t: 查找指定的字符串
-"e: 查找egrep模式，相当于egrep功能，但查找速度快多了
-"f: 查找并打开文件，类似vim的find功能
-"i: 查找包含本文件的文
-"
-"查找cscope.out文件所在的目录，如果找到，在其目录下生成更新的cscope.out文件，如果找不到，就在当前目录下生成
-"cscope.out和tags文件都在项目的根目录下，所以搜索到一个就能确定项目的根目录了
-"--- 未实现，也没必要，cscope基本上只用于阅读代码，所以没有加此功能
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("cscope")
     set csprg=cscope
@@ -416,6 +440,14 @@ endif
 " endfunction
 " autocmd BufRead,BufEnter *.cpp,*.hpp call LoadCscope()
 
+"s: 查找C语言符号，即查找函数名、宏、枚举值等出现的地方
+"g: 查找函数、宏、枚举等定义的位置，类似ctags所提供的功能
+"d: 查找本函数调用的函数
+"c: 查找调用本函数的函数
+"t: 查找指定的字符串
+"e: 查找egrep模式，相当于egrep功能，但查找速度快多了
+"f: 查找并打开文件，类似vim的find功能
+"i: 查找包含本文件的文
 set cscopequickfix=s-,g-,c-,t-,e-,f-,i-,d-
 nmap <C-@>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>
 nmap <C-@>g :cs find g <C-R>=expand("<cword>")<CR><CR>:copen<CR>
