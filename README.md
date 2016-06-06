@@ -1,5 +1,6 @@
-# vimrc
-My vimdc
+# My vimrc
+
+The `vimrc-lite` is for base use.
 
 ## Install
 
@@ -13,7 +14,7 @@ My vimdc
     * Windows
      
     download or clone this vimrc;
-    copy the file `vimrc` or `vimrc-lit` to Your Vim Path, and rename it with `_vimrc`;
+    copy the file `vimrc` or `vimrc-lite` to Your Vim Path, and rename it with `_vimrc`;
 
 2. Install Vundle in you .vim directory.
     

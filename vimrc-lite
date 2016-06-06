@@ -95,6 +95,9 @@ Plugin 'scrooloose/syntastic'           " syntastic: 语法检查（和listtoggl
 Plugin 'tpope/vim-surround'             " surround:
 " Plugin 'terryma/vim-multiple-cursors'
 
+Plugin 'fugalh/desert.vim'
+Plugin 'tomasr/molokai'
+
 " Markdown
 Plugin 'godlygeek/tabular'              " tabular: 文本对齐
 Plugin 'plasticboy/vim-markdown'
@@ -145,11 +148,8 @@ set viminfo^=%                  " Remember info about open buffers on close
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 syntax enable
 set background=dark
-colorscheme desert
-" colorscheme evening
-" colorscheme badwolf
-" colorscheme koehler
-" colorscheme molokai
+"colorscheme desert
+colorscheme molokai
 
 " colorscheme solarized
 if exists('$ITERM_PROFILE')
@@ -310,10 +310,14 @@ nmap <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>   " O
 nmap <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>  " Vimgreps in the current file
 vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>            " When you press <leader>r you can search and replace the selected text
 
+vnoremap // y/<C-R>"<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 插件配置
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ==> molokai
+let g:molokai_original = 1
+let g:rehash256 = 1
 
 " ===> NERDTree
 let g:NERDTree_title="NERDTree"
@@ -355,7 +359,11 @@ let g:tagbar_width=30
 
 " ===> vimerl
 " let g:erlangManPath = ''
-let g:erlangCheckFile = '~/.vim/bundle/vimerl/compiler/erlang_check_file.erl'
+" let g:erlangCompletionDisplayDoc = 1
+" let g:erlangCheckFile = '~/.vim/bundle/vimerl/compiler/erlang_check_file.erl'
+let g:erlangHighlightErrors = 1
+let g:erlangHighlightBif = 1
+set foldenable
 
 " ===> OmniCompletion
 " 全能(Omni)补全（代码）        CTRL-X CTRL-O
