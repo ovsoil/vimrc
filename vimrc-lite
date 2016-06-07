@@ -94,6 +94,7 @@ Plugin 'auto_mkdir'                     " auto_mkdir:
 Plugin 'scrooloose/syntastic'           " syntastic: 语法检查（和listtoggle配合尚有问题）
 Plugin 'tpope/vim-surround'             " surround:
 " Plugin 'terryma/vim-multiple-cursors'
+Plugin 'Raimondi/delimitMate'            " delimitMate: 括号，引号补全
 
 Plugin 'fugalh/desert.vim'
 Plugin 'tomasr/molokai'
@@ -420,7 +421,7 @@ set infercase           "自动补全时区分大小写，默认不区分ignorec
 "map <C-]> :tselect <C-R>=expand("<cword>")<CR><CR>
 "map <C-]> g<C-]>
 
-"添加特定的（已经生成tags）的函数库的tags
+" #TODO: 添加常用语言标准库的源码，并加载其tags
 " set tags+=~/.vim/src/cpp_src/tags
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
