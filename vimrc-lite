@@ -96,6 +96,7 @@ Plugin 'tpope/vim-surround'             " surround:
 " Plugin 'terryma/vim-multiple-cursors'
 Plugin 'Raimondi/delimitMate'            " delimitMate: 括号，引号补全
 
+" themes
 Plugin 'fugalh/desert.vim'
 Plugin 'tomasr/molokai'
 
@@ -364,7 +365,6 @@ let g:tagbar_width=30
 " let g:erlangCheckFile = '~/.vim/bundle/vimerl/compiler/erlang_check_file.erl'
 let g:erlangHighlightErrors = 1
 let g:erlangHighlightBif = 1
-set foldenable
 
 " ===> OmniCompletion
 " 全能(Omni)补全（代码）        CTRL-X CTRL-O

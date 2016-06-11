@@ -1,15 +1,16 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"vimrc lite
-"Maintainer:
+" ===============================================================================
+" vimrc lite
+" Maintainer:
 "       ovsoil
-"       http:// - hxyumail@126.com
+"       hxyumail@126.com
+"       http://ovsoil.com
 " Create Date:
 "       01/09/2015
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Platform
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
+" =>Platform
+" ===============================================================================
 let g:system=""
 let g:homedir=""
 if (has("win32") || has("win95") || has("win64") || has("win16"))
@@ -22,8 +23,8 @@ elseif (has("unix"))
 endif
 
 if(g:system=="windows")
-" copy from windows default _vimrc
-" ------------------------------------------------------------
+    " copy from windows default _vimrc
+    " ------------------------------------------------------------
     source $VIMRUNTIME/vimrc_example.vim
     source $VIMRUNTIME/mswin.vim
     behave mswin
@@ -56,7 +57,7 @@ if(g:system=="windows")
             let &shellxquote=l:shxq_sav
         endif
     endfunction
-" ------------------------------------------------------------
+    " ------------------------------------------------------------
 endif
 
 if(g:system=="windows")
@@ -66,9 +67,9 @@ else
     set encoding=utf8
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
 " => 插件管理和更新 Vundle
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
 set nocompatible                    " be iMproved, vundle required
 filetype off                        " vundle required
 if (g:system=="windows")
@@ -78,59 +79,78 @@ else
 endif
 call vundle#begin()                 " alternatively, pass a path: call vundle#begin('~/some/path/here')
 
-" plugin from http://vim-scripts.org/vim/scripts.html 直接写插件名
-" plugin on GitHub repo 用户名/插件名
-" Git plugin not hosted on GitHub 完整的git地址
-" git repos on your local machine 'file:///home/gmarik/path/to/plugin'
+" plugin from http://vim-scripts.org/vim/scripts.html: 直接写插件名
+" plugin on GitHub repo: 用户名/插件名
+" Git plugin not hosted on GitHub: 完整的git地址
+" git repos on your local machine: 'file:///path/to/plugin'
 Plugin 'gmarik/Vundle.vim'
 
-" 常用
-Plugin 'L9'                             " L9: Vim-scripts library
-Plugin 'scrooloose/nerdtree'            " nerdtree: 文件浏览
-Plugin 'fholgado/minibufexpl.vim'       " minibufexpl: buffer浏览
-Plugin 'Tagbar'                         " tagbar: 代替taglist
+" Base
+Plugin 'L9'                             " Vim-scripts library
+Plugin 'scrooloose/nerdtree'            " file browser
+Plugin 'fholgado/minibufexpl.vim'       " buffer
+Plugin 'auto_mkdir'                     " auto_mkdir
 
-Plugin 'kien/rainbow_parentheses.vim'
+" status line
+Plugin 'vim-airline/vim-airline'              "
+Plugin 'vim-airline/vim-airline-themes'              "
 
-Plugin 'auto_mkdir'                     " auto_mkdir:
-Plugin 'scrooloose/syntastic'           " syntastic: 语法检查（和listtoggle配合尚有问题）
-Plugin 'tpope/vim-surround'             " surround:
-" Plugin 'terryma/vim-multiple-cursors'
-
-Plugin 'fugalh/desert.vim'
+" Themes
+Plugin 'flazz/vim-colorschemes'         " all colorschemes of vim.org
 Plugin 'tomasr/molokai'
-Plugin 'sickill/vim-monokai'
+Plugin 'altercation/vim-colors-solarized'
+
+" Edit
+Plugin 'terryma/vim-multiple-cursors'   " Sublime Text style multiple selections for Vim
+Plugin 'tpope/vim-surround'             " surround
+Plugin 'kien/rainbow_parentheses.vim'   " Rainbow parentheses
+Plugin 'Raimondi/delimitMate'           " auto-completion for quotes, parens, brackets
+
+" Develop
+Plugin 'Tagbar'                         " tag list
+Plugin 'scrooloose/syntastic'           " syntastic: 语法检查（和listtoggle配合尚有问题）
+
+" json
+Plugin 'elzr/vim-json'
 
 " Markdown
 Plugin 'godlygeek/tabular'              " tabular: 文本对齐
 Plugin 'plasticboy/vim-markdown'
 
-" 开发常用
+" C/C++
 Plugin 'a.vim'                          " a.vim: 头文件切换
+
 " python
 Plugin 'python.vim'
 Plugin 'tmhedberg/SimpylFold'
+Plugin 'vim-scripts/indentpython.vim'
+Plugin 'davidhalter/jedi-vim'
+Plugin 'jmcantrell/vim-virtualenv'
 
 " erlang
-Plugin 'oscarh/vimerl'
-" json
-Plugin 'elzr/vim-json'
+" Plugin 'oscarh/vimerl'
+Plugin 'vim-erlang/vim-erlang-compiler'
+Plugin 'vim-erlang/vim-erlang-skeletons'
+Plugin 'vim-erlang/vim-erlang-runtime'
+Plugin 'vim-erlang/vim-erlang-omnicomplete'
+Plugin 'vim-erlang/vim-erlang-tags'
 
-" 补全
+" complement
 Plugin 'OmniCppComplete'
-"代码段
+
+" 代码段
 
 " 注释
-Plugin 'tpope/vim-commentary'           " vim-commentary: gcc
-Plugin 'DoxygenToolkit.vim'
+Plugin 'tpope/vim-commentary'           " comment
+Plugin 'DoxygenToolkit.vim'             " doxygen
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
 " => General
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
 set nocompatible        " be iMproved, vundle required
 
 set fileencodings=ucs-bom,utf-8,chinese
@@ -146,6 +166,7 @@ set backupdir=~/.vim/backup/tmp
 set nobackup            " Turn backup off
 set noswapfile
 set nowb
+set mouse=a
 
 " Return to last edit position when opening files
 autocmd BufReadPost *
@@ -154,43 +175,26 @@ autocmd BufReadPost *
             \ endif
 set viminfo^=%                  " Remember info about open buffers on close
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VIM user interface
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-syntax enable
-set background=dark
-"colorscheme desert
-"colorscheme monokai
-colorscheme molokai
+" ===============================================================================
+" => User Interface
+" ===============================================================================
 
-" colorscheme solarized
-if exists('$ITERM_PROFILE')
-    let g:solarized_termcolors=256
-else
-endif
-
-set mouse=a
-set t_Co=256
-set wildmenu                    " Turn on the WiLd menu
-set cmdheight=1                 " Height of the command bar
-set laststatus=2                " Always show the status line
-set ruler                       " Always show current position
 set nu
+set ruler                       " Always show current position
 set wildignore=*.o,*~,*.pyc     " Ignore compiled files
 set so=7                        " Set 7 lines to the cursor
 set hid                         " A buffer becomes hidden when it is abandoned
 
+syntax enable
+set incsearch                   " Makes search act like search in modern browsers
 set backspace=eol,start,indent  " Configure backspace so it acts as it should act
 set whichwrap+=<,>,h,l
 set ignorecase                  " Ignore case when searching
 set smartcase                   " When searching try to be smart about cases
 set hlsearch                    " Highlight search results
-set incsearch                   " Makes search act like search in modern browsers
 
-set list
-set listchars=tab:\|\           " 显示Tab符，使用一高亮竖线代替
 
-set lazyredraw                  " Don't redraw while executing macros (good performance config)
+set lazyredraw                  " Don't redraw while executing macros
 set magic                       " For regular expressions turn magic on
 set showmatch                   " Show matching brackets
 set mat=2                       " How many tenths of a second to blink when matching brackets
@@ -198,36 +202,72 @@ set mat=2                       " How many tenths of a second to blink when matc
 set noerrorbells                " No annoying sound on errors
 set novisualbell
 set vb t_vb=
-set tm=500
-
-set smarttab                    " Be smart when using tabs
-set shiftwidth=4                " 1 tab == 4 spaces
-set expandtab                   " Use spaces instead of tabs
-set tabstop=4
-set softtabstop=4
-
 set lbr                         " Linebreak on 500 characters
+set tm=500
 set tw=500
 
-set ai                          " Auto indent
-set si                          " Smart indent
-set ci                          " C indent
+set autoindent                  " Auto indent
+set smartindent                 " Smart indent
+set cindent                     " C indent
 set wrap                        " Wrap lines
 set cinoptions=g0
 
+set wildmenu                    " Turn on the WiLd menu
+set t_Co=256
+set background=dark
+" colorscheme desert
+" colorscheme solarized
+colorscheme molokai
+if exists('$ITERM_PROFILE')
+    let g:solarized_termcolors=256
+else
+endif
 
-"set cursorcolumn           "高亮当前列 cuc
-set cursorline              "高亮当前行 cul
-" au InsertLeave * hi Cursor guibg=green    "离开插入模式是 色
-" au InsertEnter * hi Cursor guibg=red      "进入插入模式时 色
+" Set extra options when running in GUI mode
+if has("gui_running")
+    set guifont=Monaco:h12
+    if has("gui_gtk2")   "GTK2
+        set guifont=Monaco\ 12, Monospace\ 12
+    endif
+    set guioptions-=T
+    set guioptions+=e
+    set guioptions-=r
+    set guioptions-=L
+    set guitablabel=%M\ %t
+    set showtabline=1
+    set linespace=2
+    set noimd
+    set t_Co=256
+endif
+
+set cmdheight=1                 " Height of the command bar
+"Format the statusline
+set laststatus=2
+" set statusline=
+" set statusline+=%2*%-3.3n%0*/ " buffer number
+" set statusline+=%f/ " file name
+" set statusline+=%h%1*%m%r%w%0* " flag
+" set statusline+=[
+" if v:version >= 600
+"     set statusline+=%{strlen(&ft)?&ft:'none'}, " filetype
+"     set statusline+=%{&encoding}, " encoding
+" endif
+" set statusline+=%{&fileformat}] " file format
+" if filereadable(expand("$VIM/vimfiles/plugin/vimbuddy.vim"))
+"     set statusline+=/ %{VimBuddy()} " vim buddy
+" endif
+" set statusline+=%= " right align
+" set statusline+=%2*0x%-8B/ " current char
+" set statusline+=%-14.(%l,%c%V%)/ %<%P " offset
+
+set cursorcolumn          "高亮当前列 cuc
+set cursorline            "高亮当前行 cul
 autocmd! InsertEnter * set cul
 autocmd! InsertLeave * set nocul
-
 "设置标记一列的背景颜色和数字一行颜色一致
 hi! link SignColumn   LineNr
 hi! link ShowMarksHLl DiffAdd
 hi! link ShowMarksHLu DiffChange
-
 "" for error highlight，防止错误整行标红导致看不清
 highlight clear SpellBad
 highlight SpellBad term=standout ctermfg=1 term=underline cterm=underline
@@ -238,14 +278,30 @@ highlight SpellRare term=underline cterm=underline
 highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set smarttab            " Be smart when using tabs
+set shiftwidth=4        " insert 1 tab == 4 spaces
+set tabstop=4           " display spaces number as tab
+set softtabstop=4
+set expandtab           " Use spaces instead of tabs
+set list
+nmap <leader>l :set list!<CR>
+set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend 
+" FileType Specific Changes
+if has ( "autocmd" )
+    autocmd FileType javascript setlocal ts=4 sts=4 sw=4 expandtab
+    autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
+    autocmd FileType html,xhtml,xml,css setlocal ts=2 sts=2 sw=2 expandtab
+    autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab textwidth=79
+endif
+
+highlight BadWhitespace ctermbg=Red guibg=DarkRed
+au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
+" ===============================================================================
 " => Mappings 常用快捷键以及简写
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
 " F1 - help; F2 - file(nerdtree); F3 - tag(tagbar); F4 - Buffer(minibufexpl); F5 - lookupfile; F6 - tags update; <C-F6> - cscope update
-" <leader>q - quickbox
 let mapleader = ","
 let g:mapleader = ","
-
 " ---------------------------------------
 " command mode
 " ---------------------------------------
@@ -302,13 +358,13 @@ endif
 " ---------------------------------------
 nmap <silent> <leader><cr> :noh<cr>         " Disable highlight
 nmap H ^
-namp L $
+nmap L $
 
 set foldenable
 set foldlevel=100
-" set foldmethod=syntax
+set foldmethod=syntax
+" set foldmethod=indent
 " nmap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
-set foldmethod=indent
 nmap <space> za         "用空格键来开关折叠
 
 "设定自动保存折叠
@@ -321,7 +377,6 @@ nmap <leader>sn ]s                       " Shortcuts using <leader>
 nmap <leader>sp [s
 nmap <leader>sa zg
 nmap <leader>s? z=
-
 
 " ---------------------------------------
 " 编辑
@@ -345,18 +400,17 @@ autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
 " ---------------------------------------
-" vimgrep searching and cope displaying
+" search, vimgrep
 " ---------------------------------------
-vnoremap <silent> gv :call VisualSelection('gv')<CR>                        " When you press gv you vimgrep after the selected text
-nmap <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>   " Open vimgrep and put the cursor in the right position
-nmap <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>  " Vimgreps in the current file
-vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>            " When you press <leader>r you can search and replace the selected text
+vnoremap // y/<C-R>"<CR>     " search select text
+" vnoremap <silent> gv :call VisualSelection('gv')<CR>                        " When you press gv you vimgrep after the selected text
+" nmap <leader>vg :vimgrep // **/*.<left><left><left><left><left><left><left>   " Open vimgrep and put the cursor in the right position
+" nmap <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>  " Vimgreps in the current file
+" vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>            " When you press <leader>r you can search and replace the selected text
 
-vnoremap // y/<C-R>"<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
 " 插件配置
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
 " ==> molokai
 let g:molokai_original=1
 let g:rehash256=1
@@ -364,25 +418,25 @@ let g:rehash256=1
 " ==> SimpylFold
 let g:SimpylFold_docstring_preview=1
 
-" ==> rainbow_parentheses 
+" ==> rainbow_parentheses
 let g:rbpt_colorpairs = [
-    \ ['brown',       'RoyalBlue3'],
-    \ ['Darkblue',    'SeaGreen3'],
-    \ ['darkgray',    'DarkOrchid3'],
-    \ ['darkgreen',   'firebrick3'],
-    \ ['darkcyan',    'RoyalBlue3'],
-    \ ['darkred',     'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['brown',       'firebrick3'],
-    \ ['gray',        'RoyalBlue3'],
-    \ ['black',       'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['Darkblue',    'firebrick3'],
-    \ ['darkgreen',   'RoyalBlue3'],
-    \ ['darkcyan',    'SeaGreen3'],
-    \ ['darkred',     'DarkOrchid3'],
-    \ ['red',         'firebrick3'],
-    \ ]
+            \ ['brown',       'RoyalBlue3'],
+            \ ['Darkblue',    'SeaGreen3'],
+            \ ['darkgray',    'DarkOrchid3'],
+            \ ['darkgreen',   'firebrick3'],
+            \ ['darkcyan',    'RoyalBlue3'],
+            \ ['darkred',     'SeaGreen3'],
+            \ ['darkmagenta', 'DarkOrchid3'],
+            \ ['brown',       'firebrick3'],
+            \ ['gray',        'RoyalBlue3'],
+            \ ['black',       'SeaGreen3'],
+            \ ['darkmagenta', 'DarkOrchid3'],
+            \ ['Darkblue',    'firebrick3'],
+            \ ['darkgreen',   'RoyalBlue3'],
+            \ ['darkcyan',    'SeaGreen3'],
+            \ ['darkred',     'DarkOrchid3'],
+            \ ['red',         'firebrick3'],
+            \ ]
 let g:rbpt_max = 16
 let g:rbpt_loadcmd_toggle = 0
 au VimEnter * RainbowParenthesesToggle
@@ -418,61 +472,36 @@ let g:tagbar_ctags_bin='ctags'
 let g:tagbar_width=30
 "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 
+" ===> vim-airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+
 " ===> syntastic
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-"
-" let g:syntastic_always_populate_loc_list = 0
-" let g:syntastic_auto_loc_list = 0
-" let g:syntastic_check_on_open = 1
-" let g:syntastic_check_on_wq = 0
-" " suport c++11.
-" let g:syntastic_cpp_compiler = 'clang++'
-" let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
 
-" ===> vimerl
-" let g:erlangManPath = ''
-" let g:erlangCompletionDisplayDoc = 1
-" if (g:system=="windows")
-"     let g:erlangCheckFile = $VIM.'/vimfiles/bundle/vimerl/compiler/erlang_check_file.erl'
-" else
-"     let g:erlangCheckFile = '~/.vim/bundle/vimerl/compiler/erlang_check_file.erl'
-" endif
-let g:erlangHighlightErrors = 1
-let g:erlangHighlightBif = 1
-set foldenable
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
 
-" FileType Specific Changes
-au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
+" c++11 support
+let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
 
-" html FileType
-autocmd BufNewFile,BufRead *.mako,*.mak,*.jinja2 setlocal ft=html
-autocmd FileType html,xhtml,xml,css
-    \ setlocal expandtab
-    \ setlocal shiftwidth=2
-    \ setlocal tabstop=2
-    \ setlocal softtabstop=2
+" python support 
+" let g:syntastic_python_checkers = ['pylint']              "
+" let g:syntastic_python_python_exec = '/path/to/python3'    " if use python3
 
+" erlang support
+" let g:syntastic_erlc_include_path = 'ebin'
 
-" Python FileType
-au BufRead *.py set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
-au FileType python
-    \ setlocal tabstop=4
-    \ setlocal softtabstop=4
-    \ setlocal shiftwidth=4
-    \ setlocal textwidth=79
-    \ setlocal expandtab
-    \ setlocal autoindent
-    \ setlocal fileformat=unix
-    \ smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class,with
-
-
-autocmd FileType erlang
-    \ setlocal expandtab
-    \ setlocal shiftwidth=2
-    \ setlocal tabstop=2
-    \ setlocal softtabstop=2
+" ===> virtualenv
+" let g:virtualenv_directory = '~/.virtualenvs'
+let g:virtualenv_stl_format = '[%n]'
+set statusline+=%{virtualenv#statusline()}
 
 " ===> OmniCompletion
 " 全能(Omni)补全（代码）        CTRL-X CTRL-O
@@ -507,43 +536,40 @@ let OmniCpp_MayCompleteDot = 1   " 输入 .  后自动补全
 let OmniCpp_MayCompleteArrow = 1 " 输入 -> 后自动补全
 let OmniCpp_MayCompleteScope = 1 " 输入 :: 后自动补全
 let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
+
+set nocp
+set infercase           "自动补全时区分大小写，默认不区分ignorecase
 " 自动关闭补全窗口
 au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
 set completeopt=menuone,menu,longest
 "回车即选中当前项
 inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"
-
 "上下左右键的行为 会显示其他信息
 inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
 inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
 inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
 inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 
-set nocp
-set infercase           "自动补全时区分大小写，默认不区分ignorecase
 " Pmenu 是所有项的配色，PmenuSel 是选中项的配色，guibg 和 guifg 分别对应背景色和前景色。
 " highlight Pmenu    guibg=darkgrey  guifg=black
 " highlight PmenuSel guibg=lightgrey guifg=black
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" tags
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
+" => Cscope
+" ===============================================================================
 " C++ tags: "!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q ."
-":ts 命令就能列出一个列表供用户选择。
-":tp 为上一个tag标记文件，
-":tn 为下一个tag标记文件。当然,若当前tags文件中用户所查找的变量或函数名只有一个，“:tp,:tn”命令不可用。
-"g+]直接显示ctag结果列表
-"让CTRL-]只有一个选择时自动跳转，多个选择时，出现选择列表
-"map <C-]> :tselect <C-R>=expand("<cword>")<CR><CR>
-"map <C-]> g<C-]>
+" :ts tagselect, :tp 为上一个tag标记文件，:tn 为下一个tag标记文件。
+" g+]直接显示ctag结果列表
+" 让CTRL-]只有一个选择时自动跳转，多个选择时，出现选择列表
+" map <C-]> :tselect <C-R>=expand("<cword>")<CR><CR>
+" map <C-]> g<C-]>
 
 "添加特定的（已经生成tags）的函数库的tags
 " set tags+=~/.vim/src/cpp_src/tags
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"  => Cscope
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ===============================================================================
+" => Cscope
+" ===============================================================================
 if has("cscope")
     set csprg=cscope
     " Use both cscope and ctag
@@ -584,19 +610,3 @@ nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<CR><CR>:copen<CR>
 nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>:copen<CR>
 nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>
 
-" Set extra options when running in GUI mode
-if has("gui_running")
-    set guifont=Monaco:h14
-    if has("gui_gtk2")   "GTK2
-        set guifont=Monaco\ 12, Monospace\ 12
-    endif
-    set guioptions-=T
-    set guioptions+=e
-    set guioptions-=r
-    set guioptions-=L
-    set guitablabel=%M\ %t
-    set showtabline=1
-    set linespace=2
-    set noimd
-    set t_Co=256
-endif
