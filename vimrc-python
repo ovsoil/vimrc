@@ -92,8 +92,8 @@ Plugin 'fholgado/minibufexpl.vim'       " buffer
 Plugin 'auto_mkdir'                     " auto_mkdir
 
 " status line
-Plugin 'vim-airline/vim-airline'              "
-Plugin 'vim-airline/vim-airline-themes'              "
+Plugin 'vim-airline/vim-airline'        "
+Plugin 'vim-airline/vim-airline-themes' "
 
 " Themes
 Plugin 'flazz/vim-colorschemes'         " all colorschemes of vim.org
@@ -411,97 +411,123 @@ vnoremap // y/<C-R>"<CR>     " search select text
 " ===============================================================================
 " 插件配置
 " ===============================================================================
+function! IsLoad(pluginname)
+    if &runtimepath =~ a:pluginname
+        return 1
+    else
+        return 0
+    endif
+endfunction
 " ==> molokai
 let g:molokai_original=1
 let g:rehash256=1
 
 " ==> SimpylFold
-let g:SimpylFold_docstring_preview=1
+if IsLoad("SimpylFold")
+    let g:SimpylFold_docstring_preview=1
+endif
 
 " ==> rainbow_parentheses
-let g:rbpt_colorpairs = [
-            \ ['brown',       'RoyalBlue3'],
-            \ ['Darkblue',    'SeaGreen3'],
-            \ ['darkgray',    'DarkOrchid3'],
-            \ ['darkgreen',   'firebrick3'],
-            \ ['darkcyan',    'RoyalBlue3'],
-            \ ['darkred',     'SeaGreen3'],
-            \ ['darkmagenta', 'DarkOrchid3'],
-            \ ['brown',       'firebrick3'],
-            \ ['gray',        'RoyalBlue3'],
-            \ ['black',       'SeaGreen3'],
-            \ ['darkmagenta', 'DarkOrchid3'],
-            \ ['Darkblue',    'firebrick3'],
-            \ ['darkgreen',   'RoyalBlue3'],
-            \ ['darkcyan',    'SeaGreen3'],
-            \ ['darkred',     'DarkOrchid3'],
-            \ ['red',         'firebrick3'],
-            \ ]
-let g:rbpt_max = 16
-let g:rbpt_loadcmd_toggle = 0
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+if IsLoad("rainbow_parentheses")
+    let g:rbpt_colorpairs = [
+                \ ['brown',       'RoyalBlue3'],
+                \ ['Darkblue',    'SeaGreen3'],
+                \ ['darkgray',    'DarkOrchid3'],
+                \ ['darkgreen',   'firebrick3'],
+                \ ['darkcyan',    'RoyalBlue3'],
+                \ ['darkred',     'SeaGreen3'],
+                \ ['darkmagenta', 'DarkOrchid3'],
+                \ ['brown',       'firebrick3'],
+                \ ['gray',        'RoyalBlue3'],
+                \ ['black',       'SeaGreen3'],
+                \ ['darkmagenta', 'DarkOrchid3'],
+                \ ['Darkblue',    'firebrick3'],
+                \ ['darkgreen',   'RoyalBlue3'],
+                \ ['darkcyan',    'SeaGreen3'],
+                \ ['darkred',     'DarkOrchid3'],
+                \ ['red',         'firebrick3'],
+                \ ]
+    let g:rbpt_max = 16
+    let g:rbpt_loadcmd_toggle = 0
+    au VimEnter * RainbowParenthesesToggle
+    au Syntax * RainbowParenthesesLoadRound
+    au Syntax * RainbowParenthesesLoadSquare
+    au Syntax * RainbowParenthesesLoadBraces
+endif
 
 " ===> NERDTree
-let g:NERDTree_title="NERDTree"
-let NERDTreeShowBookmarks=1         "一直显示书签
-"打开书签时，自动将Vim的pwd设为打开的目录
-let NERDTreeChDirMode=2
-let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
+if IsLoad("nerdtree")
+    let g:NERDTree_title="NERDTree"
+    let NERDTreeShowBookmarks=1         "一直显示书签
+    "打开书签时，自动将Vim的pwd设为打开的目录
+    let NERDTreeChDirMode=2
+    let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
-nmap <silent><F2> :NERDTreeToggle<CR><CR>
-" autocmd VimEnter * NERDTree
+    nmap <silent><F2> :NERDTreeToggle<CR><CR>
+    " autocmd VimEnter * NERDTree
+endif
 
 " ===> minibufexpl
-map <Leader>mbe :MBEOpen<cr>
-map <Leader>mbc :MBEClose<cr>
-map <Leader>mbt :MBEToggle<cr>
-nmap <C-TAB>   :MBEbf<CR>
-nmap <C-S-TAB> :MBEbb<CR>
-" 下面4个选项在fholgado版本的minibufexpl中已经去除，我们自己定义这些功能
-"let g:miniBufExplMapWindowNavVim = 1
-"let g:miniBufExplMapWindowNavArrows = 1
-"let g:miniBufExplMapCTabSwitchBufs = 1
-"let g:miniBufExplModSelTarget = 1
+if IsLoad("minibufexpl")
+    map <Leader>mbe :MBEOpen<cr>
+    map <Leader>mbc :MBEClose<cr>
+    map <Leader>mbt :MBEToggle<cr>
+    nmap <C-TAB>   :MBEbf<CR>
+    nmap <C-S-TAB> :MBEbb<CR>
+    " 下面4个选项在fholgado版本的minibufexpl中已经去除，我们自己定义这些功能
+    "let g:miniBufExplMapWindowNavVim = 1
+    "let g:miniBufExplMapWindowNavArrows = 1
+    "let g:miniBufExplMapCTabSwitchBufs = 1
+    "let g:miniBufExplModSelTarget = 1
+endif
 
 " ===> tagbar plugin
-nmap <silent><F3> :TagbarToggle<CR>
-let g:tagbar_ctags_bin='ctags'
-let g:tagbar_width=30
-"autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+if IsLoad("tagbar")
+    nmap <silent><F3> :TagbarToggle<CR>
+    let g:tagbar_ctags_bin='ctags'
+    let g:tagbar_width=30
+    "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+endif
 
 " ===> vim-airline
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
+if IsLoad("vim-airline")
+    if &runtimepath =~ 'vim-airline'
+        let g:runtimepathHHH = 1
+    endif
+    let g:airline#extensions#tabline#enabled = 1
+    let g:airline#extensions#tabline#left_sep = ' '
+    let g:airline#extensions#tabline#left_alt_sep = '|'
+endif
 
 " ===> syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+if IsLoad("syntastic")
+    set statusline+=%#warningmsg#
+    set statusline+=%{SyntasticStatuslineFlag()}
+    set statusline+=%*
 
-let g:syntastic_always_populate_loc_list = 0
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
+    let g:syntastic_always_populate_loc_list = 0
+    let g:syntastic_auto_loc_list = 0
+    let g:syntastic_check_on_open = 1
+    let g:syntastic_check_on_wq = 0
 
-" c++11 support
-let g:syntastic_cpp_compiler = 'clang++'
-let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
+    " c++11 support
+    let g:syntastic_cpp_compiler = 'clang++'
+    let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
 
-" python support 
-" let g:syntastic_python_checkers = ['pylint']              "
-" let g:syntastic_python_python_exec = '/path/to/python3'    " if use python3
+    " python support 
+    let g:syntastic_python_checkers = ['pylint']              "
+    " let g:syntastic_python_python_exec = '/path/to/python3'    " if use python3
 
-" erlang support
-" let g:syntastic_erlc_include_path = 'ebin'
+    " erlang support
+    " let g:syntastic_erlc_include_path = 'ebin'
+endif
 
 " ===> virtualenv
-" let g:virtualenv_directory = '~/.virtualenvs'
-let g:virtualenv_stl_format = '[%n]'
-set statusline+=%{virtualenv#statusline()}
+if IsLoad("virtualenv")
+    " let g:virtualenv_directory = '~/.virtualenvs'
+    let g:virtualenv_stl_format = '[%n]'
+    set statusline+=%{virtualenv#statusline()}
+endif
 
 " ===> OmniCompletion
 " 全能(Omni)补全（代码）        CTRL-X CTRL-O
@@ -579,6 +605,7 @@ if has("cscope")
     " Use cscope for definition search first
     set cscopetagorder=0
 endif
+
 
 "自动加载cscope.out
 " function! LoadCscope()
