@@ -119,6 +119,7 @@ Plugin 'plasticboy/vim-markdown'
 
 " C/C++
 Plugin 'a.vim'                          " a.vim: 头文件切换
+Plugin 'Rip-Rip/clang_complete'
 
 " python
 Plugin 'python.vim'
@@ -491,10 +492,7 @@ endif
 
 " ===> vim-airline
 if IsLoad("vim-airline")
-    if &runtimepath =~ 'vim-airline'
-        let g:runtimepathHHH = 1
-    endif
-    let g:airline#extensions#tabline#enabled = 1
+    let g:airline#extensions#tabline#enabled = 0
     let g:airline#extensions#tabline#left_sep = ' '
     let g:airline#extensions#tabline#left_alt_sep = '|'
 endif
@@ -579,6 +577,24 @@ inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 " Pmenu 是所有项的配色，PmenuSel 是选中项的配色，guibg 和 guifg 分别对应背景色和前景色。
 " highlight Pmenu    guibg=darkgrey  guifg=black
 " highlight PmenuSel guibg=lightgrey guifg=black
+" ===============================================================================
+" => clang_complete
+" ===============================================================================
+let g:clang_complete_auto = 1
+let g:clang_complete_copen = 1
+let g:clang_user_options='|| exit 0'
+let g:clang_library_path = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib"
+if has('win32unix') " Cygwin
+       " Using libclang requires a Vim built with +python
+       let g:clang_use_library = 1
+       " Mit der Option "gcc" kriege ich Fehler.
+       " Remove "gcc" option as it causes errors.
+       let g:clang_auto_user_options='path, .clang_complete'
+elseif has('win32') " Windows
+       let g:clang_auto_user_options='path, .clang_complete'
+       let g:clang_use_library = 1
+       let g:clang_library_path='D:\Sourcen\LLVM\build\bin\Debug'
+endif
 
 " ===============================================================================
 " => Cscope
@@ -591,7 +607,7 @@ inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 " map <C-]> g<C-]>
 
 "添加特定的（已经生成tags）的函数库的tags
-" set tags+=~/.vim/src/cpp_src/tags
+autocmd FileType cpp set tags+=~/.vim/cpp_src/tags
 
 " ===============================================================================
 " => Cscope
