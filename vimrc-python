@@ -15,6 +15,8 @@ let g:system=""
 let g:homedir=""
 if (has("win32") || has("win95") || has("win64") || has("win16"))
     let g:system="windows"
+elseif (has('win32unix'))  " Cygwin
+    let g:system="cygwin"
 elseif (has("unix"))
     let g:system="unix"
     if ( system('uname') =~ "Darwin")          " ~:去除控制字符
@@ -90,6 +92,7 @@ Plugin 'L9'                             " Vim-scripts library
 Plugin 'scrooloose/nerdtree'            " file browser
 Plugin 'fholgado/minibufexpl.vim'       " buffer
 Plugin 'auto_mkdir'                     " auto_mkdir
+Plugin 'kien/ctrlp.vim'
 
 " status line
 Plugin 'vim-airline/vim-airline'        "
@@ -134,7 +137,7 @@ Plugin 'vim-erlang/vim-erlang-compiler'
 Plugin 'vim-erlang/vim-erlang-skeletons'
 Plugin 'vim-erlang/vim-erlang-runtime'
 Plugin 'vim-erlang/vim-erlang-omnicomplete'
-Plugin 'vim-erlang/vim-erlang-tags'
+" Plugin 'vim-erlang/vim-erlang-tags'
 
 " complement
 Plugin 'OmniCppComplete'
@@ -167,7 +170,12 @@ set backupdir=~/.vim/backup/tmp
 set nobackup            " Turn backup off
 set noswapfile
 set nowb
-set mouse=a
+if has('mouse')
+    set mouse=a
+endif
+if (g:system == 'cygwin')
+    set mouse=
+endif
 
 " Return to last edit position when opening files
 autocmd BufReadPost *
@@ -261,7 +269,7 @@ set laststatus=2
 " set statusline+=%2*0x%-8B/ " current char
 " set statusline+=%-14.(%l,%c%V%)/ %<%P " offset
 
-set cursorcolumn          "高亮当前列 cuc
+" set cursorcolumn          "高亮当前列 cuc
 set cursorline            "高亮当前行 cul
 autocmd! InsertEnter * set cul
 autocmd! InsertLeave * set nocul
@@ -286,7 +294,8 @@ set softtabstop=4
 set expandtab           " Use spaces instead of tabs
 set list
 nmap <leader>l :set list!<CR>
-set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend 
+" set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend 
+set listchars=tab:\|\           " display tab with '|    '
 " FileType Specific Changes
 if has ( "autocmd" )
     autocmd FileType javascript setlocal ts=4 sts=4 sw=4 expandtab
@@ -520,6 +529,10 @@ if IsLoad("syntastic")
     " let g:syntastic_erlc_include_path = 'ebin'
 endif
 
+if IsLoad("jedi-vim")
+    let g:jedi#completions_command = "<C-E>"
+endif
+
 " ===> virtualenv
 if IsLoad("virtualenv")
     " let g:virtualenv_directory = '~/.virtualenvs'
@@ -580,20 +593,22 @@ inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 " ===============================================================================
 " => clang_complete
 " ===============================================================================
-let g:clang_complete_auto = 1
-let g:clang_complete_copen = 1
-let g:clang_user_options='|| exit 0'
-let g:clang_library_path = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib"
-if has('win32unix') " Cygwin
-       " Using libclang requires a Vim built with +python
-       let g:clang_use_library = 1
-       " Mit der Option "gcc" kriege ich Fehler.
-       " Remove "gcc" option as it causes errors.
-       let g:clang_auto_user_options='path, .clang_complete'
-elseif has('win32') " Windows
-       let g:clang_auto_user_options='path, .clang_complete'
-       let g:clang_use_library = 1
-       let g:clang_library_path='D:\Sourcen\LLVM\build\bin\Debug'
+if IsLoad("clang_complete")
+    let g:clang_complete_auto = 1
+    let g:clang_complete_copen = 1
+    let g:clang_user_options='|| exit 0'
+
+    if(g:system == 'mac')
+        let g:clang_use_library = 1
+        let g:clang_library_path = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib"
+    elseif(g:system == 'unix')
+        let g:clang_use_library = 1
+        let g:clang_library_path= "/usr/lib/clang"
+    elseif (g:system == 'windows')
+        let g:clang_use_library = 0
+    elseif(g:system == 'cygwin')
+        let g:clang_use_library = 0
+    endif
 endif
 
 " ===============================================================================
