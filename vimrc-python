@@ -138,6 +138,7 @@ Plugin 'vim-erlang/vim-erlang-skeletons'
 Plugin 'vim-erlang/vim-erlang-runtime'
 Plugin 'vim-erlang/vim-erlang-omnicomplete'
 " Plugin 'vim-erlang/vim-erlang-tags'
+Plugin 'aerosol/vim-compot'
 
 " complement
 Plugin 'OmniCppComplete'
@@ -366,7 +367,6 @@ endif
 " ---------------------------------------
 " 显示控制
 " ---------------------------------------
-nmap <silent> <leader><cr> :noh<cr>         " Disable highlight
 nmap H ^
 nmap L $
 
@@ -412,11 +412,53 @@ autocmd BufWrite *.coffee :call DeleteTrailingWS()
 " ---------------------------------------
 " search, vimgrep
 " ---------------------------------------
-vnoremap // y/<C-R>"<CR>     " search select text
+nnoremap <leader><h> :nohl<CR>         " Disable highlight
 " vnoremap <silent> gv :call VisualSelection('gv')<CR>                        " When you press gv you vimgrep after the selected text
 " nmap <leader>vg :vimgrep // **/*.<left><left><left><left><left><left><left>   " Open vimgrep and put the cursor in the right position
 " nmap <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>  " Vimgreps in the current file
 " vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>            " When you press <leader>r you can search and replace the selected text
+
+" vnoremap // y/<C-R>"<CR>     " search select text
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+" highlight but not search
+nnoremap <leader><CR> :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+
+set guioptions+=a
+function! MakePattern(text)
+  let pat = escape(a:text, '\')
+  let pat = substitute(pat, '\_s\+$', '\\s\\*', '')
+  let pat = substitute(pat, '^\_s\+', '\\s\\*', '')
+  let pat = substitute(pat, '\_s\+',  '\\_s\\+', 'g')
+  return '\\V' . escape(pat, '\"')
+endfunction
+vnoremap <leader><CR> :<C-U>let @/="<C-R>=MakePattern(@*)<CR>"<CR>:set hls<CR>
+
+" relace selected text
+vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
+vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
+
+" let g:highlighting = 0
+" function! Highlighting()
+"   if g:highlighting == 1 && @/ =~ '^\\<'.expand('<cword>').'\\>$'
+"     let g:highlighting = 0
+"     return ":silent nohlsearch\<CR>"
+"   endif
+"   let @/ = '\<'.expand('<cword>').'\>'
+"   let g:highlighting = 1
+"   return ":silent set hlsearch\<CR>"
+" endfunction
+" nnoremap <silent> <expr> <CR> Highlighting()
 
 " ===============================================================================
 " 插件配置
