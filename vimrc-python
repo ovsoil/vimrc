@@ -122,7 +122,9 @@ Plugin 'plasticboy/vim-markdown'
 
 " C/C++
 Plugin 'a.vim'                          " a.vim: 头文件切换
-Plugin 'Rip-Rip/clang_complete'
+if (executable('clang')==1)
+    Plugin 'Rip-Rip/clang_complete'
+endif
 
 " python
 Plugin 'python.vim'
