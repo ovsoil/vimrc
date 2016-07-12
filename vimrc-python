@@ -529,10 +529,15 @@ if IsLoad("nerdtree")
     let NERDTreeShowBookmarks=1         "一直显示书签
     "打开书签时，自动将Vim的pwd设为打开的目录
     let NERDTreeChDirMode=2
-    let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
+    let NERDTreeIgnore=['\.pyc$', '\~$', '\.beam$'] "ignore files in NERDTree
+
+    " open a NERDTree automatically when vim starts up if no files were specified
+    autocmd StdinReadPre * let s:std_in=1
+    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+    " close vim if the only window left open is a NERDTree
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
     nmap <silent><F2> :NERDTreeToggle<CR><CR>
-    " autocmd VimEnter * NERDTree
 endif
 
 " ===> minibufexpl
