@@ -301,9 +301,9 @@ nmap <leader>l :set list!<CR>
 set listchars=tab:\|\           " display tab with '|    '
 " FileType Specific Changes
 if has ( "autocmd" )
-    autocmd FileType javascript setlocal ts=4 sts=4 sw=4 expandtab
     autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
     autocmd FileType html,xhtml,xml,css setlocal ts=2 sts=2 sw=2 expandtab
+    autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
     autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab textwidth=79
 endif
 
@@ -434,16 +434,52 @@ endif
 
 " vnoremap // y/<C-R>"<CR>     " search select text
 " Search for selected text, forwards or backwards.
-vnoremap <silent> * :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy/<C-R><C-R>=substitute(
-  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <silent> # :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy?<C-R><C-R>=substitute(
-  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
+" vnoremap <silent> * :<C-U>
+"   \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+"   \gvy/<C-R><C-R>=substitute(
+"   \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+"   \gV:call setreg('"', old_reg, old_regtype)<CR>
+" vnoremap <silent> # :<C-U>
+"   \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+"   \gvy?<C-R><C-R>=substitute(
+"   \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+"   \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+" Search for selected text.
+" http://vim.wikia.com/wiki/VimTip171
+let s:save_cpo = &cpo | set cpo&vim
+if !exists('g:VeryLiteral')
+  let g:VeryLiteral = 0
+endif
+function! s:VSetSearch(cmd)
+  let old_reg = getreg('"')
+  let old_regtype = getregtype('"')
+  normal! gvy
+  if @@ =~? '^[0-9a-z,_]*$' || @@ =~? '^[0-9a-z ,_]*$' && g:VeryLiteral
+    let @/ = @@
+  else
+    let pat = escape(@@, a:cmd.'\')
+    if g:VeryLiteral
+      let pat = substitute(pat, '\n', '\\n', 'g')
+    else
+      let pat = substitute(pat, '^\_s\+', '\\s\\+', '')
+      let pat = substitute(pat, '\_s\+$', '\\s\\*', '')
+      let pat = substitute(pat, '\_s\+', '\\_s\\+', 'g')
+    endif
+    let @/ = '\V'.pat
+  endif
+  normal! gV
+  call setreg('"', old_reg, old_regtype)
+endfunction
+vnoremap <silent> * :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>/<CR>
+vnoremap <silent> # :<C-U>call <SID>VSetSearch('?')<CR>?<C-R>/<CR>
+vmap <kMultiply> *
+nmap <silent> <Plug>VLToggle :let g:VeryLiteral = !g:VeryLiteral
+  \\| echo "VeryLiteral " . (g:VeryLiteral ? "On" : "Off")<CR>
+if !hasmapto("<Plug>VLToggle")
+  nmap <unique> <Leader>vl <Plug>VLToggle
+endif
+let &cpo = s:save_cpo | unlet s:save_cpo
 
 " highlight but not search
 nnoremap <leader><CR> :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
@@ -557,9 +593,20 @@ endif
 " ===> tagbar plugin
 if IsLoad("tagbar")
     nmap <silent><F3> :TagbarToggle<CR>
-    let g:tagbar_ctags_bin='ctags'
-    let g:tagbar_width=30
+    let g:tagbar_ctags_bin = 'ctags'
+    let g:tagbar_width     = 30
     "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+endif
+
+" ===> ctrlp
+if IsLoad("ctrlp")
+    nmap <leader>xb :CtrlPBuffer<cr>
+    let g:ctrlp_open_multiple_files = 'v'
+    set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.o,*_build/*
+    let g:ctrlp_custom_ignore = {
+                \ 'dir':  '\v[\/]\.(git)$',
+                \ 'file': '\v\.(log|jpg|png|jpeg)$',
+                \ }
 endif
 
 " ===> vim-airline
@@ -571,9 +618,9 @@ endif
 
 " ===> syntastic
 if IsLoad("syntastic")
-    set statusline+=%#warningmsg#
-    set statusline+=%{SyntasticStatuslineFlag()}
-    set statusline+=%*
+    " set statusline+=%#warningmsg#
+    " set statusline+=%{SyntasticStatuslineFlag()}
+    " set statusline+=%*
 
     let g:syntastic_always_populate_loc_list = 0
     let g:syntastic_auto_loc_list = 0
@@ -585,11 +632,19 @@ if IsLoad("syntastic")
     let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
 
     " python support 
-    let g:syntastic_python_checkers = ['pylint']              "
+    " let g:syntastic_python_checkers = ['pylint']
+    let g:syntastic_python_checkers= ['flake8']
+    let g:syntastic_python_flake8_post_args='--ignore=E501,E128'
     " let g:syntastic_python_python_exec = '/path/to/python3'    " if use python3
 
     " erlang support
     " let g:syntastic_erlc_include_path = 'ebin'
+    
+    " set error or warning signs
+    let g:syntastic_error_symbol = '✗'
+    let g:syntastic_warning_symbol = '⚠'
+    " whether to show balloons
+    let g:syntastic_enable_balloons = 1
 endif
 
 if IsLoad("jedi-vim")
@@ -731,3 +786,36 @@ nmap <C-@>e :cs find e <C-R>=expand("<cword>")<CR><CR>:copen<CR>
 nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<CR><CR>:copen<CR>
 nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>:copen<CR>
 nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>
+
+" Folding rules {{{
+set foldenable                  " enable folding
+set foldcolumn=3                " add a fold column
+set foldmethod=marker           " detect triple-{ style fold markers
+set foldlevelstart=99           " start out with everything folded
+set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
+" which commands trigger auto-unfold
+function! MyFoldText()
+    let line = getline(v:foldstart)
+
+    let nucolwidth = &fdc + &number * &numberwidth
+    let windowwidth = winwidth(0) - nucolwidth - 3
+    let foldedlinecount = v:foldend - v:foldstart
+
+    " expand tabs into spaces
+    let onetab = strpart('          ', 0, &tabstop)
+    let line = substitute(line, '\t', onetab, 'g')
+
+    let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
+    let fillcharcount = windowwidth - len(line) - len(foldedlinecount) - 4
+    return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
+endfunction
+set foldtext=MyFoldText()
+
+"c/c++/javascript/java fold method
+autocmd filetype c,cpp,javascript,java set foldmarker={,}
+
+nnoremap zO zCzO
+nnoremap <Space> za
+vnoremap <Space> za
+nnoremap ,z zMzv
+"}}}
