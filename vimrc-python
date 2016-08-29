@@ -193,7 +193,14 @@ set viminfo^=%                  " Remember info about open buffers on close
 
 set nu
 set ruler                       " Always show current position
-set wildignore=*.o,*~,*.pyc     " Ignore compiled files
+set wildignore+=*.o,*~,*.pyc     " Ignore compiled files
+if(g:system=="windows")
+    set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*  " Windows ('noshellslash')
+    set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe
+else
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*        " Linux/MacOSX
+    set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+endif
 set so=7                        " Set 7 lines to the cursor
 set hid                         " A buffer becomes hidden when it is abandoned
 
@@ -302,9 +309,9 @@ set listchars=tab:\|\           " display tab with '|    '
 " FileType Specific Changes
 if has ( "autocmd" )
     autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
-    autocmd FileType html,xhtml,xml,css setlocal ts=2 sts=2 sw=2 expandtab
+    autocmd FileType json,html,xhtml,xml,css setlocal ts=2 sts=2 sw=2 expandtab
     autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
-    autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab textwidth=79
+    autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab              "textwidth=79
 endif
 
 highlight BadWhitespace ctermbg=Red guibg=DarkRed
@@ -425,6 +432,11 @@ if executable('ag')
     let g:ctrlp_use_caching = 0
 else
     set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
+    if(g:system=="windows")
+        let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
+    else
+        let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
+    endif
 endif
 "command! -nargs=+ RGrep execute 'silent grep! <args>' | cwindow | redraw!
 " vnoremap <silent> gv :call VisualSelection('gv')<CR>                        " When you press gv you vimgrep after the selected text
@@ -510,7 +522,7 @@ vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
 " endfunction
 " nnoremap <silent> <expr> <CR> Highlighting()
 
-nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap  <leader>K:grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " ===============================================================================
 " 插件配置
@@ -568,8 +580,8 @@ if IsLoad("nerdtree")
     let NERDTreeIgnore=['\.pyc$', '\~$', '\.beam$'] "ignore files in NERDTree
 
     " open a NERDTree automatically when vim starts up if no files were specified
-    autocmd StdinReadPre * let s:std_in=1
-    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+    " autocmd StdinReadPre * let s:std_in=1
+    " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
     " close vim if the only window left open is a NERDTree
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
@@ -614,6 +626,18 @@ if IsLoad("vim-airline")
     let g:airline#extensions#tabline#enabled = 0
     let g:airline#extensions#tabline#left_sep = ' '
     let g:airline#extensions#tabline#left_alt_sep = '|'
+endif
+
+" ===> ctrlp
+if IsLoad("ctrlp")
+    let g:ctrlp_custom_ignore = {
+        \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+        \ 'file': '\v\.(exe|so|dll)$',
+        \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
+        \ }
+    let g:ctrlp_max_files = 20000
+    let g:ctrlp_mruf_exclude = '/tmp/.*'
+    nmap <leader>p :CtrlPBuffer<cr>
 endif
 
 " ===> syntastic
