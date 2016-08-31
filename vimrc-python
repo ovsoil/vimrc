@@ -93,6 +93,7 @@ Plugin 'scrooloose/nerdtree'            " file browser
 Plugin 'fholgado/minibufexpl.vim'       " buffer
 Plugin 'auto_mkdir'                     " auto_mkdir
 Plugin 'kien/ctrlp.vim'
+Plugin 'Valloric/ListToggle'            " ListToggle: toggle quickfix and location-list
 
 " status line
 Plugin 'vim-airline/vim-airline'        "
@@ -122,8 +123,9 @@ Plugin 'plasticboy/vim-markdown'
 
 " C/C++
 Plugin 'a.vim'                          " a.vim: 头文件切换
-if (executable('clang')==1)
-    Plugin 'Rip-Rip/clang_complete'
+if g:system == 'mac' && executable('clang') == 1 && (v:version > 703 || (v:version == 703 && has('patch584')))
+    " Plugin 'Rip-Rip/clang_complete'
+    Plugin 'Valloric/YouCompleteMe'
 endif
 
 " python
@@ -146,6 +148,9 @@ Plugin 'aerosol/vim-compot'
 Plugin 'OmniCppComplete'
 
 " 代码段
+Plugin 'sirver/ultisnips'               " ultisnips: python更好
+Plugin 'honza/vim-snippets'
+" Plugin 'drmingdrmer/xptemplate'         " xptemplate: 感觉用于C/C++更好
 
 " 注释
 Plugin 'tpope/vim-commentary'           " comment
@@ -402,11 +407,6 @@ nmap <leader>s? z=
 " ---------------------------------------
 nmap <leader>pp :setlocal paste!<cr>    " Toggle paste mode on and off
 au InsertLeave * set nopaste            " Disbale paste mode when leaving insert mode
-" 插入模式下输入一些常用文本
-imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<CR>
-imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<CR>
-imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<CR>
-
 " Delete the blank space or Windows ^M at trail of line
 func! DeleteTrailingWS()
     exe "normal mz"
@@ -418,46 +418,18 @@ nmap <leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm   " Remove the Windows ^M
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
+" 插入模式下输入一些常用文本
+imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<CR>
+imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<CR>
+imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<CR>
+
 " ---------------------------------------
 " search, vimgrep
 " ---------------------------------------
-nnoremap <leader>h :nohl<CR>
-" The Silver Searcher
-if executable('ag')
-    " Use ag over grep
-    set grepprg=ag\ --nogroup\ --nocolor
-    " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    " ag is fast enough that CtrlP doesn't need to cache
-    let g:ctrlp_use_caching = 0
-else
-    set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
-    if(g:system=="windows")
-        let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
-    else
-        let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
-    endif
-endif
-"command! -nargs=+ RGrep execute 'silent grep! <args>' | cwindow | redraw!
-" vnoremap <silent> gv :call VisualSelection('gv')<CR>                        " When you press gv you vimgrep after the selected text
-" nmap <leader>vg :vimgrep // **/*.<left><left><left><left><left><left><left>   " Open vimgrep and put the cursor in the right position
-" nmap <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>  " Vimgreps in the current file
-" vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>            " When you press <leader>r you can search and replace the selected text
-
-" vnoremap // y/<C-R>"<CR>     " search select text
-" Search for selected text, forwards or backwards.
-" vnoremap <silent> * :<C-U>
-"   \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-"   \gvy/<C-R><C-R>=substitute(
-"   \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-"   \gV:call setreg('"', old_reg, old_regtype)<CR>
-" vnoremap <silent> # :<C-U>
-"   \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-"   \gvy?<C-R><C-R>=substitute(
-"   \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-"   \gV:call setreg('"', old_reg, old_regtype)<CR>
+nnoremap <leader><CR> :nohl<CR>
 
 " Search for selected text.
+" vnoremap // y/<C-R>"<CR>     " use following script instead
 " http://vim.wikia.com/wiki/VimTip171
 let s:save_cpo = &cpo | set cpo&vim
 if !exists('g:VeryLiteral')
@@ -493,36 +465,44 @@ if !hasmapto("<Plug>VLToggle")
 endif
 let &cpo = s:save_cpo | unlet s:save_cpo
 
-" highlight but not search
-nnoremap <leader><CR> :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 
-set guioptions+=a
-function! MakePattern(text)
-  let pat = escape(a:text, '\')
-  let pat = substitute(pat, '\_s\+$', '\\s\\*', '')
-  let pat = substitute(pat, '^\_s\+', '\\s\\*', '')
-  let pat = substitute(pat, '\_s\+',  '\\_s\\+', 'g')
-  return '\\V' . escape(pat, '\"')
-endfunction
-vnoremap <leader><CR> :<C-U>let @/="<C-R>=MakePattern(@*)<CR>"<CR>:set hls<CR>
+" highlight but not search the word at cursor
+nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+" highlight but not search the selected text
+vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>/<CR>N
+" set guioptions+=a
+" function! MakePattern(text)
+"   let pat = escape(a:text, '\')
+"   let pat = substitute(pat, '\_s\+$', '\\s\\*', '')
+"   let pat = substitute(pat, '^\_s\+', '\\s\\*', '')
+"   let pat = substitute(pat, '\_s\+',  '\\_s\\+', 'g')
+"   return '\\V' . escape(pat, '\"')
+" endfunction
+" vnoremap <leader>h :<C-U>let @/="<C-R>=MakePattern(@*)<CR>"<CR>:set hls<CR>
 
 " relace selected text
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
 
-" let g:highlighting = 0
-" function! Highlighting()
-"   if g:highlighting == 1 && @/ =~ '^\\<'.expand('<cword>').'\\>$'
-"     let g:highlighting = 0
-"     return ":silent nohlsearch\<CR>"
-"   endif
-"   let @/ = '\<'.expand('<cword>').'\>'
-"   let g:highlighting = 1
-"   return ":silent set hlsearch\<CR>"
-" endfunction
-" nnoremap <silent> <expr> <CR> Highlighting()
+" Grep
+if executable('ag')             " The Silver Searcher
+    " Use ag over grep
+    set grepprg=ag\ --nogroup\ --nocolor
+    " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+    " ag is fast enough that CtrlP doesn't need to cache
+    let g:ctrlp_use_caching = 0
+else
+    set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
+    if(g:system=="windows")
+        let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
+    else
+        let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
+    endif
+endif
 
-nnoremap  <leader>K:grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+" grep the word at cursor in current dir
+nnoremap  <leader>g :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " ===============================================================================
 " 插件配置
@@ -571,17 +551,22 @@ if IsLoad("rainbow_parentheses")
     au Syntax * RainbowParenthesesLoadBraces
 endif
 
+" ===> delimitMate
+if IsLoad("delimitMate")
+    let delimitMate_quotes = "\" '"
+endif
+
 " ===> NERDTree
 if IsLoad("nerdtree")
     let g:NERDTree_title="NERDTree"
     let NERDTreeShowBookmarks=1         "一直显示书签
     "打开书签时，自动将Vim的pwd设为打开的目录
     let NERDTreeChDirMode=2
-    let NERDTreeIgnore=['\.pyc$', '\~$', '\.beam$'] "ignore files in NERDTree
+    let NERDTreeIgnore=['\.pyc$', '\~$', '\.beam$']     "ignore files in NERDTree
 
     " open a NERDTree automatically when vim starts up if no files were specified
-    " autocmd StdinReadPre * let s:std_in=1
-    " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+    autocmd StdinReadPre * let s:std_in=1
+    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
     " close vim if the only window left open is a NERDTree
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
@@ -735,7 +720,7 @@ inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 " ===============================================================================
 " => clang_complete
 " ===============================================================================
-if IsLoad("clang_complete")
+" if IsLoad("clang_complete")
     let g:clang_complete_auto = 1
     let g:clang_complete_copen = 1
     let g:clang_user_options='|| exit 0'
@@ -752,6 +737,36 @@ if IsLoad("clang_complete")
         let g:clang_use_library = 1
         let g:clang_library_path= "/usr/bin"
     endif
+" endif
+
+if IsLoad("YouCompleteMe")
+    let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
+    let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
+    let g:ycm_confirm_extra_conf = 0
+endif
+
+if IsLoad("ultisnips")
+    let g:UltiSnipsUsePythonVersion=2
+    let g:UltiSnipsExpandTrigger="<tab>"
+    let g:UltiSnipsJumpForwardTrigger="<c-j>"
+    let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+    " If you want :UltiSnipsEdit to split your window.
+    let g:UltiSnipsEditSplit="vertical"
+
+endif
+
+" ===> xptemplate
+if IsLoad("xptemplate")
+    let g:xptemplate_key='<c-\>'
+    let g:xptemplate_vars = "BRloop=\n"     "循环中的 { 重起一行
+    let g:xptemplate_vars = "BRfun= "       "函数中的 { 重起一行
+    " let g:xptemplate_brace_complete = '(['
+
+    " Prevent supertab from mapping <tab> to anything.
+    let g:SuperTabMappingForward = '<Plug>xpt_void'
+    " Tell XPTemplate what to fall back to, if nothing matches.
+    " Original SuperTab() yields nothing if g:SuperTabMappingForward was set to something it does not know.
+    let g:xptemplate_fallback = '<C-r>=XPTwrapSuperTab("n")<CR>'
 endif
 
 " ===============================================================================
@@ -813,7 +828,7 @@ nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>
 
 " Folding rules {{{
 set foldenable                  " enable folding
-set foldcolumn=3                " add a fold column
+set foldcolumn=2                " add a fold column
 set foldmethod=marker           " detect triple-{ style fold markers
 set foldlevelstart=99           " start out with everything folded
 set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
