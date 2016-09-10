@@ -107,3 +107,19 @@ e.g., def<tab>
 ```<leader>n``` - Usages (shows all the usages of a name)
 ```:Pyimport <module name>``` - Open module, e.g. opens the `os` module :Pyimport os
 B
+
+
+Tips:
+
+### 简单代码跳转
+
+跳转到定义
+gd到局部变量的定义，gD到全局变量的定义
+搜索
+*, # 可对光标处的词向前/向后做全词搜索，g*, g# 做相对应的非全词匹配搜索
+代码块首尾
+[[, ]] 可跳到当前代码块起始或结束的大括号处。
+括号首尾
+% 可在配对的括号、块首尾之前跳转。
+位置历史
+Ctrl-O 在历史记录中后台，Ctrl-I 则为前进。

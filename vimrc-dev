@@ -24,9 +24,8 @@ elseif (has("unix"))
     endif
 endif
 
+" copy from windows default _vimrc
 if(g:system=="windows")
-    " copy from windows default _vimrc
-    " ------------------------------------------------------------
     source $VIMRUNTIME/vimrc_example.vim
     source $VIMRUNTIME/mswin.vim
     behave mswin
@@ -59,7 +58,6 @@ if(g:system=="windows")
             let &shellxquote=l:shxq_sav
         endif
     endfunction
-    " ------------------------------------------------------------
 endif
 
 if(g:system=="windows")
@@ -90,14 +88,16 @@ Plugin 'gmarik/Vundle.vim'
 " Base
 Plugin 'L9'                             " Vim-scripts library
 Plugin 'scrooloose/nerdtree'            " file browser
-Plugin 'fholgado/minibufexpl.vim'       " buffer
 Plugin 'auto_mkdir'                     " auto_mkdir
 Plugin 'kien/ctrlp.vim'
 Plugin 'Valloric/ListToggle'            " ListToggle: toggle quickfix and location-list
+" Plugin 'fholgado/minibufexpl.vim'       " buffer
 
 " status line
 Plugin 'vim-airline/vim-airline'        "
 Plugin 'vim-airline/vim-airline-themes' "
+" Plugin 'edkolev/tmuxline.vim'
+Plugin 'edkolev/promptline.vim'
 
 " Themes
 Plugin 'flazz/vim-colorschemes'         " all colorschemes of vim.org
@@ -107,13 +107,19 @@ Plugin 'altercation/vim-colors-solarized'
 " Edit
 Plugin 'terryma/vim-multiple-cursors'   " Sublime Text style multiple selections for Vim
 Plugin 'tpope/vim-surround'             " surround
-Plugin 'kien/rainbow_parentheses.vim'   " Rainbow parentheses
+"Plugin 'kien/rainbow_parentheses.vim'   " Rainbow parentheses
 Plugin 'Raimondi/delimitMate'           " auto-completion for quotes, parens, brackets
 
 " Develop
 Plugin 'Tagbar'                         " tag list
 Plugin 'scrooloose/syntastic'           " syntastic: 语法检查（和listtoggle配合尚有问题）
 
+if g:system == 'mac' && executable('clang') == 1 && (v:version > 703 || (v:version == 703 && has('patch584')))
+    " Plugin 'Rip-Rip/clang_complete'
+    Plugin 'Valloric/YouCompleteMe'
+else
+    Plugin 'davidhalter/jedi-vim'
+endif
 " json
 Plugin 'elzr/vim-json'
 
@@ -123,16 +129,12 @@ Plugin 'plasticboy/vim-markdown'
 
 " C/C++
 Plugin 'a.vim'                          " a.vim: 头文件切换
-if g:system == 'mac' && executable('clang') == 1 && (v:version > 703 || (v:version == 703 && has('patch584')))
-    " Plugin 'Rip-Rip/clang_complete'
-    Plugin 'Valloric/YouCompleteMe'
-endif
 
 " python
-Plugin 'python.vim'
+" Plugin 'python.vim'
+Plugin 'nvie/vim-flake8'
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'vim-scripts/indentpython.vim'
-Plugin 'davidhalter/jedi-vim'
 Plugin 'jmcantrell/vim-virtualenv'
 
 " erlang
@@ -144,11 +146,14 @@ Plugin 'vim-erlang/vim-erlang-omnicomplete'
 " Plugin 'vim-erlang/vim-erlang-tags'
 Plugin 'aerosol/vim-compot'
 
+" lisp
+Plugin 'kovisoft/slimv'
+
 " complement
 Plugin 'OmniCppComplete'
 
 " 代码段
-Plugin 'sirver/ultisnips'               " ultisnips: python更好
+Plugin 'sirver/ultisnips'               " ultisnips
 Plugin 'honza/vim-snippets'
 " Plugin 'drmingdrmer/xptemplate'         " xptemplate: 感觉用于C/C++更好
 
@@ -311,6 +316,13 @@ set list
 nmap <leader>l :set list!<CR>
 " set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend 
 set listchars=tab:\|\           " display tab with '|    '
+
+" set filetype
+au BufNewFile,BufRead *.spacemacs setf clojure
+
+highlight BadWhitespace ctermbg=Red guibg=DarkRed
+au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
+
 " FileType Specific Changes
 if has ( "autocmd" )
     autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
@@ -319,14 +331,12 @@ if has ( "autocmd" )
     autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab              "textwidth=79
 endif
 
-highlight BadWhitespace ctermbg=Red guibg=DarkRed
-au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
 " ===============================================================================
 " => Mappings 常用快捷键以及简写
 " ===============================================================================
 " F1 - help; F2 - file(nerdtree); F3 - tag(tagbar); F4 - Buffer(minibufexpl); F5 - lookupfile; F6 - tags update; <C-F6> - cscope update
-let mapleader = ","
-let g:mapleader = ","
+let mapleader = "\<Space>"
+let g:mapleader = "\<Space>"
 " ---------------------------------------
 " command mode
 " ---------------------------------------
@@ -385,11 +395,9 @@ nmap H ^
 nmap L $
 
 set foldenable
-set foldlevel=100
+set foldlevel=99
 set foldmethod=syntax
 " set foldmethod=indent
-" nmap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
-nmap <space> za         "用空格键来开关折叠
 
 "设定自动保存折叠
 "au BufWinLeave *.* silent mkview
@@ -470,15 +478,6 @@ let &cpo = s:save_cpo | unlet s:save_cpo
 nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 " highlight but not search the selected text
 vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>/<CR>N
-" set guioptions+=a
-" function! MakePattern(text)
-"   let pat = escape(a:text, '\')
-"   let pat = substitute(pat, '\_s\+$', '\\s\\*', '')
-"   let pat = substitute(pat, '^\_s\+', '\\s\\*', '')
-"   let pat = substitute(pat, '\_s\+',  '\\_s\\+', 'g')
-"   return '\\V' . escape(pat, '\"')
-" endfunction
-" vnoremap <leader>h :<C-U>let @/="<C-R>=MakePattern(@*)<CR>"<CR>:set hls<CR>
 
 " relace selected text
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
@@ -502,7 +501,12 @@ else
 endif
 
 " grep the word at cursor in current dir
-nnoremap  <leader>g :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap  <leader>fa :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+" ===============================================================================
+" Development
+" ===============================================================================
+let python_highlight_all=1
 
 " ===============================================================================
 " 插件配置
@@ -608,9 +612,16 @@ endif
 
 " ===> vim-airline
 if IsLoad("vim-airline")
-    let g:airline#extensions#tabline#enabled = 0
+    let g:airline#extensions#tabline#enabled = 1
     let g:airline#extensions#tabline#left_sep = ' '
     let g:airline#extensions#tabline#left_alt_sep = '|'
+
+    let g:airline#extensions#bufferline#enabled = 0
+
+    let g:airline#extensions#tabline#buffer_nr_show = 1
+    let g:airline#extensions#tabline#buffer_nr_format = '%s:'
+    let g:airline#extensions#tabline#fnamecollapse = 1          "collopsing parent dir
+    let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
 endif
 
 " ===> ctrlp
@@ -625,11 +636,17 @@ if IsLoad("ctrlp")
     nmap <leader>p :CtrlPBuffer<cr>
 endif
 
+" ===> promptline
+if  IsLoad("promptline")
+    let g:promptline_preset = 'full'
+    let g:promptline_theme = 'airline'
+endif
+
 " ===> syntastic
 if IsLoad("syntastic")
-    " set statusline+=%#warningmsg#
-    " set statusline+=%{SyntasticStatuslineFlag()}
-    " set statusline+=%*
+    set statusline+=%#warningmsg#
+    set statusline+=%{SyntasticStatuslineFlag()}
+    set statusline+=%*
 
     let g:syntastic_always_populate_loc_list = 0
     let g:syntastic_auto_loc_list = 0
@@ -640,15 +657,15 @@ if IsLoad("syntastic")
     let g:syntastic_cpp_compiler = 'clang++'
     let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
 
-    " python support 
+    " python support
+    " let g:syntastic_python_python_exec = '/path/to/python3'    " if use python3
     " let g:syntastic_python_checkers = ['pylint']
     let g:syntastic_python_checkers= ['flake8']
     let g:syntastic_python_flake8_post_args='--ignore=E501,E128'
-    " let g:syntastic_python_python_exec = '/path/to/python3'    " if use python3
 
     " erlang support
     " let g:syntastic_erlc_include_path = 'ebin'
-    
+
     " set error or warning signs
     let g:syntastic_error_symbol = '✗'
     let g:syntastic_warning_symbol = '⚠'
@@ -666,6 +683,16 @@ if IsLoad("virtualenv")
     let g:virtualenv_stl_format = '[%n]'
     set statusline+=%{virtualenv#statusline()}
 endif
+" py << EOF
+" import os.path
+" import sys
+" import vim
+" if 'VIRTUA_ENV' in os.environ:
+"   project_base_dir = os.environ['VIRTUAL_ENV']
+"   sys.path.insert(0, project_base_dir)
+"   activate_this = os.path.join(project_base_dir,'bin/activate_this.py')
+"   execfile(activate_this, dict(__file__=activate_this))
+" EOF
 
 " ===> OmniCompletion
 " 全能(Omni)补全（代码）        CTRL-X CTRL-O
@@ -743,6 +770,8 @@ if IsLoad("YouCompleteMe")
     let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
     let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
     let g:ycm_confirm_extra_conf = 0
+    let g:ycm_autoclose_preview_window_after_completion=1
+    map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 endif
 
 if IsLoad("ultisnips")
@@ -854,7 +883,5 @@ set foldtext=MyFoldText()
 autocmd filetype c,cpp,javascript,java set foldmarker={,}
 
 nnoremap zO zCzO
-nnoremap <Space> za
-vnoremap <Space> za
 nnoremap ,z zMzv
 "}}}
