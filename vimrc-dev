@@ -1,5 +1,5 @@
 " ===============================================================================
-" vimrc lite
+" vimrc for develop
 " Maintainer:
 "       ovsoil
 "       hxyumail@126.com
@@ -14,57 +14,57 @@
 let g:system=""
 let g:homedir=""
 if (has("win32") || has("win95") || has("win64") || has("win16"))
-    let g:system="windows"
+  let g:system="windows"
 elseif (has('win32unix'))  " Cygwin
-    let g:system="cygwin"
+  let g:system="cygwin"
 elseif (has("unix"))
-    let g:system="unix"
-    if ( system('uname') =~ "Darwin")          " ~:去除控制字符
-        let g:system="mac"
-    endif
+  let g:system="unix"
+  if ( system('uname') =~ "Darwin")          " ~:去除控制字符
+    let g:system="mac"
+  endif
 endif
 
 " copy from windows default _vimrc
 if(g:system=="windows")
-    source $VIMRUNTIME/vimrc_example.vim
-    source $VIMRUNTIME/mswin.vim
-    behave mswin
-    set diffexpr=MyDiff()
-    function MyDiff()
-        let opt = '-a --binary '
-        if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
-        if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
-        let arg1 = v:fname_in
-        if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
-        let arg2 = v:fname_new
-        if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
-        let arg3 = v:fname_out
-        if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
-        if $VIMRUNTIME =~ ' '
-            if &sh =~ '\<cmd'
-                if empty(&shellxquote)
-                    let l:shxq_sav = ''
-                    set shellxquote&
-                endif
-                let cmd = '"' . $VIMRUNTIME . '\diff"'
-            else
-                let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
-            endif
-        else
-            let cmd = $VIMRUNTIME . '\diff'
+  source $VIMRUNTIME/vimrc_example.vim
+  source $VIMRUNTIME/mswin.vim
+  behave mswin
+  set diffexpr=MyDiff()
+  function MyDiff()
+    let opt = '-a --binary '
+    if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+    if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+    let arg1 = v:fname_in
+    if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+    let arg2 = v:fname_new
+    if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+    let arg3 = v:fname_out
+    if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+    if $VIMRUNTIME =~ ' '
+      if &sh =~ '\<cmd'
+        if empty(&shellxquote)
+          let l:shxq_sav = ''
+          set shellxquote&
         endif
-        silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
-        if exists('l:shxq_sav')
-            let &shellxquote=l:shxq_sav
-        endif
-    endfunction
+        let cmd = '"' . $VIMRUNTIME . '\diff"'
+      else
+        let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+      endif
+    else
+      let cmd = $VIMRUNTIME . '\diff'
+    endif
+    silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+    if exists('l:shxq_sav')
+      let &shellxquote=l:shxq_sav
+    endif
+  endfunction
 endif
 
 if(g:system=="windows")
-    set ffs=dos,unix,mac
+  set ffs=dos,unix,mac
 else
-    set ffs=unix,dos,mac
-    set encoding=utf8
+  set ffs=unix,dos,mac
+  set encoding=utf8
 endif
 
 " ===============================================================================
@@ -73,9 +73,9 @@ endif
 set nocompatible                    " be iMproved, vundle required
 filetype off                        " vundle required
 if (g:system=="windows")
-    set rtp+=$VIM/vimfiles/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
+  set rtp+=$VIM/vimfiles/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
 else
-    set rtp+=~/.vim/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
+  set rtp+=~/.vim/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
 endif
 call vundle#begin()                 " alternatively, pass a path: call vundle#begin('~/some/path/here')
 
@@ -112,14 +112,15 @@ Plugin 'Raimondi/delimitMate'           " auto-completion for quotes, parens, br
 
 " Develop
 Plugin 'Tagbar'                         " tag list
-Plugin 'scrooloose/syntastic'           " syntastic: 语法检查（和listtoggle配合尚有问题）
+Plugin 'scrooloose/syntastic'           " syntastic: syntax check
 
 if g:system == 'mac' && executable('clang') == 1 && (v:version > 703 || (v:version == 703 && has('patch584')))
-    " Plugin 'Rip-Rip/clang_complete'
-    Plugin 'Valloric/YouCompleteMe'
+  " Plugin 'Rip-Rip/clang_complete'
+  Plugin 'Valloric/YouCompleteMe'
 else
-    Plugin 'davidhalter/jedi-vim'
+  Plugin 'davidhalter/jedi-vim'
 endif
+
 " json
 Plugin 'elzr/vim-json'
 
@@ -179,37 +180,35 @@ set nrformats=          " 无论前面是否加零，都把数字作为十进制
 set history=700         " Sets how many lines of history VIM has to remember
 set autoread            " Set to auto read when a file is changed from the outside
 set autowrite           " Automatically save before commands like :next and :make
-set backupdir=~/.vim/backup/tmp
+" set backupdir=~/.vim/backup/tmp
 set nobackup            " Turn backup off
 set noswapfile
 set nowb
 if has('mouse')
-    set mouse=a
+  set mouse=a
 endif
 if (g:system == 'cygwin')
-    set mouse=
+  set mouse=
 endif
-
 " Return to last edit position when opening files
 autocmd BufReadPost *
-            \ if line("'\"") > 0 && line("'\"") <= line("$") |
-            \   exe "normal! g`\"" |
-            \ endif
+      \ if line("'\"") > 0 && line("'\"") <= line("$") |
+      \   exe "normal! g`\"" |
+      \ endif
 set viminfo^=%                  " Remember info about open buffers on close
 
 " ===============================================================================
 " => User Interface
 " ===============================================================================
-
 set nu
 set ruler                       " Always show current position
 set wildignore+=*.o,*~,*.pyc     " Ignore compiled files
 if(g:system=="windows")
-    set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*  " Windows ('noshellslash')
-    set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe
+  set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*  " Windows ('noshellslash')
+  set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe
 else
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*        " Linux/MacOSX
-    set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*        " Linux/MacOSX
+  set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 endif
 set so=7                        " Set 7 lines to the cursor
 set hid                         " A buffer becomes hidden when it is abandoned
@@ -221,7 +220,6 @@ set whichwrap+=<,>,h,l
 set ignorecase                  " Ignore case when searching
 set smartcase                   " When searching try to be smart about cases
 set hlsearch                    " Highlight search results
-
 
 set lazyredraw                  " Don't redraw while executing macros
 set magic                       " For regular expressions turn magic on
@@ -248,25 +246,25 @@ set background=dark
 " colorscheme solarized
 colorscheme molokai
 if exists('$ITERM_PROFILE')
-    let g:solarized_termcolors=256
+  let g:solarized_termcolors=256
 else
 endif
 
 " Set extra options when running in GUI mode
 if has("gui_running")
-    set guifont=Monaco:h12
-    if has("gui_gtk2")   "GTK2
-        set guifont=Monaco\ 12, Monospace\ 12
-    endif
-    set guioptions-=T
-    set guioptions+=e
-    set guioptions-=r
-    set guioptions-=L
-    set guitablabel=%M\ %t
-    set showtabline=1
-    set linespace=2
-    set noimd
-    set t_Co=256
+  set guifont=Monaco:h12
+  if has("gui_gtk2")   "GTK2
+    set guifont=Monaco\ 12, Monospace\ 12
+  endif
+  set guioptions-=T
+  set guioptions+=e
+  set guioptions-=r
+  set guioptions-=L
+  set guitablabel=%M\ %t
+  set showtabline=1
+  set linespace=2
+  set noimd
+  set t_Co=256
 endif
 
 set cmdheight=1                 " Height of the command bar
@@ -315,20 +313,19 @@ set expandtab           " Use spaces instead of tabs
 set list
 nmap <leader>l :set list!<CR>
 " set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend 
-set listchars=tab:\|\           " display tab with '|    '
-
-" set filetype
-au BufNewFile,BufRead *.spacemacs setf clojure
-
+set listchars=tab:\|\             " display tab with '|    '
 highlight BadWhitespace ctermbg=Red guibg=DarkRed
 au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
 
+" set filetype
+au BufNewFile,BufRead *.spacemacs setf lisp
 " FileType Specific Changes
 if has ( "autocmd" )
-    autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
-    autocmd FileType json,html,xhtml,xml,css setlocal ts=2 sts=2 sw=2 expandtab
-    autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
-    autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab              "textwidth=79
+  autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType json,html,xhtml,xml,css setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab              "textwidth=79
 endif
 
 " ===============================================================================
@@ -337,6 +334,7 @@ endif
 " F1 - help; F2 - file(nerdtree); F3 - tag(tagbar); F4 - Buffer(minibufexpl); F5 - lookupfile; F6 - tags update; <C-F6> - cscope update
 let mapleader = "\<Space>"
 let g:mapleader = "\<Space>"
+
 " ---------------------------------------
 " command mode
 " ---------------------------------------
@@ -349,14 +347,15 @@ cmap w!! w !sudo tee >/dev/null %
 " Buffer mapping
 nmap <leader>bd :bdelete<cr>                " Close the current buffer
 nmap <leader>ba :1,1000 bd!<cr>             " Close all the buffers
+nmap <leader>bn :bnext<cr>
+nmap <leader>bp :bprevious<cr>
 nmap <leader>cd :cd %:p:h<cr>:pwd<cr>       " Switch CWD to the directory of the open buffer
 " Specify the behavior when switching between buffers
 try
-    set switchbuf=useopen,usetab  "newtab
-    set stal=2
+  set switchbuf=useopen,usetab  "newtab
+  set stal=2
 catch
 endtry
-
 " Tab
 nmap <leader>tn :tabnew<cr>                 " Useful mappings for managing tabs
 nmap <leader>to :tabonly<cr>
@@ -375,6 +374,10 @@ map <C-j> <C-W>j    " 窗口间切换
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
+map <leader>wj <C-W>j
+map <leader>wk <C-W>k
+map <leader>wh <C-W>h
+map <leader>wl <C-W>l
 
 nmap <leader>1 :resize -3<CR>
 nmap <leader>2 :resize +3<CR>
@@ -382,23 +385,19 @@ nmap <leader>3 :vertical resize -3<CR>
 nmap <leader>4 :vertical resize +3<CR>
 
 if (g:system=="mac")
-    nmap <D-j> <M-j>
-    nmap <D-k> <M-k>
-    vmap <D-j> <M-j>
-    vmap <D-k> <M-k>
+  nmap <D-j> <M-j>
+  nmap <D-k> <M-k>
+  vmap <D-j> <M-j>
+  vmap <D-k> <M-k>
 endif
 
 " ---------------------------------------
 " 显示控制
 " ---------------------------------------
-nmap H ^
-nmap L $
-
 set foldenable
 set foldlevel=99
-set foldmethod=syntax
+set foldmethod=syntax           " default
 " set foldmethod=indent
-
 "设定自动保存折叠
 "au BufWinLeave *.* silent mkview
 "au BufWinLeave *.* silent! loadview
@@ -413,13 +412,15 @@ nmap <leader>s? z=
 " ---------------------------------------
 " 编辑
 " ---------------------------------------
+nmap H ^
+nmap L $
 nmap <leader>pp :setlocal paste!<cr>    " Toggle paste mode on and off
 au InsertLeave * set nopaste            " Disbale paste mode when leaving insert mode
 " Delete the blank space or Windows ^M at trail of line
 func! DeleteTrailingWS()
-    exe "normal mz"
-    %s/\s\+$//ge
-    exe "normal `z"
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
 endfunc
 nmap <leader>db :call DeleteTrailingWS()<CR>       " Remove blank space in lineend
 nmap <leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm   " Remove the Windows ^M
@@ -435,7 +436,6 @@ imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<CR>
 " search, vimgrep
 " ---------------------------------------
 nnoremap <leader><CR> :nohl<CR>
-
 " Search for selected text.
 " vnoremap // y/<C-R>"<CR>     " use following script instead
 " http://vim.wikia.com/wiki/VimTip171
@@ -467,12 +467,11 @@ vnoremap <silent> * :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>/<CR>
 vnoremap <silent> # :<C-U>call <SID>VSetSearch('?')<CR>?<C-R>/<CR>
 vmap <kMultiply> *
 nmap <silent> <Plug>VLToggle :let g:VeryLiteral = !g:VeryLiteral
-  \\| echo "VeryLiteral " . (g:VeryLiteral ? "On" : "Off")<CR>
+      \\| echo "VeryLiteral " . (g:VeryLiteral ? "On" : "Off")<CR>
 if !hasmapto("<Plug>VLToggle")
   nmap <unique> <Leader>vl <Plug>VLToggle
 endif
 let &cpo = s:save_cpo | unlet s:save_cpo
-
 
 " highlight but not search the word at cursor
 nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
@@ -483,25 +482,25 @@ vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>/<CR>N
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
 
-" Grep
+" vim grep
 if executable('ag')             " The Silver Searcher
-    " Use ag over grep
-    set grepprg=ag\ --nogroup\ --nocolor
-    " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    " ag is fast enough that CtrlP doesn't need to cache
-    let g:ctrlp_use_caching = 0
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
 else
-    set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
-    if(g:system=="windows")
-        let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
-    else
-        let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
-    endif
+  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
+  if(g:system=="windows")
+    let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
+  else
+    let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
+  endif
 endif
 
 " grep the word at cursor in current dir
-nnoremap  <leader>fa :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap  <leader>gr :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " ===============================================================================
 " Development
@@ -512,11 +511,11 @@ let python_highlight_all=1
 " 插件配置
 " ===============================================================================
 function! IsLoad(pluginname)
-    if &runtimepath =~ a:pluginname
-        return 1
-    else
-        return 0
-    endif
+  if &runtimepath =~ a:pluginname
+    return 1
+  else
+    return 0
+  endif
 endfunction
 " ==> molokai
 let g:molokai_original=1
@@ -524,164 +523,173 @@ let g:rehash256=1
 
 " ==> SimpylFold
 if IsLoad("SimpylFold")
-    let g:SimpylFold_docstring_preview=1
+  let g:SimpylFold_docstring_preview=1
 endif
 
 " ==> rainbow_parentheses
 if IsLoad("rainbow_parentheses")
-    let g:rbpt_colorpairs = [
-                \ ['brown',       'RoyalBlue3'],
-                \ ['Darkblue',    'SeaGreen3'],
-                \ ['darkgray',    'DarkOrchid3'],
-                \ ['darkgreen',   'firebrick3'],
-                \ ['darkcyan',    'RoyalBlue3'],
-                \ ['darkred',     'SeaGreen3'],
-                \ ['darkmagenta', 'DarkOrchid3'],
-                \ ['brown',       'firebrick3'],
-                \ ['gray',        'RoyalBlue3'],
-                \ ['black',       'SeaGreen3'],
-                \ ['darkmagenta', 'DarkOrchid3'],
-                \ ['Darkblue',    'firebrick3'],
-                \ ['darkgreen',   'RoyalBlue3'],
-                \ ['darkcyan',    'SeaGreen3'],
-                \ ['darkred',     'DarkOrchid3'],
-                \ ['red',         'firebrick3'],
-                \ ]
-    let g:rbpt_max = 16
-    let g:rbpt_loadcmd_toggle = 0
-    au VimEnter * RainbowParenthesesToggle
-    au Syntax * RainbowParenthesesLoadRound
-    au Syntax * RainbowParenthesesLoadSquare
-    au Syntax * RainbowParenthesesLoadBraces
+  let g:rbpt_colorpairs = [
+        \ ['brown',       'RoyalBlue3'],
+        \ ['Darkblue',    'SeaGreen3'],
+        \ ['darkgray',    'DarkOrchid3'],
+        \ ['darkgreen',   'firebrick3'],
+        \ ['darkcyan',    'RoyalBlue3'],
+        \ ['darkred',     'SeaGreen3'],
+        \ ['darkmagenta', 'DarkOrchid3'],
+        \ ['brown',       'firebrick3'],
+        \ ['gray',        'RoyalBlue3'],
+        \ ['black',       'SeaGreen3'],
+        \ ['darkmagenta', 'DarkOrchid3'],
+        \ ['Darkblue',    'firebrick3'],
+        \ ['darkgreen',   'RoyalBlue3'],
+        \ ['darkcyan',    'SeaGreen3'],
+        \ ['darkred',     'DarkOrchid3'],
+        \ ['red',         'firebrick3'],
+        \ ]
+  let g:rbpt_max = 16
+  let g:rbpt_loadcmd_toggle = 0
+  au VimEnter * RainbowParenthesesToggle
+  au Syntax * RainbowParenthesesLoadRound
+  au Syntax * RainbowParenthesesLoadSquare
+  au Syntax * RainbowParenthesesLoadBraces
 endif
 
 " ===> delimitMate
 if IsLoad("delimitMate")
-    let delimitMate_quotes = "\" '"
+  let delimitMate_quotes = "\" ' `"
+  au FileType python,vim let b:delimitMate_quotes = "' `"
+  au FileType markdown let b:delimitMate_quotes = "\" '"
+  au FileType lisp,clojure let b:delimitMate_quotes = "\" `"
+
 endif
 
 " ===> NERDTree
 if IsLoad("nerdtree")
-    let g:NERDTree_title="NERDTree"
-    let NERDTreeShowBookmarks=1         "一直显示书签
-    "打开书签时，自动将Vim的pwd设为打开的目录
-    let NERDTreeChDirMode=2
-    let NERDTreeIgnore=['\.pyc$', '\~$', '\.beam$']     "ignore files in NERDTree
+  let g:NERDTree_title="NERDTree"
+  let NERDTreeShowBookmarks=1         "一直显示书签
+  "打开书签时，自动将Vim的pwd设为打开的目录
+  let NERDTreeChDirMode=2
+  let NERDTreeIgnore=['\.pyc$', '\~$', '\.beam$']     "ignore files in NERDTree
+  " open a NERDTree automatically when vim starts up if no files were specified
+  autocmd StdinReadPre * let s:std_in=1
+  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+  " close vim if the only window left open is a NERDTree
+  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-    " open a NERDTree automatically when vim starts up if no files were specified
-    autocmd StdinReadPre * let s:std_in=1
-    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-    " close vim if the only window left open is a NERDTree
-    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-    nmap <silent><F2> :NERDTreeToggle<CR><CR>
+  nmap <silent><F2> :NERDTreeToggle<CR><CR>
+  nmap <silent>ft :NERDTreeToggle<CR><CR>
 endif
 
 " ===> minibufexpl
 if IsLoad("minibufexpl")
-    map <Leader>mbe :MBEOpen<cr>
-    map <Leader>mbc :MBEClose<cr>
-    map <Leader>mbt :MBEToggle<cr>
-    nmap <C-TAB>   :MBEbf<CR>
-    nmap <C-S-TAB> :MBEbb<CR>
-    " 下面4个选项在fholgado版本的minibufexpl中已经去除，我们自己定义这些功能
-    "let g:miniBufExplMapWindowNavVim = 1
-    "let g:miniBufExplMapWindowNavArrows = 1
-    "let g:miniBufExplMapCTabSwitchBufs = 1
-    "let g:miniBufExplModSelTarget = 1
+  map <Leader>mbe :MBEOpen<cr>
+  map <Leader>mbc :MBEClose<cr>
+  map <Leader>mbt :MBEToggle<cr>
+  nmap <C-TAB>   :MBEbf<CR>
+  nmap <C-S-TAB> :MBEbb<CR>
+  " 下面4个选项在fholgado版本的minibufexpl中已经去除，我们自己定义这些功能
+  "let g:miniBufExplMapWindowNavVim = 1
+  "let g:miniBufExplMapWindowNavArrows = 1
+  "let g:miniBufExplMapCTabSwitchBufs = 1
+  "let g:miniBufExplModSelTarget = 1
 endif
 
 " ===> tagbar plugin
 if IsLoad("tagbar")
-    nmap <silent><F3> :TagbarToggle<CR>
-    let g:tagbar_ctags_bin = 'ctags'
-    let g:tagbar_width     = 30
-    "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+  nmap <silent><F3> :TagbarToggle<CR>
+  let g:tagbar_ctags_bin = 'ctags'
+  let g:tagbar_width     = 30
+  "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 endif
 
 " ===> ctrlp
 if IsLoad("ctrlp")
-    nmap <leader>xb :CtrlPBuffer<cr>
-    let g:ctrlp_open_multiple_files = 'v'
-    set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.o,*_build/*
-    let g:ctrlp_custom_ignore = {
-                \ 'dir':  '\v[\/]\.(git)$',
-                \ 'file': '\v\.(log|jpg|png|jpeg)$',
-                \ }
+  let g:ctrlp_map = '<c-p>'
+  nmap <leader>ff :CtrlP<cr>
+  nmap <leader>fr :CtrlPMRU<cr>
+  nmap <leader>fb :CtrlPBuffer<cr>
+  nmap <leader>xb :CtrlPBuffer<cr>
+  let g:ctrlp_open_multiple_files = 'v'
+  set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.o,*_build/*
+  let g:ctrlp_custom_ignore = {
+        \ 'dir':  '\v[\/]\.(git)$',
+        \ 'file': '\v\.(log|jpg|png|jpeg)$',
+        \ }
+  let g:ctrlp_by_filename = 1
 endif
 
 " ===> vim-airline
 if IsLoad("vim-airline")
-    let g:airline#extensions#tabline#enabled = 1
-    let g:airline#extensions#tabline#left_sep = ' '
-    let g:airline#extensions#tabline#left_alt_sep = '|'
+  let g:airline#extensions#tabline#enabled = 1
+  let g:airline#extensions#tabline#left_sep = ' '
+  let g:airline#extensions#tabline#left_alt_sep = '|'
 
-    let g:airline#extensions#bufferline#enabled = 0
+  let g:airline#extensions#bufferline#enabled = 0
 
-    let g:airline#extensions#tabline#buffer_nr_show = 1
-    let g:airline#extensions#tabline#buffer_nr_format = '%s:'
-    let g:airline#extensions#tabline#fnamecollapse = 1          "collopsing parent dir
-    let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
+  let g:airline#extensions#tabline#buffer_nr_show = 1
+  let g:airline#extensions#tabline#buffer_nr_format = '%s:'
+  let g:airline#extensions#tabline#fnamecollapse = 1          "collopsing parent dir
+  let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
 endif
 
 " ===> ctrlp
 if IsLoad("ctrlp")
-    let g:ctrlp_custom_ignore = {
+  let g:ctrlp_custom_ignore = {
         \ 'dir':  '\v[\/]\.(git|hg|svn)$',
         \ 'file': '\v\.(exe|so|dll)$',
         \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
         \ }
-    let g:ctrlp_max_files = 20000
-    let g:ctrlp_mruf_exclude = '/tmp/.*'
-    nmap <leader>p :CtrlPBuffer<cr>
+  let g:ctrlp_max_files = 20000
+  let g:ctrlp_mruf_exclude = '/tmp/.*'
+  nmap <leader>p :CtrlPBuffer<cr>
 endif
 
 " ===> promptline
 if  IsLoad("promptline")
-    let g:promptline_preset = 'full'
-    let g:promptline_theme = 'airline'
+  let g:promptline_preset = 'full'
+  let g:promptline_theme = 'airline'
 endif
 
 " ===> syntastic
 if IsLoad("syntastic")
-    set statusline+=%#warningmsg#
-    set statusline+=%{SyntasticStatuslineFlag()}
-    set statusline+=%*
+  set statusline+=%#warningmsg#
+  set statusline+=%{SyntasticStatuslineFlag()}
+  set statusline+=%*
 
-    let g:syntastic_always_populate_loc_list = 0
-    let g:syntastic_auto_loc_list = 0
-    let g:syntastic_check_on_open = 1
-    let g:syntastic_check_on_wq = 0
+  let g:syntastic_always_populate_loc_list = 0
+  let g:syntastic_auto_loc_list = 0
+  let g:syntastic_check_on_open = 1
+  let g:syntastic_check_on_wq = 0
 
-    " c++11 support
-    let g:syntastic_cpp_compiler = 'clang++'
-    let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
+  " c++11 support
+  let g:syntastic_cpp_compiler = 'clang++'
+  let g:syntastic_cpp_compiler_options = '-std=c++11 -stdlib=libc++'
 
-    " python support
-    " let g:syntastic_python_python_exec = '/path/to/python3'    " if use python3
-    " let g:syntastic_python_checkers = ['pylint']
-    let g:syntastic_python_checkers= ['flake8']
-    let g:syntastic_python_flake8_post_args='--ignore=E501,E128'
+  " python support
+  " let g:syntastic_python_python_exec = '/path/to/python3'    " if use python3
+  " let g:syntastic_python_checkers = ['pylint']
+  let g:syntastic_python_checkers= ['flake8']
+  let g:syntastic_python_flake8_post_args='--ignore=E501,E128'
 
-    " erlang support
-    " let g:syntastic_erlc_include_path = 'ebin'
+  " erlang support
+  " let g:syntastic_erlc_include_path = 'ebin'
 
-    " set error or warning signs
-    let g:syntastic_error_symbol = '✗'
-    let g:syntastic_warning_symbol = '⚠'
-    " whether to show balloons
-    let g:syntastic_enable_balloons = 1
+  " set error or warning signs
+  let g:syntastic_error_symbol = '✗'
+  let g:syntastic_warning_symbol = '⚠'
+  " whether to show balloons
+  let g:syntastic_enable_balloons = 1
 endif
 
 if IsLoad("jedi-vim")
-    let g:jedi#completions_command = "<C-E>"
+  let g:jedi#completions_command = "<C-E>"
 endif
 
 " ===> virtualenv
 if IsLoad("virtualenv")
-    " let g:virtualenv_directory = '~/.virtualenvs'
-    let g:virtualenv_stl_format = '[%n]'
-    set statusline+=%{virtualenv#statusline()}
+  " let g:virtualenv_directory = '~/.virtualenvs'
+  let g:virtualenv_stl_format = '[%n]'
+  set statusline+=%{virtualenv#statusline()}
 endif
 " py << EOF
 " import os.path
@@ -748,54 +756,54 @@ inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 " => clang_complete
 " ===============================================================================
 " if IsLoad("clang_complete")
-    let g:clang_complete_auto = 1
-    let g:clang_complete_copen = 1
-    let g:clang_user_options='|| exit 0'
+let g:clang_complete_auto = 1
+let g:clang_complete_copen = 1
+let g:clang_user_options='|| exit 0'
 
-    if(g:system == 'mac')
-        let g:clang_use_library = 1
-        let g:clang_library_path = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib"
-    elseif(g:system == 'unix')
-        let g:clang_use_library = 1
-        let g:clang_library_path= "/usr/lib/clang"
-    elseif (g:system == 'windows')
-        let g:clang_use_library = 0
-    elseif(g:system == 'cygwin')
-        let g:clang_use_library = 1
-        let g:clang_library_path= "/usr/bin"
-    endif
+if(g:system == 'mac')
+  let g:clang_use_library = 1
+  let g:clang_library_path = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib"
+elseif(g:system == 'unix')
+  let g:clang_use_library = 1
+  let g:clang_library_path= "/usr/lib/clang"
+elseif (g:system == 'windows')
+  let g:clang_use_library = 0
+elseif(g:system == 'cygwin')
+  let g:clang_use_library = 1
+  let g:clang_library_path= "/usr/bin"
+endif
 " endif
 
 if IsLoad("YouCompleteMe")
-    let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
-    let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
-    let g:ycm_confirm_extra_conf = 0
-    let g:ycm_autoclose_preview_window_after_completion=1
-    map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+  let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
+  let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
+  let g:ycm_confirm_extra_conf = 0
+  let g:ycm_autoclose_preview_window_after_completion=1
+  map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 endif
 
 if IsLoad("ultisnips")
-    let g:UltiSnipsUsePythonVersion=2
-    let g:UltiSnipsExpandTrigger="<tab>"
-    let g:UltiSnipsJumpForwardTrigger="<c-j>"
-    let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-    " If you want :UltiSnipsEdit to split your window.
-    let g:UltiSnipsEditSplit="vertical"
+  let g:UltiSnipsUsePythonVersion=2
+  let g:UltiSnipsExpandTrigger="<tab>"
+  let g:UltiSnipsJumpForwardTrigger="<c-j>"
+  let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+  " If you want :UltiSnipsEdit to split your window.
+  let g:UltiSnipsEditSplit="vertical"
 
 endif
 
 " ===> xptemplate
 if IsLoad("xptemplate")
-    let g:xptemplate_key='<c-\>'
-    let g:xptemplate_vars = "BRloop=\n"     "循环中的 { 重起一行
-    let g:xptemplate_vars = "BRfun= "       "函数中的 { 重起一行
-    " let g:xptemplate_brace_complete = '(['
+  let g:xptemplate_key='<c-\>'
+  let g:xptemplate_vars = "BRloop=\n"     "循环中的 { 重起一行
+  let g:xptemplate_vars = "BRfun= "       "函数中的 { 重起一行
+  " let g:xptemplate_brace_complete = '(['
 
-    " Prevent supertab from mapping <tab> to anything.
-    let g:SuperTabMappingForward = '<Plug>xpt_void'
-    " Tell XPTemplate what to fall back to, if nothing matches.
-    " Original SuperTab() yields nothing if g:SuperTabMappingForward was set to something it does not know.
-    let g:xptemplate_fallback = '<C-r>=XPTwrapSuperTab("n")<CR>'
+  " Prevent supertab from mapping <tab> to anything.
+  let g:SuperTabMappingForward = '<Plug>xpt_void'
+  " Tell XPTemplate what to fall back to, if nothing matches.
+  " Original SuperTab() yields nothing if g:SuperTabMappingForward was set to something it does not know.
+  let g:xptemplate_fallback = '<C-r>=XPTwrapSuperTab("n")<CR>'
 endif
 
 " ===============================================================================
@@ -815,13 +823,13 @@ autocmd FileType cpp set tags+=~/.vim/cpp_src/tags
 " => Cscope
 " ===============================================================================
 if has("cscope")
-    set csprg=cscope
-    " Use both cscope and ctag
-    set cscopetag
-    " Show msg when cscope db added
-    set cscopeverbose
-    " Use cscope for definition search first
-    set cscopetagorder=0
+  set csprg=cscope
+  " Use both cscope and ctag
+  set cscopetag
+  " Show msg when cscope db added
+  set cscopeverbose
+  " Use cscope for definition search first
+  set cscopetagorder=0
 endif
 
 
@@ -863,19 +871,19 @@ set foldlevelstart=99           " start out with everything folded
 set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
 " which commands trigger auto-unfold
 function! MyFoldText()
-    let line = getline(v:foldstart)
+  let line = getline(v:foldstart)
 
-    let nucolwidth = &fdc + &number * &numberwidth
-    let windowwidth = winwidth(0) - nucolwidth - 3
-    let foldedlinecount = v:foldend - v:foldstart
+  let nucolwidth = &fdc + &number * &numberwidth
+  let windowwidth = winwidth(0) - nucolwidth - 3
+  let foldedlinecount = v:foldend - v:foldstart
 
-    " expand tabs into spaces
-    let onetab = strpart('          ', 0, &tabstop)
-    let line = substitute(line, '\t', onetab, 'g')
+  " expand tabs into spaces
+  let onetab = strpart('          ', 0, &tabstop)
+  let line = substitute(line, '\t', onetab, 'g')
 
-    let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
-    let fillcharcount = windowwidth - len(line) - len(foldedlinecount) - 4
-    return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
+  let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
+  let fillcharcount = windowwidth - len(line) - len(foldedlinecount) - 4
+  return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
 endfunction
 set foldtext=MyFoldText()
 
