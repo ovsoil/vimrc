@@ -89,9 +89,10 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'L9'                             " Vim-scripts library
 Plugin 'scrooloose/nerdtree'            " file browser
 Plugin 'auto_mkdir'                     " auto_mkdir
-Plugin 'kien/ctrlp.vim'
 Plugin 'Valloric/ListToggle'            " ListToggle: toggle quickfix and location-list
 " Plugin 'fholgado/minibufexpl.vim'       " buffer
+Plugin 'kien/ctrlp.vim'
+Plugin 'FelikZ/ctrlp-py-matcher'
 
 " status line
 Plugin 'vim-airline/vim-airline'        "
@@ -115,7 +116,7 @@ Plugin 'Tagbar'                         " tag list
 Plugin 'scrooloose/syntastic'           " syntastic: syntax check
 
 if g:system == 'mac' && executable('clang') == 1 && (v:version > 703 || (v:version == 703 && has('patch584')))
-  " Plugin 'Rip-Rip/clang_complete'
+  Plugin 'Rip-Rip/clang_complete'
   Plugin 'Valloric/YouCompleteMe'
 else
   Plugin 'davidhalter/jedi-vim'
@@ -133,9 +134,8 @@ Plugin 'a.vim'                          " a.vim: 头文件切换
 
 " python
 " Plugin 'python.vim'
-Plugin 'nvie/vim-flake8'
+" Plugin 'nvie/vim-flake8'
 Plugin 'tmhedberg/SimpylFold'
-Plugin 'vim-scripts/indentpython.vim'
 Plugin 'jmcantrell/vim-virtualenv'
 
 " erlang
@@ -154,9 +154,11 @@ Plugin 'kovisoft/slimv'
 Plugin 'OmniCppComplete'
 
 " 代码段
-Plugin 'sirver/ultisnips'               " ultisnips
+if (v:version > 704 || (v:version == 703))
+  Plugin 'sirver/ultisnips'               " ultisnips
+endif
 Plugin 'honza/vim-snippets'
-" Plugin 'drmingdrmer/xptemplate'         " xptemplate: 感觉用于C/C++更好
+Plugin 'drmingdrmer/xptemplate'         " xptemplate: 感觉用于C/C++更好
 
 " 注释
 Plugin 'tpope/vim-commentary'           " comment
@@ -203,6 +205,8 @@ set viminfo^=%                  " Remember info about open buffers on close
 set nu
 set ruler                       " Always show current position
 set wildignore+=*.o,*~,*.pyc     " Ignore compiled files
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.o,*_build/*
+
 if(g:system=="windows")
   set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*  " Windows ('noshellslash')
   set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe
@@ -243,16 +247,17 @@ set wildmenu                    " Turn on the WiLd menu
 set t_Co=256
 set background=dark
 " colorscheme desert
-" colorscheme solarized
 colorscheme molokai
-if exists('$ITERM_PROFILE')
-  let g:solarized_termcolors=256
-else
-endif
+" colorscheme solarized
+" if exists('$ITERM_PROFILE')
+"   let g:solarized_termcolors=256
+" else
+" endif
 
 " Set extra options when running in GUI mode
 if has("gui_running")
   set guifont=Monaco:h12
+  " set guifont=Source_Code_Pro:h13
   if has("gui_gtk2")   "GTK2
     set guifont=Monaco\ 12, Monospace\ 12
   endif
@@ -482,23 +487,6 @@ vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>/<CR>N
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
 
-" vim grep
-if executable('ag')             " The Silver Searcher
-  " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-else
-  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
-  if(g:system=="windows")
-    let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
-  else
-    let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
-  endif
-endif
-
 " grep the word at cursor in current dir
 nnoremap  <leader>gr :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
@@ -610,13 +598,42 @@ if IsLoad("ctrlp")
   nmap <leader>fb :CtrlPBuffer<cr>
   nmap <leader>xb :CtrlPBuffer<cr>
   let g:ctrlp_open_multiple_files = 'v'
-  set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.o,*_build/*
   let g:ctrlp_custom_ignore = {
         \ 'dir':  '\v[\/]\.(git)$',
         \ 'file': '\v\.(log|jpg|png|jpeg)$',
         \ }
   let g:ctrlp_by_filename = 1
 endif
+
+" ===> PyMatcher for CtrlP
+if !has('python')
+  echo 'In order to use pymatcher plugin, you need +python compiled vim'
+else
+  let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+endif
+
+" Set delay to prevent extra search
+let g:ctrlp_lazy_update = 350
+" Do not clear filenames cache, to improve CtrlP startup
+" You can manualy clear it by <F5>
+let g:ctrlp_clear_cache_on_exit = 0
+" Set no file limit, we are building a big project
+let g:ctrlp_max_files = 0
+" If ag is available use it as filename list generator instead of 'find'
+if executable('ag')             " The Silver Searcher
+  set grepprg=ag\ --nogroup\ --nocolor
+  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --ignore ''.git'' --ignore ''.DS_Store'' --ignore ''node_modules'' --hidden -g ""'
+  " ag is fast enough that CtrlP doesn't need to cache
+  " let g:ctrlp_use_caching = 0
+else
+  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
+  if(g:system=="windows")
+    let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
+  else
+    let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
+  endif
+endif
+
 
 " ===> vim-airline
 if IsLoad("vim-airline")

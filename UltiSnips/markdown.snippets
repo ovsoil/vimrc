@@ -1,0 +1,18 @@
+snippet head "Jekyll post header" b
+---
+title: ${1:title}
+layout: post
+guid: `!p
+import uuid
+if not snip.c:
+guid = uuid.uuid4().get_hex()
+	snip.rv = guid
+	`
+	date: `!v strftime("%Y-%m-%d %H:%M:%S")`
+	tags:
+	- ${4}
+	---
+
+	${0}
+	endsnippet
+# vim:ft=snippets:
