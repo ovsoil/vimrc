@@ -24,42 +24,6 @@ elseif (has("unix"))
   endif
 endif
 
-" copy from windows default _vimrc
-if(g:system=="windows")
-  source $VIMRUNTIME/vimrc_example.vim
-  source $VIMRUNTIME/mswin.vim
-  behave mswin
-  set diffexpr=MyDiff()
-  function MyDiff()
-    let opt = '-a --binary '
-    if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
-    if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
-    let arg1 = v:fname_in
-    if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
-    let arg2 = v:fname_new
-    if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
-    let arg3 = v:fname_out
-    if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
-    if $VIMRUNTIME =~ ' '
-      if &sh =~ '\<cmd'
-        if empty(&shellxquote)
-          let l:shxq_sav = ''
-          set shellxquote&
-        endif
-        let cmd = '"' . $VIMRUNTIME . '\diff"'
-      else
-        let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
-      endif
-    else
-      let cmd = $VIMRUNTIME . '\diff'
-    endif
-    silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
-    if exists('l:shxq_sav')
-      let &shellxquote=l:shxq_sav
-    endif
-  endfunction
-endif
-
 if(g:system=="windows")
   set ffs=dos,unix,mac
 else
@@ -68,7 +32,7 @@ else
 endif
 
 " ===============================================================================
-" => 插件管理和更新 Vundle
+" => Vundle
 " ===============================================================================
 set nocompatible                    " be iMproved, vundle required
 filetype off                        " vundle required
@@ -114,9 +78,8 @@ Plugin 'Raimondi/delimitMate'           " auto-completion for quotes, parens, br
 " Develop
 Plugin 'Tagbar'                         " tag list
 Plugin 'scrooloose/syntastic'           " syntastic: syntax check
-
 if g:system == 'mac' && executable('clang') == 1 && (v:version > 703 || (v:version == 703 && has('patch584')))
-  Plugin 'Rip-Rip/clang_complete'
+  " Plugin 'Rip-Rip/clang_complete'
   Plugin 'Valloric/YouCompleteMe'
 else
   Plugin 'davidhalter/jedi-vim'
@@ -158,7 +121,7 @@ if (v:version > 704 || (v:version == 703))
   Plugin 'sirver/ultisnips'               " ultisnips
 endif
 Plugin 'honza/vim-snippets'
-Plugin 'drmingdrmer/xptemplate'         " xptemplate: 感觉用于C/C++更好
+Plugin 'drmingdrmer/xptemplate'         " xptemplate: seems better for C/C++
 
 " 注释
 Plugin 'tpope/vim-commentary'           " comment
@@ -350,31 +313,26 @@ cmap w!! w !sudo tee >/dev/null %
 " 文件切换与导航
 " ---------------------------------------
 " Buffer mapping
-nmap <leader>bd :bdelete<cr>                " Close the current buffer
-nmap <leader>ba :1,1000 bd!<cr>             " Close all the buffers
-nmap <leader>bn :bnext<cr>
-nmap <leader>bp :bprevious<cr>
-nmap <leader>cd :cd %:p:h<cr>:pwd<cr>       " Switch CWD to the directory of the open buffer
+nmap <leader>bd :bdelete<CR>                " Close the current buffer
+nmap <leader>ba :1,1000 bd!<CR>             " Close all the buffers
+nmap <leader>bn :bnext<CR>
+nmap <leader>bp :bprevious<CR>
+nmap <leader>cd :cd %:p:h<CR>:pwd<CR>       " Switch CWD to the directory of the open buffer
 " Specify the behavior when switching between buffers
 try
   set switchbuf=useopen,usetab  "newtab
   set stal=2
 catch
 endtry
-" Tab
-nmap <leader>tn :tabnew<cr>                 " Useful mappings for managing tabs
-nmap <leader>to :tabonly<cr>
-nmap <leader>tc :tabclose<cr>
-nmap <leader>tm :tabmove
-" Opens a new tab with the current buffer's path
-" Super useful when editing files in the same directory
-nmap <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+" Tab (I rarely use tab)
 
 " ---------------------------------------
-" Moving mapping
+" Moving
 " ---------------------------------------
 map j gj
 map k gk
+nmap H ^
+nmap L $
 map <C-j> <C-W>j    " 窗口间切换
 map <C-k> <C-W>k
 map <C-h> <C-W>h
@@ -397,7 +355,7 @@ if (g:system=="mac")
 endif
 
 " ---------------------------------------
-" 显示控制
+" interface 显示控制
 " ---------------------------------------
 set foldenable
 set foldlevel=99
@@ -408,18 +366,19 @@ set foldmethod=syntax           " default
 "au BufWinLeave *.* silent! loadview
 
 " Spell checking
-nmap <leader>ss :setlocal spell!<cr>     " Pressing ,ss will toggle and untoggle spell checking
+nmap <leader>ss :setlocal spell!<CR>     " Pressing <leader>ss will toggle and untoggle spell checking
 nmap <leader>sn ]s                       " Shortcuts using <leader>
 nmap <leader>sp [s
 nmap <leader>sa zg
 nmap <leader>s? z=
 
+
 " ---------------------------------------
-" 编辑
+" Edit 编辑
 " ---------------------------------------
-nmap H ^
-nmap L $
-nmap <leader>pp :setlocal paste!<cr>    " Toggle paste mode on and off
+" nmap <leader>fe :edit <c-r>=expand("%:p:h")<CR>/    " Open file in the current buffer's path
+nmap <leader>pp :setlocal paste!<CR>    " Toggle paste mode on and off
+map <leader>= <Esc>:%!python -m json.tool<CR>         " format json
 au InsertLeave * set nopaste            " Disbale paste mode when leaving insert mode
 " Delete the blank space or Windows ^M at trail of line
 func! DeleteTrailingWS()
@@ -428,7 +387,7 @@ func! DeleteTrailingWS()
   exe "normal `z"
 endfunc
 nmap <leader>db :call DeleteTrailingWS()<CR>       " Remove blank space in lineend
-nmap <leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm   " Remove the Windows ^M
+nmap <leader>dm mmHmt:%s/<C-V><CR>//ge<CR>'tzt'm   " Remove the Windows ^M
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
@@ -570,9 +529,9 @@ endif
 
 " ===> minibufexpl
 if IsLoad("minibufexpl")
-  map <Leader>mbe :MBEOpen<cr>
-  map <Leader>mbc :MBEClose<cr>
-  map <Leader>mbt :MBEToggle<cr>
+  map <Leader>mbe :MBEOpen<CR>
+  map <Leader>mbc :MBEClose<CR>
+  map <Leader>mbt :MBEToggle<CR>
   nmap <C-TAB>   :MBEbf<CR>
   nmap <C-S-TAB> :MBEbb<CR>
   " 下面4个选项在fholgado版本的minibufexpl中已经去除，我们自己定义这些功能
@@ -593,10 +552,10 @@ endif
 " ===> ctrlp
 if IsLoad("ctrlp")
   let g:ctrlp_map = '<c-p>'
-  nmap <leader>ff :CtrlP<cr>
-  nmap <leader>fr :CtrlPMRU<cr>
-  nmap <leader>fb :CtrlPBuffer<cr>
-  nmap <leader>xb :CtrlPBuffer<cr>
+  nmap <leader>ff :CtrlP<CR>
+  nmap <leader>fr :CtrlPMRU<CR>
+  nmap <leader>fb :CtrlPBuffer<CR>
+  nmap <leader>xb :CtrlPBuffer<CR>
   let g:ctrlp_open_multiple_files = 'v'
   let g:ctrlp_custom_ignore = {
         \ 'dir':  '\v[\/]\.(git)$',
@@ -658,7 +617,7 @@ if IsLoad("ctrlp")
         \ }
   let g:ctrlp_max_files = 20000
   let g:ctrlp_mruf_exclude = '/tmp/.*'
-  nmap <leader>p :CtrlPBuffer<cr>
+  nmap <leader>p :CtrlPBuffer<CR>
 endif
 
 " ===> promptline
