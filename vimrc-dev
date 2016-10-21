@@ -1,16 +1,37 @@
-" ===============================================================================
-" vimrc for develop
+" ============================================================================
+" ovsoil-vimrc for develop
 " Maintainer:
 "       ovsoil
 "       hxyumail@126.com
 "       http://ovsoil.com
 " Create Date:
 "       01/09/2015
-" ===============================================================================
+" ============================================================================
 
-" ===============================================================================
+" ============================================================================
+" Vim-plug initialization
+" Avoid modify this section, unless you are very sure of what you are doing
+" ============================================================================
+
+let vim_plug_just_installed = 0
+let vim_plug_path = expand('~/.vim/autoload/plug.vim')
+if !filereadable(vim_plug_path)
+    echo "Installing Vim-plug..."
+    echo ""
+    silent !mkdir -p ~/.vim/autoload
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    let vim_plug_just_installed = 1
+endif
+
+" manually load vim-plug the first time
+if vim_plug_just_installed
+    :execute 'source '.fnameescape(vim_plug_path)
+endif
+
+" Obscure hacks done, you can now modify the rest of the .vimrc as you wish :)
+" ============================================================================
 " =>Platform
-" ===============================================================================
+" ============================================================================
 let g:system=""
 let g:homedir=""
 if (has("win32") || has("win95") || has("win64") || has("win16"))
@@ -31,129 +52,174 @@ else
   set encoding=utf8
 endif
 
-" ===============================================================================
-" => Vundle
-" ===============================================================================
-set nocompatible                    " be iMproved, vundle required
-filetype off                        " vundle required
-if (g:system=="windows")
-  set rtp+=$VIM/vimfiles/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
-else
-  set rtp+=~/.vim/bundle/Vundle.vim   " set the runtime path to include Vundle and initialize
-endif
-call vundle#begin()                 " alternatively, pass a path: call vundle#begin('~/some/path/here')
+" ============================================================================
+" Active plugins
+" You can disable or add new ones here:
+" ============================================================================
 
-" plugin from http://vim-scripts.org/vim/scripts.html: 直接写插件名
-" plugin on GitHub repo: 用户名/插件名
-" Git plugin not hosted on GitHub: 完整的git地址
-" git repos on your local machine: 'file:///path/to/plugin'
-Plugin 'gmarik/Vundle.vim'
+" this needs to be here, so vim-plug knows we are declaring the plugins we
+" want to use
+call plug#begin('~/.vim/plugged')
 
+" Plugins from github repos:
 " Base
-Plugin 'L9'                             " Vim-scripts library
-Plugin 'scrooloose/nerdtree'            " file browser
-Plugin 'auto_mkdir'                     " auto_mkdir
-Plugin 'Valloric/ListToggle'            " ListToggle: toggle quickfix and location-list
-" Plugin 'fholgado/minibufexpl.vim'       " buffer
-Plugin 'kien/ctrlp.vim'
-Plugin 'FelikZ/ctrlp-py-matcher'
+Plug 'arielrossanigo/dir-configs-override.vim'  " Override configs by directory 
+Plug 'scrooloose/nerdtree'                      " Better file browser
+Plug 'ctrlpvim/ctrlp.vim'               " Code and files fuzzy finder
+Plug 'fisadev/vim-ctrlp-cmdpalette'     " Extension to ctrlp, for fuzzy command finder
+" Plug 'kien/tabman.vim'                  " Tab list panel
+Plug 'Valloric/ListToggle'              " ListToggle: toggle quickfix and location-list
+Plug 'IndexedSearch'                    " Search results counter
+Plug 'auto_mkdir'                       " auto_mkdir
+Plug 'matchit.zip'                      " XML/HTML tags navigation
+Plug 'Wombat'                           " Gvim colorscheme
+Plug 't9md/vim-choosewin'               " Window chooser
+Plug 'fisadev/dragvisuals.vim'          " Drag visual blocks arround
+if executable('ack')
+  " Plug 'mileszs/ack.vim'              " Ack code search (requires ack)
+endif
 
-" status line
-Plugin 'vim-airline/vim-airline'        "
-Plugin 'vim-airline/vim-airline-themes' "
-" Plugin 'edkolev/tmuxline.vim'
-Plugin 'edkolev/promptline.vim'
+" Enhancement
+Plug 'rosenfeld/conque-term'            " Consoles as buffers
+Plug 'fisadev/FixedTaskList.vim'        " Pending tasks list
+Plug 'terryma/vim-multiple-cursors'     " Sublime Text style multiple selections for Vim
+Plug 'tpope/vim-surround'               " surround
+Plug 'Raimondi/delimitMate'             " auto-completion for quotes, parens, brackets
+" Plug 'kien/rainbow_parentheses.vim'     " Rainbow parentheses
+Plug 'michaeljsmith/vim-indent-object'  " Indent text object
+Plug 'jeetsukumaran/vim-indentwise'     " Indentation based movements
 
-" Themes
-Plugin 'flazz/vim-colorschemes'         " all colorschemes of vim.org
-Plugin 'tomasr/molokai'
-Plugin 'altercation/vim-colors-solarized'
-
-" Edit
-Plugin 'terryma/vim-multiple-cursors'   " Sublime Text style multiple selections for Vim
-Plugin 'tpope/vim-surround'             " surround
-"Plugin 'kien/rainbow_parentheses.vim'   " Rainbow parentheses
-Plugin 'Raimondi/delimitMate'           " auto-completion for quotes, parens, brackets
+" User Interface
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+" Plug 'edkolev/tmuxline.vim'
+" Plug 'edkolev/promptline.vim'
+Plug 'flazz/vim-colorschemes'           " all colorschemes of vim.org
+Plug 'tomasr/molokai'
+Plug 'altercation/vim-colors-solarized'
+Plug 'fisadev/fisa-vim-colorscheme'     " Terminal Vim with 256 colors colorscheme
 
 " Develop
-Plugin 'Tagbar'                         " tag list
-Plugin 'scrooloose/syntastic'           " syntastic: syntax check
-if g:system == 'mac' && executable('clang') == 1 && (v:version > 703 || (v:version == 703 && has('patch584')))
-  " Plugin 'Rip-Rip/clang_complete'
-  Plugin 'Valloric/YouCompleteMe'
-else
-  Plugin 'davidhalter/jedi-vim'
-endif
+Plug 'majutsushi/tagbar'                " Class/module browser
+Plug 'scrooloose/syntastic'             " syntastic: syntax check
+Plug 'mattn/emmet-vim'                  " Zen coding
+Plug 'motemen/git-vim'                  " Git integration
+Plug 'mhinz/vim-signify'                " Git/mercurial/others diff icons on the side of the file lines
+" commenter
+Plug 'tpope/vim-commentary'             " comment
+Plug 'scrooloose/nerdcommenter'         " Code commenter
+Plug 'DoxygenToolkit.vim'               " doxygen
+" complete
+Plug 'Shougo/neocomplcache.vim'         " Better autocompletion
+" if g:system == 'mac' && executable('clang') == 1 && (v:version > 703 || (v:version == 703 && has('patch584')))
+"   Plug 'Rip-Rip/clang_complete'
+"   Plug 'Valloric/YouCompleteMe'
+" endif
+" snippets manager (SnipMate), dependencies, and snippets repo
+" Plug 'drmingdrmer/xptemplate'         " xptemplate
+" if (v:version > 704 || (v:version == 703))
+"   Plug 'sirver/ultisnips'               " ultisnips
+" endif
+Plug 'tomtom/tlib_vim'
+Plug 'honza/vim-snippets'
+Plug 'garbas/vim-snipmate'
 
-" json
-Plugin 'elzr/vim-json'
+" Json
+Plug 'elzr/vim-json'
 
 " Markdown
-Plugin 'godlygeek/tabular'              " tabular: 文本对齐
-Plugin 'plasticboy/vim-markdown'
+Plug 'godlygeek/tabular'                " aligning text
+Plug 'plasticboy/vim-markdown'
 
 " C/C++
-Plugin 'a.vim'                          " a.vim: 头文件切换
+Plug 'a.vim'                            " navigate btween head and source file
 
-" python
-" Plugin 'python.vim'
-" Plugin 'nvie/vim-flake8'
-Plugin 'tmhedberg/SimpylFold'
-Plugin 'jmcantrell/vim-virtualenv'
+" Python
+" Python mode (indentation, doc, refactor, lints, code checking, motion and
+" operators, highlighting, run and ipdb breakpoints)
+Plug 'klen/python-mode'
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'fisadev/vim-isort'              " Automatically sort python imports
+Plug 'tmhedberg/SimpylFold'
+if has('python')
+    Plug 'pignacio/vim-yapf-format' " YAPF formatter for Python
+endif
+" Relative numbering of lines (0 is the current line)
+" (disabled by default because is very intrusive and can't be easily toggled
+" on/off. When the plugin is present, will always activate the relative 
+" numbering every time you go to normal mode. Author refuses to add a setting 
+" to avoid that)
+" Plug 'myusuf3/numbers.vim'
 
-" erlang
-" Plugin 'oscarh/vimerl'
-Plugin 'vim-erlang/vim-erlang-compiler'
-Plugin 'vim-erlang/vim-erlang-skeletons'
-Plugin 'vim-erlang/vim-erlang-runtime'
-Plugin 'vim-erlang/vim-erlang-omnicomplete'
-" Plugin 'vim-erlang/vim-erlang-tags'
-Plugin 'aerosol/vim-compot'
+" Css
+Plug 'lilydjwg/colorizer'           " Paint css colors with the real color
+
+" Erlang
+" Plug 'oscarh/vimerl'
+Plug 'vim-erlang/vim-erlang-compiler'
+Plug 'vim-erlang/vim-erlang-skeletons'
+Plug 'vim-erlang/vim-erlang-runtime'
+Plug 'vim-erlang/vim-erlang-omnicomplete'
+" Plug 'vim-erlang/vim-erlang-tags'
+Plug 'aerosol/vim-compot'
 
 " lisp
-Plugin 'kovisoft/slimv'
+Plug 'kovisoft/slimv'
 
-" complement
-Plugin 'OmniCppComplete'
+" Tell vim-plug we finished declaring plugins, so it can load them
+call plug#end()
 
-" 代码段
-if (v:version > 704 || (v:version == 703))
-  Plugin 'sirver/ultisnips'               " ultisnips
+" ============================================================================
+" Install plugins the first time vim runs
+" ============================================================================
+
+if vim_plug_just_installed
+    echo "Installing Bundles, please ignore key map error messages"
+    :PlugInstall
 endif
-Plugin 'honza/vim-snippets'
-Plugin 'drmingdrmer/xptemplate'         " xptemplate: seems better for C/C++
 
-" 注释
-Plugin 'tpope/vim-commentary'           " comment
-Plugin 'DoxygenToolkit.vim'             " doxygen
+" General Vim settings and mappings
+" ============================================================================
+" General
+" ============================================================================
+set nocompatible                  " no vi-compatible
+filetype plugin indent on      " allow plugins by file type (required for plugins!)
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-
-" ===============================================================================
-" => General
-" ===============================================================================
-set nocompatible        " be iMproved, vundle required
-
+set wildignore+=*.o,*~,*.pyc     " Ignore compiled files
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.o,*_build/*
+if(g:system=="windows")
+  set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*  " Windows ('noshellslash')
+  set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe
+else
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*        " Linux/MacOSX
+  set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+endif
 set fileencodings=ucs-bom,utf-8,chinese
-set formatoptions+=m    " 如遇Unicode值大于255的文本，不必等到空格再折行。
-set formatoptions+=B    " 合并两行中文时，不在中间加空格：
-
+set formatoptions+=m          " 如遇Unicode值大于255的文本，不必等到空格再折行。
+set formatoptions+=B          " 合并两行中文时，不在中间加空格：
 set ambiwidth=single
 set nrformats=          " 无论前面是否加零，都把数字作为十进制处理(在使用<C-x>, <C-a>的时候)
-set history=700         " Sets how many lines of history VIM has to remember
+
 set autoread            " Set to auto read when a file is changed from the outside
-set autowrite           " Automatically save before commands like :next and :make
-" set backupdir=~/.vim/backup/tmp
-set nobackup            " Turn backup off
+" backup, swap and undos storage
 set noswapfile
-set nowb
-if has('mouse')
-  set mouse=a
+set directory=~/.vim/dirs/tmp     " directory to place swap files in
+set backup                        " make backup files
+" set nobackup                      " default: off
+" set nowritebackup                 " default: on
+set backupdir=~/.vim/dirs/backups " where to put backup files
+set undofile                      " persistent undos - undo after you re-open the file
+set undodir=~/.vim/dirs/undos
+set viminfo+=n~/.vim/dirs/viminfo
+" create needed directories if they don't exist
+if !isdirectory(&backupdir)
+    call mkdir(&backupdir, "p")
 endif
-if (g:system == 'cygwin')
-  set mouse=
+if !isdirectory(&directory)
+    call mkdir(&directory, "p")
+endif
+if !isdirectory(&undodir)
+    call mkdir(&undodir, "p")
 endif
 " Return to last edit position when opening files
 autocmd BufReadPost *
@@ -162,26 +228,28 @@ autocmd BufReadPost *
       \ endif
 set viminfo^=%                  " Remember info about open buffers on close
 
-" ===============================================================================
+" ============================================================================
 " => User Interface
-" ===============================================================================
-set nu
+" ============================================================================
+set nu                          " show line numbers
 set ruler                       " Always show current position
-set wildignore+=*.o,*~,*.pyc     " Ignore compiled files
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.o,*_build/*
-
-if(g:system=="windows")
-  set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*  " Windows ('noshellslash')
-  set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe
-else
-  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*        " Linux/MacOSX
-  set wildignore+=*/tmp/*,*.so,*.swp,*.zip
-endif
-set so=7                        " Set 7 lines to the cursor
+set scrolloff=7                 " Set 7 lines to the cursor
 set hid                         " A buffer becomes hidden when it is abandoned
+" status line
+set laststatus=2                " always show status line - use 2 lines
+set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
+set scrolloff=7                 " when scrolling, 7 lines away from screen border
+" autocompletion of files and commands behaves like shell
+" (complete only the common part, list the options that match)
+set wildmode=list:longest
+" Comment this line to enable autocompletion preview window
+" (displays documentation related to the selected completion option)
+" Disabled by default because preview makes the window flicker
+set completeopt-=preview
 
-syntax enable
-set incsearch                   " Makes search act like search in modern browsers
+syntax on                       " syntax highlight on
+set incsearch                   " incremental search
+set hlsearch                    " highlighted search results
 set backspace=eol,start,indent  " Configure backspace so it acts as it should act
 set whichwrap+=<,>,h,l
 set ignorecase                  " Ignore case when searching
@@ -191,7 +259,7 @@ set hlsearch                    " Highlight search results
 set lazyredraw                  " Don't redraw while executing macros
 set magic                       " For regular expressions turn magic on
 set showmatch                   " Show matching brackets
-set mat=2                       " How many tenths of a second to blink when matching brackets
+set mat=2                       " tenths of a second to blink when matching brackets
 
 set noerrorbells                " No annoying sound on errors
 set novisualbell
@@ -206,54 +274,57 @@ set cindent                     " C indent
 set wrap                        " Wrap lines
 set cinoptions=g0
 
-set wildmenu                    " Turn on the WiLd menu
-set t_Co=256
-set background=dark
-" colorscheme desert
-colorscheme molokai
-" colorscheme solarized
-" if exists('$ITERM_PROFILE')
-"   let g:solarized_termcolors=256
-" else
-" endif
-
-" Set extra options when running in GUI mode
-if has("gui_running")
-  set guifont=Monaco:h12
-  " set guifont=Source_Code_Pro:h13
-  if has("gui_gtk2")   "GTK2
-    set guifont=Monaco\ 12, Monospace\ 12
-  endif
-  set guioptions-=T
-  set guioptions+=e
-  set guioptions-=r
-  set guioptions-=L
-  set guitablabel=%M\ %t
-  set showtabline=1
-  set linespace=2
-  set noimd
-  set t_Co=256
+" use 256 colors when possible
+if (&term =~? 'mlterm\|xterm\|xterm-256\|screen-256') || has('nvim')
+	let &t_Co = 256
+    colorscheme molokai
+else
+    colorscheme delek
 endif
 
-set cmdheight=1                 " Height of the command bar
-"Format the statusline
-set laststatus=2
-" set statusline=
-" set statusline+=%2*%-3.3n%0*/ " buffer number
-" set statusline+=%f/ " file name
-" set statusline+=%h%1*%m%r%w%0* " flag
-" set statusline+=[
-" if v:version >= 600
-"     set statusline+=%{strlen(&ft)?&ft:'none'}, " filetype
-"     set statusline+=%{&encoding}, " encoding
+" colors for gvim
+if has('gui_running')
+    colorscheme wombat
+endif
+" " Set extra options when running in GUI mode
+" if has("gui_running")
+"   set guifont=Monaco:h12
+"   " set guifont=Source_Code_Pro:h13
+"   if has("gui_gtk2")   "GTK2
+"     set guifont=Monaco\ 12, Monospace\ 12
+"   endif
+"   set guioptions-=T
+"   set guioptions+=e
+"   set guioptions-=r
+"   set guioptions-=L
+"   set guitablabel=%M\ %t
+"   set showtabline=1
+"   set linespace=2
+"   set noimd
+"   set t_Co=256
 " endif
-" set statusline+=%{&fileformat}] " file format
-" if filereadable(expand("$VIM/vimfiles/plugin/vimbuddy.vim"))
-"     set statusline+=/ %{VimBuddy()} " vim buddy
-" endif
-" set statusline+=%= " right align
-" set statusline+=%2*0x%-8B/ " current char
-" set statusline+=%-14.(%l,%c%V%)/ %<%P " offset
+
+set smarttab                      " Be smart when using tabs
+set expandtab                     " Use spaces instead of tabs
+set tabstop=4                     " display spaces number as tab
+set softtabstop=4
+set shiftwidth=4                  " insert 1 tab == 4 spaces
+set list
+nmap <leader>l :set list!<CR>
+" set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend 
+set listchars=tab:\|\             " display tab with '|    '
+highlight BadWhitespace ctermbg=Red guibg=DarkRed
+au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
+
+" set filetype
+au BufNewFile,BufRead *.spacemacs setf lisp
+" FileType Specific Changes
+if has ( "autocmd" )
+  autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType json,html,xhtml,xml,css,htmldjango setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
+endif
 
 " set cursorcolumn          "高亮当前列 cuc
 set cursorline            "高亮当前行 cul
@@ -273,44 +344,26 @@ highlight SpellRare term=underline cterm=underline
 highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
 
-set smarttab            " Be smart when using tabs
-set shiftwidth=4        " insert 1 tab == 4 spaces
-set tabstop=4           " display spaces number as tab
-set softtabstop=4
-set expandtab           " Use spaces instead of tabs
-set list
-nmap <leader>l :set list!<CR>
-" set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend 
-set listchars=tab:\|\             " display tab with '|    '
-highlight BadWhitespace ctermbg=Red guibg=DarkRed
-au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
+"auto save folding
+"au BufWinLeave *.* silent mkview
+"au BufWinLeave *.* silent! loadview
+set foldenable                  " enable folding
+set foldcolumn=2                " add a fold column
+set foldmethod=syntax           " default
+set foldlevel=20                " start out with everything folded
 
-" set filetype
-au BufNewFile,BufRead *.spacemacs setf lisp
-" FileType Specific Changes
-if has ( "autocmd" )
-  autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType json,html,xhtml,xml,css setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab              "textwidth=79
-endif
-
-" ===============================================================================
-" => Mappings 常用快捷键以及简写
-" ===============================================================================
-" F1 - help; F2 - file(nerdtree); F3 - tag(tagbar); F4 - Buffer(minibufexpl); F5 - lookupfile; F6 - tags update; <C-F6> - cscope update
+" ============================================================================
+" => Mapping
+" ============================================================================
 let mapleader = "\<Space>"
 let g:mapleader = "\<Space>"
 
-" ---------------------------------------
-" command mode
-" ---------------------------------------
-" w!! to sudo & write a file
-cmap w!! w !sudo tee >/dev/null %
+" F1 - help; F2 - file(nerdtree); F3 - tag(tagbar); F4 - tasklist
+" save as sudo
+ca w!! w !sudo tee "%"
 
 " ---------------------------------------
-" 文件切换与导航
+" files navigation
 " ---------------------------------------
 " Buffer mapping
 nmap <leader>bd :bdelete<CR>                " Close the current buffer
@@ -324,16 +377,17 @@ try
   set stal=2
 catch
 endtry
-" Tab (I rarely use tab)
+" Tab
+" I rarely use tab
 
 " ---------------------------------------
-" Moving
+" windows Moving
 " ---------------------------------------
 map j gj
 map k gk
 nmap H ^
 nmap L $
-map <C-j> <C-W>j    " 窗口间切换
+map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
@@ -355,26 +409,14 @@ if (g:system=="mac")
 endif
 
 " ---------------------------------------
-" interface 显示控制
+" folding
 " ---------------------------------------
-set foldenable
-set foldlevel=99
-set foldmethod=syntax           " default
-" set foldmethod=indent
-"设定自动保存折叠
-"au BufWinLeave *.* silent mkview
-"au BufWinLeave *.* silent! loadview
 
-" Spell checking
-nmap <leader>ss :setlocal spell!<CR>     " Pressing <leader>ss will toggle and untoggle spell checking
-nmap <leader>sn ]s                       " Shortcuts using <leader>
-nmap <leader>sp [s
-nmap <leader>sa zg
-nmap <leader>s? z=
-
+nnoremap zO zCzO
+nnoremap ,z zMzv
 
 " ---------------------------------------
-" Edit 编辑
+" Edit
 " ---------------------------------------
 " nmap <leader>fe :edit <c-r>=expand("%:p:h")<CR>/    " Open file in the current buffer's path
 nmap <leader>pp :setlocal paste!<CR>    " Toggle paste mode on and off
@@ -399,6 +441,20 @@ imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<CR>
 " ---------------------------------------
 " search, vimgrep
 " ---------------------------------------
+if executable('ag')             " The Silver Searcher
+  set grepprg=ag\ --nogroup\ --nocolor
+  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --ignore ''.git'' --ignore ''.DS_Store'' --ignore ''node_modules'' --hidden -g ""'
+  " ag is fast enough that CtrlP doesn't need to cache
+  " let g:ctrlp_use_caching = 0
+else
+  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
+  if(g:system=="windows")
+    let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
+  else
+    let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
+  endif
+endif
+
 nnoremap <leader><CR> :nohl<CR>
 " Search for selected text.
 " vnoremap // y/<C-R>"<CR>     " use following script instead
@@ -449,14 +505,10 @@ vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
 " grep the word at cursor in current dir
 nnoremap  <leader>gr :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
-" ===============================================================================
-" Development
-" ===============================================================================
-let python_highlight_all=1
 
-" ===============================================================================
-" 插件配置
-" ===============================================================================
+" ============================================================================
+" => Plugins settings and mappings
+" ============================================================================
 function! IsLoad(pluginname)
   if &runtimepath =~ a:pluginname
     return 1
@@ -464,17 +516,123 @@ function! IsLoad(pluginname)
     return 0
   endif
 endfunction
-" ==> molokai
-let g:molokai_original=1
-let g:rehash256=1
 
-" ==> SimpylFold
-if IsLoad("SimpylFold")
-  let g:SimpylFold_docstring_preview=1
+if IsLoad('nerdtree')
+  nmap <silent><F2> :NERDTreeToggle<CR><CR>
+  nmap <silent>ft :NERDTreeToggle<CR><CR>
+  let g:NERDTree_title="NERDTree"
+  let NERDTreeShowBookmarks=1         "一直显示书签
+  let NERDTreeChDirMode=2             "打开书签时，自动将Vim的pwd设为打开的目录
+  let NERDTreeIgnore=['\.pyc$', '\.pyo$', '\~$', '\.beam$']     "ignore files in NERDTree
+  " open a NERDTree automatically when vim starts up if no files were specified
+  autocmd StdinReadPre * let s:std_in=1
+  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+  " close vim if the only window left open is a NERDTree
+  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 endif
 
-" ==> rainbow_parentheses
-if IsLoad("rainbow_parentheses")
+if IsLoad('tagbar')
+  nmap <silent><F3> :TagbarToggle<CR>
+  let g:tagbar_ctags_bin = 'ctags'
+  let g:tagbar_width     = 30
+  let g:tagbar_autofocus = 1      " autofocus on tagbar open
+  "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+endif
+
+if IsLoad('fixedtasklist')
+  map <F4> :TaskList<CR>                " show pending tasks list
+  map <Leader>lt :TaskList<CR>          " show pending tasks list
+endif
+
+if IsLoad('ctrlp')
+  " file finder mapping
+  " let g:ctrlp_map = ',e'
+  let g:ctrlp_map = '<leader>ff'
+  " tags (symbols) in current file finder mapping
+  nmap ,g :CtrlPBufTag<CR>
+  " tags (symbols) in all files finder mapping
+  nmap ,G :CtrlPBufTagAll<CR>
+  " general code finder in all files mapping
+  nmap ,f :CtrlPLine<CR>
+  " recent files finder mapping
+  nmap ,m :CtrlPMRUFiles<CR>
+  " commands finder mapping
+  nmap ,c :CtrlPCmdPalette<CR>
+  " to be able to call CtrlP with default search text
+  function! CtrlPWithSearchText(search_text, ctrlp_command_end)
+      execute ':CtrlP' . a:ctrlp_command_end
+      call feedkeys(a:search_text)
+  endfunction
+  " same as previous mappings, but calling with current word as default text
+  nmap ,wg :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
+  nmap ,wG :call CtrlPWithSearchText(expand('<cword>'), 'BufTagAll')<CR>
+  nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
+  nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
+  nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
+  nmap ,wm :call CtrlPWithSearchText(expand('<cword>'), 'MRUFiles')<CR>
+  nmap ,wc :call CtrlPWithSearchText(expand('<cword>'), 'CmdPalette')<CR>
+  " don't change working directory
+  let g:ctrlp_working_path_mode = 0
+  " ignore these files and folders on file finder
+  let g:ctrlp_custom_ignore = {
+    \ 'dir':  '\v[\/](\.git|\.hg|\.svn|node_modules)$',
+    \ 'file': '\.pyc$\|\.pyo$\|\.(log|jpg|png|jpeg)$',
+    \ }
+
+  nmap <leader>ff :CtrlP<CR>
+  nmap <leader>fr :CtrlPMRU<CR>
+  nmap <leader>fb :CtrlPBuffer<CR>
+endif
+
+if IsLoad('ack')
+  " simple recursive grep
+  nmap ,r :Ack
+  nmap ,wr :Ack <cword><CR>
+endif
+
+if IsLoad('molokai')
+  let g:molokai_original=1
+  let g:rehash256=1
+endif
+
+if IsLoad('tabman')
+  " mappings to toggle display, and to focus on it
+  let g:tabman_toggle = '<leader>mt'
+  let g:tabman_focus  = '<leader>mf'
+endif
+
+if IsLoad('vim-airline')
+  let g:airline_powerline_fonts = 0
+  let g:airline_theme = 'bubblegum'
+  let g:airline#extensions#whitespace#enabled = 0
+  let g:airline#extensions#tabline#enabled = 1
+  let g:airline#extensions#tabline#left_sep = ' '
+  let g:airline#extensions#tabline#left_alt_sep = '|'
+  let g:airline#extensions#bufferline#enabled = 0
+  let g:airline#extensions#tabline#buffer_nr_show = 1
+  let g:airline#extensions#tabline#buffer_nr_format = '%s:'
+  let g:airline#extensions#tabline#fnamecollapse = 1          "collopsing parent dir
+  let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
+  " to use fancy symbols for airline, uncomment the following lines and use a
+  " patched font (more info on the README.rst)
+  "if !exists('g:airline_symbols')
+  "   let g:airline_symbols = {}
+  "endif
+  "let g:airline_left_sep = '⮀'
+  "let g:airline_left_alt_sep = '⮁'
+  "let g:airline_right_sep = '⮂'
+  "let g:airline_right_alt_sep = '⮃'
+  "let g:airline_symbols.branch = '⭠'
+  "let g:airline_symbols.readonly = '⭤'
+  "let g:airline_symbols.linenr = '⭡'
+endif
+
+if  IsLoad('promptline')
+  let g:promptline_preset = 'full'
+  let g:promptline_theme = 'airline'
+endif
+
+if IsLoad('rainbow_parentheses')
   let g:rbpt_colorpairs = [
         \ ['brown',       'RoyalBlue3'],
         \ ['Darkblue',    'SeaGreen3'],
@@ -501,8 +659,7 @@ if IsLoad("rainbow_parentheses")
   au Syntax * RainbowParenthesesLoadBraces
 endif
 
-" ===> delimitMate
-if IsLoad("delimitMate")
+if IsLoad('delimitmate')
   let delimitMate_quotes = "\" ' `"
   au FileType python,vim let b:delimitMate_quotes = "' `"
   au FileType markdown let b:delimitMate_quotes = "\" '"
@@ -510,132 +667,15 @@ if IsLoad("delimitMate")
 
 endif
 
-" ===> NERDTree
-if IsLoad("nerdtree")
-  let g:NERDTree_title="NERDTree"
-  let NERDTreeShowBookmarks=1         "一直显示书签
-  "打开书签时，自动将Vim的pwd设为打开的目录
-  let NERDTreeChDirMode=2
-  let NERDTreeIgnore=['\.pyc$', '\~$', '\.beam$']     "ignore files in NERDTree
-  " open a NERDTree automatically when vim starts up if no files were specified
-  autocmd StdinReadPre * let s:std_in=1
-  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-  " close vim if the only window left open is a NERDTree
-  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-  nmap <silent><F2> :NERDTreeToggle<CR><CR>
-  nmap <silent>ft :NERDTreeToggle<CR><CR>
-endif
-
-" ===> minibufexpl
-if IsLoad("minibufexpl")
-  map <Leader>mbe :MBEOpen<CR>
-  map <Leader>mbc :MBEClose<CR>
-  map <Leader>mbt :MBEToggle<CR>
-  nmap <C-TAB>   :MBEbf<CR>
-  nmap <C-S-TAB> :MBEbb<CR>
-  " 下面4个选项在fholgado版本的minibufexpl中已经去除，我们自己定义这些功能
-  "let g:miniBufExplMapWindowNavVim = 1
-  "let g:miniBufExplMapWindowNavArrows = 1
-  "let g:miniBufExplMapCTabSwitchBufs = 1
-  "let g:miniBufExplModSelTarget = 1
-endif
-
-" ===> tagbar plugin
-if IsLoad("tagbar")
-  nmap <silent><F3> :TagbarToggle<CR>
-  let g:tagbar_ctags_bin = 'ctags'
-  let g:tagbar_width     = 30
-  "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
-endif
-
-" ===> ctrlp
-if IsLoad("ctrlp")
-  let g:ctrlp_map = '<c-p>'
-  nmap <leader>ff :CtrlP<CR>
-  nmap <leader>fr :CtrlPMRU<CR>
-  nmap <leader>fb :CtrlPBuffer<CR>
-  nmap <leader>xb :CtrlPBuffer<CR>
-  let g:ctrlp_open_multiple_files = 'v'
-  let g:ctrlp_custom_ignore = {
-        \ 'dir':  '\v[\/]\.(git)$',
-        \ 'file': '\v\.(log|jpg|png|jpeg)$',
-        \ }
-  let g:ctrlp_by_filename = 1
-endif
-
-" ===> PyMatcher for CtrlP
-if !has('python')
-  echo 'In order to use pymatcher plugin, you need +python compiled vim'
-else
-  let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-endif
-
-" Set delay to prevent extra search
-let g:ctrlp_lazy_update = 350
-" Do not clear filenames cache, to improve CtrlP startup
-" You can manualy clear it by <F5>
-let g:ctrlp_clear_cache_on_exit = 0
-" Set no file limit, we are building a big project
-let g:ctrlp_max_files = 0
-" If ag is available use it as filename list generator instead of 'find'
-if executable('ag')             " The Silver Searcher
-  set grepprg=ag\ --nogroup\ --nocolor
-  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --ignore ''.git'' --ignore ''.DS_Store'' --ignore ''node_modules'' --hidden -g ""'
-  " ag is fast enough that CtrlP doesn't need to cache
-  " let g:ctrlp_use_caching = 0
-else
-  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
-  if(g:system=="windows")
-    let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
-  else
-    let g:ctrlp_user_command = 'find %s -type f'        " MacOSX/Linux
-  endif
-endif
-
-
-" ===> vim-airline
-if IsLoad("vim-airline")
-  let g:airline#extensions#tabline#enabled = 1
-  let g:airline#extensions#tabline#left_sep = ' '
-  let g:airline#extensions#tabline#left_alt_sep = '|'
-
-  let g:airline#extensions#bufferline#enabled = 0
-
-  let g:airline#extensions#tabline#buffer_nr_show = 1
-  let g:airline#extensions#tabline#buffer_nr_format = '%s:'
-  let g:airline#extensions#tabline#fnamecollapse = 1          "collopsing parent dir
-  let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
-endif
-
-" ===> ctrlp
-if IsLoad("ctrlp")
-  let g:ctrlp_custom_ignore = {
-        \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-        \ 'file': '\v\.(exe|so|dll)$',
-        \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
-        \ }
-  let g:ctrlp_max_files = 20000
-  let g:ctrlp_mruf_exclude = '/tmp/.*'
-  nmap <leader>p :CtrlPBuffer<CR>
-endif
-
-" ===> promptline
-if  IsLoad("promptline")
-  let g:promptline_preset = 'full'
-  let g:promptline_theme = 'airline'
-endif
-
-" ===> syntastic
-if IsLoad("syntastic")
-  set statusline+=%#warningmsg#
-  set statusline+=%{SyntasticStatuslineFlag()}
-  set statusline+=%*
-
+if IsLoad('syntastic')
+  " show list of errors and warnings on the current file
+  nmap <leader>le :Errors<CR>
   let g:syntastic_always_populate_loc_list = 0
   let g:syntastic_auto_loc_list = 0
   let g:syntastic_check_on_open = 1
   let g:syntastic_check_on_wq = 0
+  " don't put icons on the sign column (it hides the vcs status icons of signify)
+  let g:syntastic_enable_signs = 0
 
   " c++11 support
   let g:syntastic_cpp_compiler = 'clang++'
@@ -650,107 +690,133 @@ if IsLoad("syntastic")
   " erlang support
   " let g:syntastic_erlc_include_path = 'ebin'
 
-  " set error or warning signs
-  let g:syntastic_error_symbol = '✗'
-  let g:syntastic_warning_symbol = '⚠'
+  " custom icons (enable them if you use a patched font, and enable the previous 
+  " setting)
+  "let g:syntastic_error_symbol = '✗'
+  "let g:syntastic_warning_symbol = '⚠'
+  "let g:syntastic_style_error_symbol = '✗'
+  "let g:syntastic_style_warning_symbol = '⚠'
+ 
   " whether to show balloons
   let g:syntastic_enable_balloons = 1
 endif
 
-if IsLoad("jedi-vim")
-  let g:jedi#completions_command = "<C-E>"
+if IsLoad('nerdcommenter')
+  " Add spaces after comment delimiters by default
+  let g:NERDSpaceDelims = 1
+  " Use compact syntax for prettified multi-line comments
+  let g:NERDCompactSexyComs = 1
+  " Align line-wise comment delimiters flush left instead of following code indentation
+  let g:NERDDefaultAlign = 'left'
+  " Set a language to use its alternate delimiters by default
+  let g:NERDAltDelims_java = 1
+  " Add your own custom formats or override the defaults
+  let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+  " Allow commenting and inverting empty lines (useful when commenting a region)
+  let g:NERDCommentEmptyLines = 1
+  " Enable trimming of trailing whitespace when uncommenting
+  let g:NERDTrimTrailingWhitespace = 1
 endif
 
-" ===> virtualenv
-if IsLoad("virtualenv")
-  " let g:virtualenv_directory = '~/.virtualenvs'
-  let g:virtualenv_stl_format = '[%n]'
-  set statusline+=%{virtualenv#statusline()}
+if IsLoad('python-mode')
+  " don't use linter, we use syntastic for that
+  let g:pymode_lint_on_write = 0
+  let g:pymode_lint_signs = 0
+  " don't fold python code on open
+  let g:pymode_folding = 0
+  " don't load rope by default. Change to 1 to use rope
+  let g:pymode_rope = 0
+  " open definitions on same window, and custom mappings for definitions and
+  " occurrences
+  " Override go-to.definition key shortcut to Ctrl-]
+  let g:pymode_rope_goto_definition_bind = "<C-]>"
+  " let g:pymode_rope_goto_definition_bind = ',d'
+  let g:pymode_rope_goto_definition_cmd = 'e'
+  " Override run current python file key shortcut to Ctrl-Shift-e
+  let g:pymode_run_bind = "<C-S-e>"
+  " Override view python doc key shortcut to Ctrl-Shift-d
+  " let g:pymode_doc_bind = "<C-S-d>"
+  nmap ,D :tab split<CR>:PymodePython rope.goto()<CR>
+  nmap ,o :RopeFindOccurrences<CR>
+
+  let g:pymode_virtualenv = 1
+  " let g:pymode_virtualenv_path = $VIRTUAL_ENV
 endif
-" py << EOF
-" import os.path
-" import sys
-" import vim
-" if 'VIRTUA_ENV' in os.environ:
-"   project_base_dir = os.environ['VIRTUAL_ENV']
-"   sys.path.insert(0, project_base_dir)
-"   activate_this = os.path.join(project_base_dir,'bin/activate_this.py')
-"   execfile(activate_this, dict(__file__=activate_this))
-" EOF
 
-" ===> OmniCompletion
-" 全能(Omni)补全（代码）        CTRL-X CTRL-O
-" 从上文查找补全                CTRL-P
-" 从下文查找补全                CTRL-N
-" 整行补全                      CTRL-X CTRL-L
-" 根据当前文件里关键字补全      CTRL-X CTRL-N
-" 根据字典补全                  CTRL-X CTRL-K
-" 根据同义词字典补全            CTRL-X CTRL-T
-" 根据头文件内关键字补全        CTRL-X CTRL-I
-" 根据标签补全                  CTRL-X CTRL-]
-" 补全文件名                    CTRL-X CTRL-F
-" 补全宏定义                    CTRL-X CTRL-D
-" 补全vim命令                   CTRL-X CTRL-V
-" 用户自定义补全方式            CTRL-X CTRL-U
-" 拼写建议                      CTRL-X CTRL-S
-set ofu=syntaxcomplete#Complete
-autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-autocmd FileType c set omnifunc=ccomplete#Complete
-autocmd BufNewFile,BufRead,BufEnter *.cpp,*.hpp set omnifunc=omni#cpp#complete#Main
-
-let OmniCpp_NamespaceSearch = 1
-let OmniCpp_GlobalScopeSearch = 1
-let OmniCpp_ShowAccess = 1
-let OmniCpp_ShowPrototypeInAbbr = 1 " 显示函数参数列表
-let OmniCpp_MayCompleteDot = 1   " 输入 .  后自动补全
-let OmniCpp_MayCompleteArrow = 1 " 输入 -> 后自动补全
-let OmniCpp_MayCompleteScope = 1 " 输入 :: 后自动补全
-let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
-
-set nocp
-set infercase           "自动补全时区分大小写，默认不区分ignorecase
-" 自动关闭补全窗口
-au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
-set completeopt=menuone,menu,longest
-"回车即选中当前项
-inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"
-"上下左右键的行为 会显示其他信息
-inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
-inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
-inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
-inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
-
-" Pmenu 是所有项的配色，PmenuSel 是选中项的配色，guibg 和 guifg 分别对应背景色和前景色。
-" highlight Pmenu    guibg=darkgrey  guifg=black
-" highlight PmenuSel guibg=lightgrey guifg=black
-" ===============================================================================
-" => clang_complete
-" ===============================================================================
-" if IsLoad("clang_complete")
-let g:clang_complete_auto = 1
-let g:clang_complete_copen = 1
-let g:clang_user_options='|| exit 0'
-
-if(g:system == 'mac')
-  let g:clang_use_library = 1
-  let g:clang_library_path = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib"
-elseif(g:system == 'unix')
-  let g:clang_use_library = 1
-  let g:clang_library_path= "/usr/lib/clang"
-elseif (g:system == 'windows')
-  let g:clang_use_library = 0
-elseif(g:system == 'cygwin')
-  let g:clang_use_library = 1
-  let g:clang_library_path= "/usr/bin"
+if IsLoad("simpyfold")
+  let g:SimpylFold_docstring_preview=1
 endif
-" endif
 
-if IsLoad("YouCompleteMe")
+if IsLoad('neocomplcache')
+  " most of them not documented because I'm not sure how they work
+  " (docs aren't good, had to do a lot of trial and error to make 
+  " it play nice)
+  let g:neocomplcache_enable_at_startup = 1
+  let g:neocomplcache_enable_ignore_case = 1
+  let g:neocomplcache_enable_smart_case = 1
+  let g:neocomplcache_enable_auto_select = 1
+  let g:neocomplcache_enable_fuzzy_completion = 1
+  let g:neocomplcache_enable_camel_case_completion = 1
+  let g:neocomplcache_enable_underbar_completion = 1
+  let g:neocomplcache_fuzzy_completion_start_length = 1
+  let g:neocomplcache_auto_completion_start_length = 1
+  let g:neocomplcache_manual_completion_start_length = 1
+  let g:neocomplcache_min_keyword_length = 1
+  let g:neocomplcache_min_syntax_length = 1
+  " complete with workds from any opened file
+  let g:neocomplcache_same_filetype_lists = {}
+  let g:neocomplcache_same_filetype_lists._ = '_'
+endif
+
+if IsLoad('dragvisuals')
+  " mappings to move blocks in 4 directions
+  vmap <expr> <S-M-LEFT> DVB_Drag('left')
+  vmap <expr> <S-M-RIGHT> DVB_Drag('right')
+  vmap <expr> <S-M-DOWN> DVB_Drag('down')
+  vmap <expr> <S-M-UP> DVB_Drag('up')
+  " mapping to duplicate block
+  vmap <expr> D DVB_Duplicate()
+endif
+
+if IsLoad('signify')
+  " this first setting decides in which order try to guess your current vcs
+  " UPDATE it to reflect your preferences, it will speed up opening files
+  let g:signify_vcs_list = [ 'git', 'hg' ]
+  " nicer colors
+  highlight DiffAdd           cterm=bold ctermbg=none ctermfg=119
+  highlight DiffDelete        cterm=bold ctermbg=none ctermfg=167
+  highlight DiffChange        cterm=bold ctermbg=none ctermfg=227
+  highlight SignifySignAdd    cterm=bold ctermbg=237  ctermfg=119
+  highlight SignifySignDelete cterm=bold ctermbg=237  ctermfg=167
+  highlight SignifySignChange cterm=bold ctermbg=237  ctermfg=227
+endif
+
+if IsLoad('vim-choosewin')
+  " mapping
+  nmap  -  <Plug>(choosewin)
+  " show big letters
+  let g:choosewin_overlay_enable = 1
+endif
+
+if IsLoad('clang_complete')
+  let g:clang_complete_auto = 1
+  let g:clang_complete_copen = 1
+  let g:clang_user_options='|| exit 0'
+  if(g:system == 'mac')
+    let g:clang_use_library = 1
+    let g:clang_library_path = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib"
+  elseif(g:system == 'unix')
+    let g:clang_use_library = 1
+    let g:clang_library_path= "/usr/lib/clang"
+  elseif (g:system == 'windows')
+    let g:clang_use_library = 0
+  elseif(g:system == 'cygwin')
+    let g:clang_use_library = 1
+    let g:clang_library_path= "/usr/bin"
+  endif
+endif
+
+if IsLoad('YouCompleteMe')
   let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
   let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
   let g:ycm_confirm_extra_conf = 0
@@ -758,32 +824,17 @@ if IsLoad("YouCompleteMe")
   map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 endif
 
-if IsLoad("ultisnips")
+if IsLoad('ultisnips')
   let g:UltiSnipsUsePythonVersion=2
   let g:UltiSnipsExpandTrigger="<tab>"
   let g:UltiSnipsJumpForwardTrigger="<c-j>"
   let g:UltiSnipsJumpBackwardTrigger="<c-k>"
   " If you want :UltiSnipsEdit to split your window.
   let g:UltiSnipsEditSplit="vertical"
-
-endif
-
-" ===> xptemplate
-if IsLoad("xptemplate")
-  let g:xptemplate_key='<c-\>'
-  let g:xptemplate_vars = "BRloop=\n"     "循环中的 { 重起一行
-  let g:xptemplate_vars = "BRfun= "       "函数中的 { 重起一行
-  " let g:xptemplate_brace_complete = '(['
-
-  " Prevent supertab from mapping <tab> to anything.
-  let g:SuperTabMappingForward = '<Plug>xpt_void'
-  " Tell XPTemplate what to fall back to, if nothing matches.
-  " Original SuperTab() yields nothing if g:SuperTabMappingForward was set to something it does not know.
-  let g:xptemplate_fallback = '<C-r>=XPTwrapSuperTab("n")<CR>'
 endif
 
 " ===============================================================================
-" => Cscope
+" => ctags
 " ===============================================================================
 " C++ tags: "!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q ."
 " :ts tagselect, :tp 为上一个tag标记文件，:tn 为下一个tag标记文件。
@@ -796,7 +847,7 @@ endif
 autocmd FileType cpp set tags+=~/.vim/cpp_src/tags
 
 " ===============================================================================
-" => Cscope
+" => cscope
 " ===============================================================================
 if has("cscope")
   set csprg=cscope
@@ -839,33 +890,3 @@ nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<CR><CR>:copen<CR>
 nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>:copen<CR>
 nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>
 
-" Folding rules {{{
-set foldenable                  " enable folding
-set foldcolumn=2                " add a fold column
-set foldmethod=marker           " detect triple-{ style fold markers
-set foldlevelstart=99           " start out with everything folded
-set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
-" which commands trigger auto-unfold
-function! MyFoldText()
-  let line = getline(v:foldstart)
-
-  let nucolwidth = &fdc + &number * &numberwidth
-  let windowwidth = winwidth(0) - nucolwidth - 3
-  let foldedlinecount = v:foldend - v:foldstart
-
-  " expand tabs into spaces
-  let onetab = strpart('          ', 0, &tabstop)
-  let line = substitute(line, '\t', onetab, 'g')
-
-  let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
-  let fillcharcount = windowwidth - len(line) - len(foldedlinecount) - 4
-  return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
-endfunction
-set foldtext=MyFoldText()
-
-"c/c++/javascript/java fold method
-autocmd filetype c,cpp,javascript,java set foldmarker={,}
-
-nnoremap zO zCzO
-nnoremap ,z zMzv
-"}}}
