@@ -1,33 +1,63 @@
-# My vimrc
+# vimrc
+a powerful vim config file, the key map refer to spacemacs
 
-The `vimrc-lite` is for base use.
+still being imaturing...
 
-## Install
+## Description
 
-1. Get vimrc and put it in your home directory.
-    
-    * Linux/Unix
-    ```bash 
-         git clone https://github.com/ovsoil/vimrc.git
-         cp vimrc/vimrc ~/.vimrc  or   cp vimrc/vimrc-lite ~/.vimrc
-     ```
-    * Windows
-     
-    download or clone this vimrc;
-    copy the file `vimrc` or `vimrc-lite` to Your Vim Path, and rename it with `_vimrc`;
+* `vimrc-server`: Simple vimrc for server without any plugin
+* `vimrc-dev`: vimrc for develop
 
-2. Install Vundle in you .vim directory.
-    
-    * Linux/Unix
-   ```bash 
-        git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-   ```
-   * Windows
-   
-   ```bash 
-        git clone https://github.com/VundleVim/Vundle.vim.git $VIM/vimfiles/bundle/Vundle.vim
-   ```
+## Install | Upgrade
 
-3. Install Plugin.
-    
-    Launch `vim` and run `:PluginInstall`.
+1. Prerequisites
+
+    * vim compiled with python support. Check it with vim --version | grep +python
+    * Install the required dependencies:
+    ```bash
+    # ubuntu
+    sudo apt-get install exuberant-ctags git ack-grep
+    sudo apt-get install silversearcher-ag
+    sudo pip install pep8 flake8 pyflakes isort yapf
+
+    # mac
+    brew install ctags
+    brew install the_silver_searcher
+    sudo pip install pep8 flake8 pyflakes isort yapf
+    ```
+    * backup your old .vimrc file and .vim folder, create an empty .vim folder
+
+2. Clone this repo, and create a soft symbolic links `~/.vimrc` target the vimrc file which you want to use
+    ```bash
+    ln -s [real_path_of_the_repo]/vimrc-dev ~/.vimrc
+    ```
+3. Open vim and it will continue the installation by itself. Wait for it to finish... and done! You now have your new shiny powerful vim :)
+
+
+## Features
+
+* screenshot:
+* vim-plug: easy to install plugins and runtime files
+* Syntastic: external syntax checkers and displays any resulting errors
+* NERDTree: explore your file system and to open files and directories
+* Vim-airline: provides statuslines and prompts
+* Return to last edit position when opening files
+* Compile and execute
+* ...
+
+
+## Tips
+
+### general
+
+### search and replace
+
+### copy and paste
+
+### navigate
+
+### git
+
+### auto completion
+
+### snipmate

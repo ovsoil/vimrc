@@ -519,7 +519,7 @@ endfunction
 
 if IsLoad('nerdtree')
   nmap <silent><F2> :NERDTreeToggle<CR><CR>
-  nmap <silent>ft :NERDTreeToggle<CR><CR>
+  nmap <leader>ft :NERDTreeToggle<CR><CR>
   let g:NERDTree_title="NERDTree"
   let NERDTreeShowBookmarks=1         "一直显示书签
   let NERDTreeChDirMode=2             "打开书签时，自动将Vim的pwd设为打开的目录
