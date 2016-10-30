@@ -88,6 +88,7 @@ Plug 'Raimondi/delimitMate'             " auto-completion for quotes, parens, br
 " Plug 'kien/rainbow_parentheses.vim'     " Rainbow parentheses
 Plug 'michaeljsmith/vim-indent-object'  " Indent text object
 Plug 'jeetsukumaran/vim-indentwise'     " Indentation based movements
+" Plug 'ConradIrwin/vim-bracketed-paste'  " automatic set paste
 
 " User Interface
 Plug 'vim-airline/vim-airline'
@@ -275,11 +276,11 @@ set wrap                        " Wrap lines
 set cinoptions=g0
 
 " use 256 colors when possible
-if (&term =~? 'mlterm\|xterm\|xterm-256\|screen-256') || has('nvim')
-	let &t_Co = 256
-    colorscheme molokai
+if (&term =~? 'mlterm\|xterm\|xterm-256\|screen-256\|gnome-terminal') || has('nvim')
+  let &t_Co = 256
+  colorscheme molokai
 else
-    colorscheme delek
+  colorscheme delek
 endif
 
 " colors for gvim
@@ -327,9 +328,10 @@ if has ( "autocmd" )
 endif
 
 " set cursorcolumn          "高亮当前列 cuc
-set cursorline            "高亮当前行 cul
-autocmd! InsertEnter * set cul
-autocmd! InsertLeave * set nocul
+" set cursorline            "高亮当前行 cul
+" autocmd! InsertEnter * set cul
+" autocmd! InsertLeave * set nocul
+
 "设置标记一列的背景颜色和数字一行颜色一致
 hi! link SignColumn   LineNr
 hi! link ShowMarksHLl DiffAdd
@@ -422,6 +424,8 @@ nnoremap ,z zMzv
 nmap <leader>pp :setlocal paste!<CR>    " Toggle paste mode on and off
 map <leader>= <Esc>:%!python -m json.tool<CR>         " format json
 au InsertLeave * set nopaste            " Disbale paste mode when leaving insert mode
+" set clipboard=unnamed
+
 " Delete the blank space or Windows ^M at trail of line
 func! DeleteTrailingWS()
   exe "normal mz"
@@ -498,7 +502,7 @@ nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 " highlight but not search the selected text
 vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>/<CR>N
 
-" relace selected text
+" replace selected text
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
 
@@ -523,7 +527,7 @@ if IsLoad('nerdtree')
   let g:NERDTree_title="NERDTree"
   let NERDTreeShowBookmarks=1         "一直显示书签
   let NERDTreeChDirMode=2             "打开书签时，自动将Vim的pwd设为打开的目录
-  let NERDTreeIgnore=['\.pyc$', '\.pyo$', '\~$', '\.beam$']     "ignore files in NERDTree
+  let NERDTreeIgnore=['node_modules', 'bower_components', '\.pyc$', '\.pyo$', '\~$', '\.beam$']     "ignore files in NERDTree
   " open a NERDTree automatically when vim starts up if no files were specified
   autocmd StdinReadPre * let s:std_in=1
   autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
@@ -546,16 +550,16 @@ endif
 
 if IsLoad('ctrlp')
   " file finder mapping
-  " let g:ctrlp_map = ',e'
-  let g:ctrlp_map = '<leader>ff'
+  nmap <silent> <expr> <Leader>ff (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":CtrlP\<cr>"
+  " let g:ctrlp_map = '<leader>ff'
+  nmap <leader>fr :CtrlPMRU<CR>
+  nmap <leader>fb :CtrlPBuffer<CR>
   " tags (symbols) in current file finder mapping
   nmap ,g :CtrlPBufTag<CR>
   " tags (symbols) in all files finder mapping
   nmap ,G :CtrlPBufTagAll<CR>
   " general code finder in all files mapping
   nmap ,f :CtrlPLine<CR>
-  " recent files finder mapping
-  nmap ,m :CtrlPMRUFiles<CR>
   " commands finder mapping
   nmap ,c :CtrlPCmdPalette<CR>
   " to be able to call CtrlP with default search text
@@ -569,19 +573,15 @@ if IsLoad('ctrlp')
   nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
   nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
   nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
-  nmap ,wm :call CtrlPWithSearchText(expand('<cword>'), 'MRUFiles')<CR>
   nmap ,wc :call CtrlPWithSearchText(expand('<cword>'), 'CmdPalette')<CR>
   " don't change working directory
   let g:ctrlp_working_path_mode = 0
   " ignore these files and folders on file finder
   let g:ctrlp_custom_ignore = {
     \ 'dir':  '\v[\/](\.git|\.hg|\.svn|node_modules)$',
-    \ 'file': '\.pyc$\|\.pyo$\|\.(log|jpg|png|jpeg)$',
+    \ 'file': '\.(o|swp|pyc|pyo|wav|mp3|ogg|blend)$\|\.(log|jpg|png|jpeg)$|__init__\.py',
     \ }
 
-  nmap <leader>ff :CtrlP<CR>
-  nmap <leader>fr :CtrlPMRU<CR>
-  nmap <leader>fb :CtrlPBuffer<CR>
 endif
 
 if IsLoad('ack')
