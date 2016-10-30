@@ -118,9 +118,7 @@ Plug 'Shougo/neocomplcache.vim'         " Better autocompletion
 " endif
 " snippets manager (SnipMate), dependencies, and snippets repo
 " Plug 'drmingdrmer/xptemplate'         " xptemplate
-" if (v:version > 704 || (v:version == 703))
-"   Plug 'sirver/ultisnips'               " ultisnips
-" endif
+" Plug 'sirver/ultisnips'               " ultisnips
 Plug 'tomtom/tlib_vim'
 Plug 'honza/vim-snippets'
 Plug 'garbas/vim-snipmate'
@@ -133,7 +131,8 @@ Plug 'godlygeek/tabular'                " aligning text
 Plug 'plasticboy/vim-markdown'
 
 " C/C++
-Plug 'a.vim'                            " navigate btween head and source file
+" it's insert mode mappings use <leader>
+" Plug 'a.vim'                          " navigate btween head and source file
 
 " Python
 " Python mode (indentation, doc, refactor, lints, code checking, motion and
@@ -145,12 +144,6 @@ Plug 'tmhedberg/SimpylFold'
 if has('python')
     Plug 'pignacio/vim-yapf-format' " YAPF formatter for Python
 endif
-" Relative numbering of lines (0 is the current line)
-" (disabled by default because is very intrusive and can't be easily toggled
-" on/off. When the plugin is present, will always activate the relative 
-" numbering every time you go to normal mode. Author refuses to add a setting 
-" to avoid that)
-" Plug 'myusuf3/numbers.vim'
 
 " Css
 Plug 'lilydjwg/colorizer'           " Paint css colors with the real color
@@ -283,27 +276,20 @@ else
   colorscheme delek
 endif
 
-" colors for gvim
+" Set extra options when running in GUI mode
 if has('gui_running')
-    colorscheme wombat
+  colorscheme wombat
+  set guifont=Monaco:h12
+  " set guifont=Source_Code_Pro:h13
+  set guioptions-=T   " no toobar
+  set guioptions-=r   " no right scroolbar
+  set guioptions-=L   " no left scrollbar except there is a vertically split windows
+  set guitablabel=%M\ %t
+  set showtabline=1
+  set linespace=2
+  set noimd
+  set t_Co=256
 endif
-" " Set extra options when running in GUI mode
-" if has("gui_running")
-"   set guifont=Monaco:h12
-"   " set guifont=Source_Code_Pro:h13
-"   if has("gui_gtk2")   "GTK2
-"     set guifont=Monaco\ 12, Monospace\ 12
-"   endif
-"   set guioptions-=T
-"   set guioptions+=e
-"   set guioptions-=r
-"   set guioptions-=L
-"   set guitablabel=%M\ %t
-"   set showtabline=1
-"   set linespace=2
-"   set noimd
-"   set t_Co=256
-" endif
 
 set smarttab                      " Be smart when using tabs
 set expandtab                     " Use spaces instead of tabs
@@ -311,7 +297,7 @@ set tabstop=4                     " display spaces number as tab
 set softtabstop=4
 set shiftwidth=4                  " insert 1 tab == 4 spaces
 set list
-nmap <leader>l :set list!<CR>
+nmap <leader>l :set list!<cr>
 " set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend 
 set listchars=tab:\|\             " display tab with '|    '
 highlight BadWhitespace ctermbg=Red guibg=DarkRed
@@ -360,19 +346,48 @@ set foldlevel=20                " start out with everything folded
 let mapleader = "\<Space>"
 let g:mapleader = "\<Space>"
 
+function! HasHelp()
+  " Save current window number to revert.
+  let nwin = 1
+  while 1
+    let nbuf = winbufnr(nwin)
+    " all window processed, there is no help buftype, return 0
+    if nbuf == -1
+      return 0
+    endif
+    " if there is help buftype, return 1
+    if getbufvar(nbuf, '&buftype') ==# 'help'
+      return 1
+    else
+      let nwin = nwin + 1
+    endif
+  endwhile
+endfunction
+
+function! ToggleHelp()
+  if HasHelp()
+    :helpclose
+  else
+    :help
+  endif
+endfunction
+
 " F1 - help; F2 - file(nerdtree); F3 - tag(tagbar); F4 - tasklist
 " save as sudo
 ca w!! w !sudo tee "%"
+
+nmap <silent><F1> :call ToggleHelp()<cr>
+nmap <leader>th :call ToggleHelp()<cr>
 
 " ---------------------------------------
 " files navigation
 " ---------------------------------------
 " Buffer mapping
-nmap <leader>bd :bdelete<CR>                " Close the current buffer
-nmap <leader>ba :1,1000 bd!<CR>             " Close all the buffers
-nmap <leader>bn :bnext<CR>
-nmap <leader>bp :bprevious<CR>
-nmap <leader>cd :cd %:p:h<CR>:pwd<CR>       " Switch CWD to the directory of the open buffer
+nmap <leader>bd :bdelete<cr>                " Close the current buffer
+nmap <leader>ba :1,1000 bd!<cr>             " Close all the buffers
+nmap <leader>bn :bnext<cr>
+nmap <leader>bp :bprevious<cr>
+nmap <leader>cd :cd %:p:h<cr>:pwd<cr>       " Switch CWD to the directory of the open buffer
 " Specify the behavior when switching between buffers
 try
   set switchbuf=useopen,usetab  "newtab
@@ -389,19 +404,19 @@ map j gj
 map k gk
 nmap H ^
 nmap L $
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
+" map <C-j> <C-W>j
+" map <C-k> <C-W>k
+" map <C-h> <C-W>h
+" map <C-l> <C-W>l
 map <leader>wj <C-W>j
 map <leader>wk <C-W>k
 map <leader>wh <C-W>h
 map <leader>wl <C-W>l
 
-nmap <leader>1 :resize -3<CR>
-nmap <leader>2 :resize +3<CR>
-nmap <leader>3 :vertical resize -3<CR>
-nmap <leader>4 :vertical resize +3<CR>
+nmap <leader>1 :resize -3<cr>
+nmap <leader>2 :resize +3<cr>
+nmap <leader>3 :vertical resize -3<cr>
+nmap <leader>4 :vertical resize +3<cr>
 
 if (g:system=="mac")
   nmap <D-j> <M-j>
@@ -420,9 +435,9 @@ nnoremap ,z zMzv
 " ---------------------------------------
 " Edit
 " ---------------------------------------
-" nmap <leader>fe :edit <c-r>=expand("%:p:h")<CR>/    " Open file in the current buffer's path
-nmap <leader>pp :setlocal paste!<CR>    " Toggle paste mode on and off
-map <leader>= <Esc>:%!python -m json.tool<CR>         " format json
+" nmap <leader>fe :edit <c-r>=expand("%:p:h")<cr>/    " Open file in the current buffer's path
+nmap <leader>pp :setlocal paste!<cr>    " Toggle paste mode on and off
+map <leader>= <Esc>:%!python -m json.tool<cr>         " format json
 au InsertLeave * set nopaste            " Disbale paste mode when leaving insert mode
 " set clipboard=unnamed
 
@@ -432,15 +447,15 @@ func! DeleteTrailingWS()
   %s/\s\+$//ge
   exe "normal `z"
 endfunc
-nmap <leader>db :call DeleteTrailingWS()<CR>       " Remove blank space in lineend
-nmap <leader>dm mmHmt:%s/<C-V><CR>//ge<CR>'tzt'm   " Remove the Windows ^M
+nmap <leader>db :call DeleteTrailingWS()<cr>       " Remove blank space in lineend
+nmap <leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm   " Remove the Windows ^M
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
 " 插入模式下输入一些常用文本
-imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<CR>
-imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<CR>
-imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<CR>
+imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<cr>
+imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<cr>
+imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<cr>
 
 " ---------------------------------------
 " search, vimgrep
@@ -459,9 +474,9 @@ else
   endif
 endif
 
-nnoremap <leader><CR> :nohl<CR>
+nnoremap <leader><cr> :nohl<cr>
 " Search for selected text.
-" vnoremap // y/<C-R>"<CR>     " use following script instead
+" vnoremap // y/<C-R>"<cr>     " use following script instead
 " http://vim.wikia.com/wiki/VimTip171
 let s:save_cpo = &cpo | set cpo&vim
 if !exists('g:VeryLiteral')
@@ -487,27 +502,27 @@ function! s:VSetSearch(cmd)
   normal! gV
   call setreg('"', old_reg, old_regtype)
 endfunction
-vnoremap <silent> * :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>/<CR>
-vnoremap <silent> # :<C-U>call <SID>VSetSearch('?')<CR>?<C-R>/<CR>
+vnoremap <silent> * :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>
+vnoremap <silent> # :<C-U>call <SID>VSetSearch('?')<cr>?<C-R>/<cr>
 vmap <kMultiply> *
 nmap <silent> <Plug>VLToggle :let g:VeryLiteral = !g:VeryLiteral
-      \\| echo "VeryLiteral " . (g:VeryLiteral ? "On" : "Off")<CR>
+      \\| echo "VeryLiteral " . (g:VeryLiteral ? "On" : "Off")<cr>
 if !hasmapto("<Plug>VLToggle")
   nmap <unique> <Leader>vl <Plug>VLToggle
 endif
 let &cpo = s:save_cpo | unlet s:save_cpo
 
 " highlight but not search the word at cursor
-nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
 " highlight but not search the selected text
-vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<CR>/<C-R>/<CR>N
+vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N
 
 " replace selected text
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
-vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<CR>//g<Left><Left>
+vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
 
 " grep the word at cursor in current dir
-nnoremap  <leader>gr :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap  <leader>gr :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
 
 
 " ============================================================================
@@ -522,8 +537,8 @@ function! IsLoad(pluginname)
 endfunction
 
 if IsLoad('nerdtree')
-  nmap <silent><F2> :NERDTreeToggle<CR><CR>
-  nmap <leader>ft :NERDTreeToggle<CR><CR>
+  nmap <silent><F2> :NERDTreeToggle<cr><cr>
+  nmap <leader>ft :NERDTreeToggle<cr><cr>
   let g:NERDTree_title="NERDTree"
   let NERDTreeShowBookmarks=1         "一直显示书签
   let NERDTreeChDirMode=2             "打开书签时，自动将Vim的pwd设为打开的目录
@@ -536,7 +551,7 @@ if IsLoad('nerdtree')
 endif
 
 if IsLoad('tagbar')
-  nmap <silent><F3> :TagbarToggle<CR>
+  nmap <silent><F3> :TagbarToggle<cr>
   let g:tagbar_ctags_bin = 'ctags'
   let g:tagbar_width     = 30
   let g:tagbar_autofocus = 1      " autofocus on tagbar open
@@ -544,36 +559,36 @@ if IsLoad('tagbar')
 endif
 
 if IsLoad('fixedtasklist')
-  map <F4> :TaskList<CR>                " show pending tasks list
-  map <Leader>lt :TaskList<CR>          " show pending tasks list
+  map <F4> :TaskList<cr>                " show pending tasks list
+  map <leader>lt :TaskList<cr>          " show pending tasks list
 endif
 
 if IsLoad('ctrlp')
   " file finder mapping
   nmap <silent> <expr> <Leader>ff (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":CtrlP\<cr>"
   " let g:ctrlp_map = '<leader>ff'
-  nmap <leader>fr :CtrlPMRU<CR>
-  nmap <leader>fb :CtrlPBuffer<CR>
+  nmap <leader>fr :CtrlPMRU<cr>
+  nmap <leader>fb :CtrlPBuffer<cr>
   " tags (symbols) in current file finder mapping
-  nmap ,g :CtrlPBufTag<CR>
+  nmap ,g :CtrlPBufTag<cr>
   " tags (symbols) in all files finder mapping
-  nmap ,G :CtrlPBufTagAll<CR>
+  nmap ,G :CtrlPBufTagAll<cr>
   " general code finder in all files mapping
-  nmap ,f :CtrlPLine<CR>
+  nmap ,f :CtrlPLine<cr>
   " commands finder mapping
-  nmap ,c :CtrlPCmdPalette<CR>
+  nmap ,c :CtrlPCmdPalette<cr>
   " to be able to call CtrlP with default search text
   function! CtrlPWithSearchText(search_text, ctrlp_command_end)
       execute ':CtrlP' . a:ctrlp_command_end
       call feedkeys(a:search_text)
   endfunction
   " same as previous mappings, but calling with current word as default text
-  nmap ,wg :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
-  nmap ,wG :call CtrlPWithSearchText(expand('<cword>'), 'BufTagAll')<CR>
-  nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
-  nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
-  nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
-  nmap ,wc :call CtrlPWithSearchText(expand('<cword>'), 'CmdPalette')<CR>
+  nmap ,wg :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<cr>
+  nmap ,wG :call CtrlPWithSearchText(expand('<cword>'), 'BufTagAll')<cr>
+  nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<cr>
+  nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<cr>
+  nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<cr>
+  nmap ,wc :call CtrlPWithSearchText(expand('<cword>'), 'CmdPalette')<cr>
   " don't change working directory
   let g:ctrlp_working_path_mode = 0
   " ignore these files and folders on file finder
@@ -587,7 +602,7 @@ endif
 if IsLoad('ack')
   " simple recursive grep
   nmap ,r :Ack
-  nmap ,wr :Ack <cword><CR>
+  nmap ,wr :Ack <cword><cr>
 endif
 
 if IsLoad('molokai')
@@ -669,7 +684,7 @@ endif
 
 if IsLoad('syntastic')
   " show list of errors and warnings on the current file
-  nmap <leader>le :Errors<CR>
+  nmap <leader>le :Errors<cr>
   let g:syntastic_always_populate_loc_list = 0
   let g:syntastic_auto_loc_list = 0
   let g:syntastic_check_on_open = 1
@@ -736,8 +751,8 @@ if IsLoad('python-mode')
   let g:pymode_run_bind = "<C-S-e>"
   " Override view python doc key shortcut to Ctrl-Shift-d
   " let g:pymode_doc_bind = "<C-S-d>"
-  nmap ,D :tab split<CR>:PymodePython rope.goto()<CR>
-  nmap ,o :RopeFindOccurrences<CR>
+  nmap ,D :tab split<cr>:PymodePython rope.goto()<cr>
+  nmap ,o :RopeFindOccurrences<cr>
 
   let g:pymode_virtualenv = 1
   " let g:pymode_virtualenv_path = $VIRTUAL_ENV
@@ -821,7 +836,7 @@ if IsLoad('YouCompleteMe')
   let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
   let g:ycm_confirm_extra_conf = 0
   let g:ycm_autoclose_preview_window_after_completion=1
-  map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+  map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<cr>
 endif
 
 if IsLoad('ultisnips')
@@ -840,7 +855,7 @@ endif
 " :ts tagselect, :tp 为上一个tag标记文件，:tn 为下一个tag标记文件。
 " g+]直接显示ctag结果列表
 " 让CTRL-]只有一个选择时自动跳转，多个选择时，出现选择列表
-" map <C-]> :tselect <C-R>=expand("<cword>")<CR><CR>
+" map <C-]> :tselect <C-R>=expand("<cword>")<cr><cr>
 " map <C-]> g<C-]>
 
 "添加特定的（已经生成tags）的函数库的tags
@@ -881,12 +896,12 @@ endif
 "f: 查找并打开文件，类似vim的find功能
 "i: 查找包含本文件的文
 set cscopequickfix=s-,g-,c-,t-,e-,f-,i-,d-
-nmap <C-@>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-nmap <C-@>g :cs find g <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-nmap <C-@>c :cs find c <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-nmap <C-@>t :cs find t <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-nmap <C-@>e :cs find e <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<CR><CR>:copen<CR>
-nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>:copen<CR>
-nmap <C-@>d :cs find d <C-R>=expand("<cword>")<CR><CR>:copen<CR>
+nmap <C-@>s :cs find s <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <C-@>g :cs find g <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <C-@>c :cs find c <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <C-@>t :cs find t <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <C-@>e :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>
+nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<cr>$<cr>:copen<cr>
+nmap <C-@>d :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 
