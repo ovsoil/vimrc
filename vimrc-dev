@@ -104,7 +104,8 @@ Plug 'fisadev/fisa-vim-colorscheme'     " Terminal Vim with 256 colors colorsche
 Plug 'majutsushi/tagbar'                " Class/module browser
 Plug 'scrooloose/syntastic'             " syntastic: syntax check
 Plug 'mattn/emmet-vim'                  " Zen coding
-Plug 'motemen/git-vim'                  " Git integration
+" Plug 'motemen/git-vim'                  " Git integration
+Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'                " Git/mercurial/others diff icons on the side of the file lines
 " commenter
 Plug 'tpope/vim-commentary'             " comment
@@ -285,7 +286,7 @@ if has('gui_running')
   set guioptions-=r   " no right scroolbar
   set guioptions-=L   " no left scrollbar except there is a vertically split windows
   set guitablabel=%M\ %t
-  set showtabline=1
+  set showtabline=0   " no tabine
   set linespace=2
   set noimd
   set t_Co=256
@@ -310,7 +311,7 @@ if has ( "autocmd" )
   autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
   autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
   autocmd FileType json,html,xhtml,xml,css,htmldjango setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
+  " autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
 endif
 
 " set cursorcolumn          "高亮当前列 cuc
@@ -873,7 +874,6 @@ if has("cscope")
   " Use cscope for definition search first
   set cscopetagorder=0
 endif
-
 
 "自动加载cscope.out
 " function! LoadCscope()
