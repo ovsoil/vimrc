@@ -431,7 +431,6 @@ nnoremap ,z zMzv
 " ---------------------------------------
 " Edit
 " ---------------------------------------
-" nmap <leader>fe :edit <c-r>=expand("%:p:h")<cr>/
 nmap <leader>pp :setlocal paste!<cr>    " Toggle paste mode on and off
 map <leader>= <Esc>:%!python -m json.tool<cr>         " format json
 au InsertLeave * set nopaste            " Disbale paste mode when leaving insert mode
@@ -458,7 +457,7 @@ imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<cr>
 " ---------------------------------------
 if executable('ag')             " The Silver Searcher
   set grepprg=ag\ --nogroup\ --nocolor
-  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --ignore ''.git'' --ignore ''.DS_Store'' --ignore ''node_modules'' --hidden -g ""'
+  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --ignore .git --ignore .DS_Store --ignore node_modules --ignore "**/*.pyc" --hidden -g ""'
   " ag is fast enough that CtrlP doesn't need to cache
   " let g:ctrlp_use_caching = 0
 else
@@ -533,6 +532,13 @@ function! IsLoad(pluginname)
 endfunction
 
 if IsLoad('nerdtree')
+  let mymapping_file = expand('~/.vim/nerdtree_plugin/mymapping.vim')
+  if !filereadable(mymapping_file)
+    echo "Installing custom mapping for nerdtree ..."
+    echo ""
+    silent !mkdir -p ~/.vim/nerdtree_plugin
+    silent !curl -fLo ~/.vim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
+  endif
   nmap <silent><F2> :NERDTreeToggle<cr><cr>
   nmap <leader>ft :NERDTreeToggle<cr><cr>
   let g:NERDTree_title="NERDTree"
@@ -544,6 +550,9 @@ if IsLoad('nerdtree')
   autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
   " close vim if the only window left open is a NERDTree
   autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+  " open NERDTree automatically when vim starts up on opening a directory
+  autocmd StdinReadPre * let s:std_in=1
+  autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
 endif
 
 if IsLoad('tagbar')
@@ -561,10 +570,12 @@ endif
 
 if IsLoad('ctrlp')
   " file finder mapping
-  nmap <silent> <expr> <Leader>ff (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":CtrlP\<cr>"
   " let g:ctrlp_map = '<leader>ff'
+  " avoid open file in nerdtree window
+  nmap <silent> <expr> <Leader>ff (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":CtrlP\<cr>"
   nmap <leader>fr :CtrlPMRU<cr>
   nmap <leader>fb :CtrlPBuffer<cr>
+  nmap <leader>fe :CtrlP <c-r>=expand("%:p:h")<cr><cr>
   " tags (symbols) in current file finder mapping
   nmap ,g :CtrlPBufTag<cr>
   " tags (symbols) in all files finder mapping
@@ -585,8 +596,8 @@ if IsLoad('ctrlp')
   nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<cr>
   nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<cr>
   nmap ,wc :call CtrlPWithSearchText(expand('<cword>'), 'CmdPalette')<cr>
-  " don't change working directory
-  let g:ctrlp_working_path_mode = 0
+  " let g:ctrlp_working_path_mode = 0             " don't change working directory
+  let g:ctrlp_working_path_mode = 'ra'        " smart change working directory
   " ignore these files and folders on file finder
   let g:ctrlp_custom_ignore = {
     \ 'dir':  '\v[\/](\.git|\.hg|\.svn|node_modules)$',
