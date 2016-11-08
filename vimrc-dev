@@ -10,9 +10,7 @@
 
 " ============================================================================
 " Vim-plug initialization
-" Avoid modify this section, unless you are very sure of what you are doing
 " ============================================================================
-
 let vim_plug_just_installed = 0
 let vim_plug_path = expand('~/.vim/autoload/plug.vim')
 if !filereadable(vim_plug_path)
@@ -28,7 +26,6 @@ if vim_plug_just_installed
     :execute 'source '.fnameescape(vim_plug_path)
 endif
 
-" Obscure hacks done, you can now modify the rest of the .vimrc as you wish :)
 " ============================================================================
 " =>Platform
 " ============================================================================
@@ -54,11 +51,7 @@ endif
 
 " ============================================================================
 " Active plugins
-" You can disable or add new ones here:
 " ============================================================================
-
-" this needs to be here, so vim-plug knows we are declaring the plugins we
-" want to use
 call plug#begin('~/.vim/plugged')
 
 " Plugins from github repos:
@@ -89,6 +82,8 @@ Plug 'Raimondi/delimitMate'             " auto-completion for quotes, parens, br
 Plug 'michaeljsmith/vim-indent-object'  " Indent text object
 Plug 'jeetsukumaran/vim-indentwise'     " Indentation based movements
 " Plug 'ConradIrwin/vim-bracketed-paste'  " automatic set paste
+Plug 'easymotion/vim-easymotion'
+Plug 'tpope/vim-repeat'
 
 " User Interface
 Plug 'vim-airline/vim-airline'
@@ -106,7 +101,9 @@ Plug 'scrooloose/syntastic'             " syntastic: syntax check
 Plug 'mattn/emmet-vim'                  " Zen coding
 " Plug 'motemen/git-vim'                  " Git integration
 Plug 'tpope/vim-fugitive'
-Plug 'mhinz/vim-signify'                " Git/mercurial/others diff icons on the side of the file lines
+" Plug 'mhinz/vim-signify'                " Git/mercurial/others diff icons on the side of the file lines
+Plug 'vim-gitgutter'
+
 " commenter
 Plug 'tpope/vim-commentary'             " comment
 Plug 'scrooloose/nerdcommenter'         " Code commenter
@@ -124,19 +121,19 @@ Plug 'tomtom/tlib_vim'
 Plug 'honza/vim-snippets'
 Plug 'garbas/vim-snipmate'
 
-" Json
+" json
 Plug 'elzr/vim-json'
 
-" Markdown
+" markdown
 Plug 'godlygeek/tabular'                " aligning text
 Plug 'plasticboy/vim-markdown'
 
-" C/C++
+" c/c++
 " it's insert mode mappings use <leader>
 " Plug 'a.vim'                          " navigate btween head and source file
 
-" Python
-" Python mode (indentation, doc, refactor, lints, code checking, motion and
+" python
+" python mode (indentation, doc, refactor, lints, code checking, motion and
 " operators, highlighting, run and ipdb breakpoints)
 Plug 'klen/python-mode'
 Plug 'MarcWeber/vim-addon-mw-utils'
@@ -146,28 +143,34 @@ if has('python')
     Plug 'pignacio/vim-yapf-format' " YAPF formatter for Python
 endif
 
-" Css
+" javascript
+Plug 'pangloss/vim-javascript'
+Plug 'kchmck/vim-coffee-script'
+" html
+Plug 'mattn/emmet-vim'
+" css
 Plug 'lilydjwg/colorizer'           " Paint css colors with the real color
 
-" Erlang
+" ruby on rail
+Plug 'tpope/vim-rails'
+
+" erlang
 " Plug 'oscarh/vimerl'
 Plug 'vim-erlang/vim-erlang-compiler'
 Plug 'vim-erlang/vim-erlang-skeletons'
 Plug 'vim-erlang/vim-erlang-runtime'
 Plug 'vim-erlang/vim-erlang-omnicomplete'
-" Plug 'vim-erlang/vim-erlang-tags'
+Plug 'vim-erlang/vim-erlang-tags'
 Plug 'aerosol/vim-compot'
 
 " lisp
 Plug 'kovisoft/slimv'
 
-" Tell vim-plug we finished declaring plugins, so it can load them
 call plug#end()
 
 " ============================================================================
 " Install plugins the first time vim runs
 " ============================================================================
-
 if vim_plug_just_installed
     echo "Installing Bundles, please ignore key map error messages"
     :PlugInstall
@@ -177,11 +180,10 @@ endif
 " ============================================================================
 " General
 " ============================================================================
-set nocompatible                  " no vi-compatible
-filetype plugin indent on      " allow plugins by file type (required for plugins!)
-
-set wildignore+=*.o,*~,*.pyc     " Ignore compiled files
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.o,*_build/*
+set nocompatible                                   " no vi-compatible
+filetype plugin indent on                          " allow plugins by file type (required for plugins!)
+set wildignore+=*.o,*~,*.so,*.swp,*.zip,*.pyc      " Ignore compiled files
+set wildignore+=*_build/*
 if(g:system=="windows")
   set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*  " Windows ('noshellslash')
   set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe
@@ -190,12 +192,12 @@ else
   set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 endif
 set fileencodings=ucs-bom,utf-8,chinese
-set formatoptions+=m          " 如遇Unicode值大于255的文本，不必等到空格再折行。
-set formatoptions+=B          " 合并两行中文时，不在中间加空格：
+set formatoptions+=m                              " 如遇Unicode值大于255的文本，不必等到空格再折行。
+set formatoptions+=B                              " 合并两行中文时，不在中间加空格：
 set ambiwidth=single
-set nrformats=          " 无论前面是否加零，都把数字作为十进制处理(在使用<C-x>, <C-a>的时候)
+set nrformats=                                    " 无论前面是否加零，都把数字作为十进制处理(在使用<C-x>, <C-a>的时候)
+set autoread                                      " Set to auto read when a file is changed from the outside
 
-set autoread            " Set to auto read when a file is changed from the outside
 " backup, swap and undos storage
 set noswapfile
 set directory=~/.vim/dirs/tmp     " directory to place swap files in
@@ -383,7 +385,7 @@ nmap <leader>th :call ToggleHelp()<cr>
 " ---------------------------------------
 " files navigation
 " ---------------------------------------
-" Buffer mapping
+" Buffer
 nmap <leader>bd :bdelete<cr>                " Close the current buffer
 nmap <leader>ba :1,1000 bd!<cr>             " Close all the buffers
 nmap <leader>bn :bnext<cr>
@@ -395,8 +397,8 @@ try
   set stal=2
 catch
 endtry
-" Tab
-" I rarely use tab
+
+" Tab " I rarely use tab
 
 " ---------------------------------------
 " windows Moving
@@ -405,20 +407,14 @@ map j gj
 map k gk
 nmap H ^
 nmap L $
-" map <C-j> <C-W>j
-" map <C-k> <C-W>k
-" map <C-h> <C-W>h
-" map <C-l> <C-W>l
 map <leader>wj <C-W>j
 map <leader>wk <C-W>k
 map <leader>wh <C-W>h
 map <leader>wl <C-W>l
-
 nmap <leader>1 :resize -3<cr>
 nmap <leader>2 :resize +3<cr>
 nmap <leader>3 :vertical resize -3<cr>
 nmap <leader>4 :vertical resize +3<cr>
-
 if (g:system=="mac")
   nmap <D-j> <M-j>
   nmap <D-k> <M-k>
@@ -429,14 +425,13 @@ endif
 " ---------------------------------------
 " folding
 " ---------------------------------------
-
 nnoremap zO zCzO
 nnoremap ,z zMzv
 
 " ---------------------------------------
 " Edit
 " ---------------------------------------
-" nmap <leader>fe :edit <c-r>=expand("%:p:h")<cr>/    " Open file in the current buffer's path
+" nmap <leader>fe :edit <c-r>=expand("%:p:h")<cr>/
 nmap <leader>pp :setlocal paste!<cr>    " Toggle paste mode on and off
 map <leader>= <Esc>:%!python -m json.tool<cr>         " format json
 au InsertLeave * set nopaste            " Disbale paste mode when leaving insert mode
