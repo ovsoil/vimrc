@@ -34,15 +34,22 @@ still being imaturing...
 3. Open vim and it will continue the installation by itself. Wait for it to finish... and done! You now have your new shiny powerful vim :)
 
 
+## screenshot:
 ## Features
+    
+a powerful vim config file, some of the keymap refer to spacemacs
 
-* screenshot:
+1.  Include the Hot Plugin
 * vim-plug: easy to install plugins and runtime files
-* Syntastic: external syntax checkers and displays any resulting errors
-* NERDTree: explore your file system and to open files and directories
-* Vim-airline: provides statuslines and prompts
-* Return to last edit position when opening files
-* Compile and execute
+* syntastic: external syntax checkers and displays any resulting errors
+* nerdtree: explore your file system and to open files and directories
+* vim-airline: provides statuslines and prompts
+
+2. Little but *usefull* features
+* toggle help window by one key(default <F1>);
+* nerdtree keymap similar to neotree in emacs;
+* easy way to *search/replace/highlight/grep* current word & selected text
+* return to last edit position when opening files
 * ...
 
 
