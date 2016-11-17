@@ -101,8 +101,8 @@ Plug 'scrooloose/syntastic'             " syntastic: syntax check
 Plug 'mattn/emmet-vim'                  " Zen coding
 " Plug 'motemen/git-vim'                  " Git integration
 Plug 'tpope/vim-fugitive'
-" Plug 'mhinz/vim-signify'                " Git/mercurial/others diff icons on the side of the file lines
-Plug 'vim-gitgutter'
+Plug 'mhinz/vim-signify'                " Git/mercurial/others diff icons on the side of the file lines
+" Plug 'vim-gitgutter'
 
 " commenter
 Plug 'tpope/vim-commentary'             " comment
@@ -339,7 +339,7 @@ highlight SpellLocal term=underline cterm=underline
 "au BufWinLeave *.* silent mkview
 "au BufWinLeave *.* silent! loadview
 set foldenable                  " enable folding
-set foldcolumn=2                " add a fold column
+" set foldcolumn=2                " add a fold column
 set foldmethod=syntax           " default
 set foldlevel=20                " start out with everything folded
 
@@ -540,7 +540,6 @@ if IsLoad('nerdtree')
     silent !curl -fLo ~/.vim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
   endif
   nmap <silent><F2> :NERDTreeToggle<cr><cr>
-  nmap <leader>ft :NERDTreeToggle<cr><cr>
   let g:NERDTree_title="NERDTree"
   let NERDTreeShowBookmarks=1         "一直显示书签
   let NERDTreeChDirMode=2             "打开书签时，自动将Vim的pwd设为打开的目录
@@ -575,15 +574,21 @@ if IsLoad('ctrlp')
   nmap <silent> <expr> <Leader>ff (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":CtrlP\<cr>"
   nmap <leader>fr :CtrlPMRU<cr>
   nmap <leader>fb :CtrlPBuffer<cr>
+  nmap <leader>bb :CtrlPBuffer<cr>
+  nmap <leader>ft :CtrlPTag<cr>
   nmap <leader>fe :CtrlP <c-r>=expand("%:p:h")<cr><cr>
   " tags (symbols) in current file finder mapping
   nmap ,g :CtrlPBufTag<cr>
+  nmap <leader>st :CtrlPBufTag<cr>
   " tags (symbols) in all files finder mapping
   nmap ,G :CtrlPBufTagAll<cr>
+  nmap <leader>sT :CtrlPBufTagAll<cr>
   " general code finder in all files mapping
   nmap ,f :CtrlPLine<cr>
+  nmap <leader>sl :CtrlPLine<cr>
   " commands finder mapping
   nmap ,c :CtrlPCmdPalette<cr>
+  nmap <leader>sc :CtrlPCmdPalette<cr>
   " to be able to call CtrlP with default search text
   function! CtrlPWithSearchText(search_text, ctrlp_command_end)
       execute ':CtrlP' . a:ctrlp_command_end
@@ -601,7 +606,7 @@ if IsLoad('ctrlp')
   " ignore these files and folders on file finder
   let g:ctrlp_custom_ignore = {
     \ 'dir':  '\v[\/](\.git|\.hg|\.svn|node_modules)$',
-    \ 'file': '\.(o|swp|pyc|pyo|wav|mp3|ogg|blend)$\|\.(log|jpg|png|jpeg)$|__init__\.py',
+    \ 'file': '\.(o|swp|beam|pyc|pyo|wav|mp3|ogg|blend)$\|\.(log|jpg|png|jpeg)$|__init__\.py',
     \ }
 
 endif
