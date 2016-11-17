@@ -101,9 +101,9 @@ Plug 'scrooloose/syntastic'             " syntastic: syntax check
 Plug 'mattn/emmet-vim'                  " Zen coding
 " Plug 'motemen/git-vim'                  " Git integration
 Plug 'tpope/vim-fugitive'
-Plug 'mhinz/vim-signify'                " Git/mercurial/others diff icons on the side of the file lines
-" Plug 'vim-gitgutter'
-
+" Plug 'mhinz/vim-signify'                " Git/mercurial/others diff icons on the side of the file lines
+Plug 'airblade/vim-gitgutter'
+"
 " commenter
 Plug 'tpope/vim-commentary'             " comment
 Plug 'scrooloose/nerdcommenter'         " Code commenter
@@ -311,7 +311,7 @@ au BufNewFile,BufRead *.spacemacs setf lisp
 " FileType Specific Changes
 if has ( "autocmd" )
   autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
+  " autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
   autocmd FileType json,html,xhtml,xml,css,htmldjango setlocal ts=2 sts=2 sw=2 expandtab
   " autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
 endif

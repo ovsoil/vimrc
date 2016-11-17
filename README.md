@@ -28,8 +28,12 @@ still being imaturing...
     * backup your old .vimrc file and .vim folder, create an empty .vim folder
 
 2. Clone this repo, and create a soft symbolic links `~/.vimrc` target the vimrc file which you want to use
+
+    eg:
+
     ```bash
-    ln -s [real_path_of_the_repo]/vimrc-dev ~/.vimrc
+    git clone https://github.com/ovsoil/vimrc.git ~/repo/vimrc
+    ln -s repo/vimrc/vimrc-dev ~/.vimrc
     ```
 3. Open vim and it will continue the installation by itself. Wait for it to finish... and done! You now have your new shiny powerful vim :)
 
@@ -39,13 +43,16 @@ still being imaturing...
     
 a powerful vim config file, some of the keymap refer to spacemacs
 
-1.  Include the Hot Plugin
+### 1.  Include the Hot Plugins
+
 * vim-plug: easy to install plugins and runtime files
 * syntastic: external syntax checkers and displays any resulting errors
 * nerdtree: explore your file system and to open files and directories
 * vim-airline: provides statuslines and prompts
+* ...
 
-2. Little but *usefull* features
+### 2. Little but *usefull* features
+
 * toggle help window by one key(default <F1>);
 * nerdtree keymap similar to neotree in emacs;
 * easy way to *search/replace/highlight/grep* current word & selected text
