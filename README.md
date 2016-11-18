@@ -53,12 +53,56 @@ a powerful vim config file, some of the keymap refer to spacemacs
 
 ### 2. Little but *usefull* features
 
-* toggle help window by one key(default <F1>);
-* nerdtree keymap similar to neotree in emacs;
 * easy way to *search/replace/highlight/grep* current word & selected text
+* good completion
+* toggle help window by one key
+* nerdtree keymap similar to neotree in emacs;
 * return to last edit position when opening files
-* ...
+* convenient to inset date/time/calculate
 
+### keymap
+
+`<leader>` is `<Space>`, similar to spacemacs
+
+    # Help
+    <leader>hh      toggle help window (or <F1>)
+    ... more comming
+
+    # Windows navigate
+    <leader>wj      navigate to down window
+    <leader>wk      navigate to up window
+    <leader>wh      navigate to left window
+    <leader>wl      navigate to right window
+
+    # File open
+    <leader>ff      find file in pwd of vim
+    <leader>fb      find in opened buffers
+    <leader>fr      find in most recently files
+    <leader>fe      find in the dir of current buffers
+    <leader>ft      find tag in pwd of vim
+
+    # Buffer navigate
+    <leader>bb      find in opened buffers
+    <leader>bn      next buffer
+    <leader>bp      previous buffer
+    <leader>bd      close the current buffer
+    <leader>ba      close all buffers
+    <leader>b<tab>  switch between most recently buffer
+    <leader>bN      jump to buffer N, for single digit
+    Ngb             jump to buffer N, 
+
+    # Search word/tag
+
+    # Edit
+    <leader>pp      toggle paste mode
+    <leader>=       format json file
+    <leader>dm      delete the Windows ^M in file
+    <leader>db      delete blank space in linend
+
+    # Insert Mode
+    <c-d><c-d>      insert date
+    <c-t><c-t>      insert time
+    <c-c><c-c>      insert calculate
 
 ## Tips
 

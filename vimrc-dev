@@ -381,6 +381,7 @@ ca w!! w !sudo tee "%"
 
 nmap <silent><F1> :call ToggleHelp()<cr>
 nmap <leader>th :call ToggleHelp()<cr>
+nmap <leader>hh :call ToggleHelp()<cr>
 
 " ---------------------------------------
 " files navigation
@@ -398,9 +399,9 @@ nmap <Leader>b7 :7b<CR>
 nmap <Leader>b8 :8b<CR>
 nmap <Leader>b9 :9b<CR>
 nmap <Leader>b0 :10b<CR>
-nmap <leader>bd :bdelete<cr>           " Close the current buffer
-nmap <leader>ba :1,1000 bd!<cr>        " Close all the buffers
-nmap <leader>b<tab> :b#<cr>            " switch between most recently buffer
+nmap <leader>bd :bdelete<cr>          " Close the current buffer
+nmap <leader>ba :1,1000 bd!<cr>       " Close all the buffers
+nmap <leader>b<tab> :b#<cr>           " switch between most recently buffer
 " Ngb to jump to buffer number N
 let c = 1
 while c <= 99
@@ -410,7 +411,7 @@ endwhile
 nmap <leader>cd :cd %:p:h<cr>:pwd<cr>       " Switch CWD to the directory of the open buffer
 " Specify the behavior when switching between buffers
 try
-  set switchbuf=useopen,usetab  "newtab
+  set switchbuf=useopen,usetab        " newtab
   set stal=2
 catch
 endtry
@@ -933,4 +934,3 @@ nmap <C-@>e :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>
 nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<cr>$<cr>:copen<cr>
 nmap <C-@>d :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>
-
