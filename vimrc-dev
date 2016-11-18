@@ -140,7 +140,7 @@ Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'fisadev/vim-isort'              " Automatically sort python imports
 Plug 'tmhedberg/SimpylFold'
 if has('python')
-    Plug 'pignacio/vim-yapf-format' " YAPF formatter for Python
+  Plug 'pignacio/vim-yapf-format'     " YAPF formatter for Python
 endif
 
 " javascript
@@ -386,10 +386,27 @@ nmap <leader>th :call ToggleHelp()<cr>
 " files navigation
 " ---------------------------------------
 " Buffer
-nmap <leader>bd :bdelete<cr>                " Close the current buffer
-nmap <leader>ba :1,1000 bd!<cr>             " Close all the buffers
 nmap <leader>bn :bnext<cr>
 nmap <leader>bp :bprevious<cr>
+nmap <Leader>b1 :1b<CR>
+nmap <Leader>b2 :2b<CR>
+nmap <Leader>b3 :3b<CR>
+nmap <Leader>b4 :4b<CR>
+nmap <Leader>b5 :5b<CR>
+nmap <Leader>b6 :6b<CR>
+nmap <Leader>b7 :7b<CR>
+nmap <Leader>b8 :8b<CR>
+nmap <Leader>b9 :9b<CR>
+nmap <Leader>b0 :10b<CR>
+nmap <leader>bd :bdelete<cr>           " Close the current buffer
+nmap <leader>ba :1,1000 bd!<cr>        " Close all the buffers
+nmap <leader>b<tab> :b#<cr>            " switch between most recently buffer
+" Ngb to jump to buffer number N
+let c = 1
+while c <= 99
+  execute "nnoremap " . c . "gb :" . c . "b\<CR>"
+  let c += 1
+endwhile
 nmap <leader>cd :cd %:p:h<cr>:pwd<cr>       " Switch CWD to the directory of the open buffer
 " Specify the behavior when switching between buffers
 try
@@ -398,7 +415,8 @@ try
 catch
 endtry
 
-" Tab " I rarely use tab
+" Tab
+" No Tab, I rarely use tab
 
 " ---------------------------------------
 " windows Moving
@@ -411,10 +429,10 @@ map <leader>wj <C-W>j
 map <leader>wk <C-W>k
 map <leader>wh <C-W>h
 map <leader>wl <C-W>l
-nmap <leader>1 :resize -3<cr>
-nmap <leader>2 :resize +3<cr>
-nmap <leader>3 :vertical resize -3<cr>
-nmap <leader>4 :vertical resize +3<cr>
+" nmap <leader>1 :resize -3<cr>
+" nmap <leader>2 :resize +3<cr>
+" nmap <leader>3 :vertical resize -3<cr>
+" nmap <leader>4 :vertical resize +3<cr>
 if (g:system=="mac")
   nmap <D-j> <M-j>
   nmap <D-k> <M-k>
@@ -431,8 +449,8 @@ nnoremap ,z zMzv
 " ---------------------------------------
 " Edit
 " ---------------------------------------
-nmap <leader>pp :setlocal paste!<cr>    " Toggle paste mode on and off
-map <leader>= <Esc>:%!python -m json.tool<cr>         " format json
+nmap <leader>pp :setlocal paste!<cr>                " Toggle paste mode on and off
+map <leader>= <Esc>:%!python -m json.tool<cr>       " format json
 au InsertLeave * set nopaste            " Disbale paste mode when leaving insert mode
 " set clipboard=unnamed
 
@@ -447,7 +465,7 @@ nmap <leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm   " Remove the Windows ^M
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
-" 插入模式下输入一些常用文本
+" insert some usefull text
 imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<cr>
 imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<cr>
 imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<cr>
@@ -541,8 +559,8 @@ if IsLoad('nerdtree')
   endif
   nmap <silent><F2> :NERDTreeToggle<cr><cr>
   let g:NERDTree_title="NERDTree"
-  let NERDTreeShowBookmarks=1         "一直显示书签
-  let NERDTreeChDirMode=2             "打开书签时，自动将Vim的pwd设为打开的目录
+  let NERDTreeShowBookmarks=1         "allways show bookmarks
+  let NERDTreeChDirMode=2             "auto set pwd when open bookmarks
   let NERDTreeIgnore=['node_modules', 'bower_components', '\.pyc$', '\.pyo$', '\~$', '\.beam$']     "ignore files in NERDTree
   " open a NERDTree automatically when vim starts up if no files were specified
   autocmd StdinReadPre * let s:std_in=1
