@@ -56,53 +56,64 @@ call plug#begin('~/.vim/plugged')
 
 " Plugins from github repos:
 " Base
+" Plug 'liuchengxu/vim-better-default'
 Plug 'arielrossanigo/dir-configs-override.vim'  " Override configs by directory 
+Plug 'tomtom/tlib_vim'                          " This library provides some utility functions
+Plug 'auto_mkdir'                               " auto_mkdir
 Plug 'scrooloose/nerdtree'                      " Better file browser
-Plug 'ctrlpvim/ctrlp.vim'               " Code and files fuzzy finder
-Plug 'fisadev/vim-ctrlp-cmdpalette'     " Extension to ctrlp, for fuzzy command finder
-" Plug 'kien/tabman.vim'                  " Tab list panel
-Plug 'Valloric/ListToggle'              " ListToggle: toggle quickfix and location-list
-Plug 'IndexedSearch'                    " Search results counter
-Plug 'auto_mkdir'                       " auto_mkdir
-Plug 'matchit.zip'                      " XML/HTML tags navigation
-Plug 'Wombat'                           " Gvim colorscheme
-Plug 't9md/vim-choosewin'               " Window chooser
-Plug 'fisadev/dragvisuals.vim'          " Drag visual blocks arround
+Plug 'Valloric/ListToggle'                      " ListToggle: toggle quickfix and location-list
+Plug 'easymotion/vim-easymotion'
+Plug 'IndexedSearch'                            " Search results counter
+" Plug 't9md/vim-choosewin'                       " Window chooser
+" Plug 'fisadev/dragvisuals.vim'                  " Drag visual blocks arround
+Plug 'ctrlpvim/ctrlp.vim'                       " Code and files fuzzy finder
+Plug 'fisadev/vim-ctrlp-cmdpalette'             " Extension to ctrlp, for fuzzy command finder
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 if executable('ack')
-  " Plug 'mileszs/ack.vim'              " Ack code search (requires ack)
+  " Plug 'mileszs/ack.vim'                      " Ack code search (requires ack)
 endif
 
 " Enhancement
+Plug 'Shougo/denite.nvim'
 Plug 'rosenfeld/conque-term'            " Consoles as buffers
 Plug 'fisadev/FixedTaskList.vim'        " Pending tasks list
 Plug 'terryma/vim-multiple-cursors'     " Sublime Text style multiple selections for Vim
 Plug 'tpope/vim-surround'               " surround
 Plug 'Raimondi/delimitMate'             " auto-completion for quotes, parens, brackets
-" Plug 'kien/rainbow_parentheses.vim'     " Rainbow parentheses
 Plug 'michaeljsmith/vim-indent-object'  " Indent text object
 Plug 'jeetsukumaran/vim-indentwise'     " Indentation based movements
-" Plug 'ConradIrwin/vim-bracketed-paste'  " automatic set paste
-Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-repeat'
+Plug 'godlygeek/tabular'                " aligning text
+
+" Write
+Plug 'junegunn/limelight.vim'
+Plug 'junegunn/goyo.vim'
 
 " User Interface
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-" Plug 'edkolev/tmuxline.vim'
-" Plug 'edkolev/promptline.vim'
 Plug 'flazz/vim-colorschemes'           " all colorschemes of vim.org
 Plug 'tomasr/molokai'
 Plug 'altercation/vim-colors-solarized'
 Plug 'fisadev/fisa-vim-colorscheme'     " Terminal Vim with 256 colors colorscheme
+Plug 'morhetz/gruvbox'
+" Plug 'liuchengxu/space-vim-dark'
+" Plug 'Wombat'                           " Gvim colorscheme
 
 " Develop
+let s:vim8 = has('patch-8.0.0039') && exists('*job_start')      " if vim8 or neovim
+if s:vim8
+    Plug 'w0rp/ale'
+else
+    Plug 'scrooloose/syntastic'
+endif
+Plug 'scrooloose/syntastic'
 Plug 'majutsushi/tagbar'                " Class/module browser
-Plug 'scrooloose/syntastic'             " syntastic: syntax check
-Plug 'mattn/emmet-vim'                  " Zen coding
-" Plug 'motemen/git-vim'                  " Git integration
 Plug 'tpope/vim-fugitive'
-" Plug 'mhinz/vim-signify'                " Git/mercurial/others diff icons on the side of the file lines
-Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'           " Git/mercurial/others diff icons on the side of the file lines
+Plug 'matchit.zip'                      " XML/HTML tags navigation
+Plug 'mattn/emmet-vim'                  " Zen coding
 "
 " commenter
 Plug 'tpope/vim-commentary'             " comment
@@ -117,7 +128,6 @@ Plug 'Shougo/neocomplcache.vim'         " Better autocompletion
 " snippets manager (SnipMate), dependencies, and snippets repo
 " Plug 'drmingdrmer/xptemplate'         " xptemplate
 " Plug 'sirver/ultisnips'               " ultisnips
-Plug 'tomtom/tlib_vim'
 Plug 'honza/vim-snippets'
 Plug 'garbas/vim-snipmate'
 
@@ -125,8 +135,9 @@ Plug 'garbas/vim-snipmate'
 Plug 'elzr/vim-json'
 
 " markdown
-Plug 'godlygeek/tabular'                " aligning text
 Plug 'plasticboy/vim-markdown'
+Plug 'mzlogin/vim-markdown-toc'
+Plug 'JamshedVesuna/vim-markdown-preview'
 
 " c/c++
 " it's insert mode mappings use <leader>
@@ -274,7 +285,8 @@ set cinoptions=g0
 " use 256 colors when possible
 if (&term =~? 'mlterm\|xterm\|xterm-256\|screen-256\|gnome-terminal') || has('nvim')
   let &t_Co = 256
-  colorscheme molokai
+  colorscheme gruvbox
+  "colorscheme molokai
 else
   colorscheme delek
 endif
@@ -650,27 +662,26 @@ endif
 if IsLoad('vim-airline')
   let g:airline_powerline_fonts = 0
   let g:airline_theme = 'bubblegum'
-  let g:airline#extensions#whitespace#enabled = 0
+  let g:airline#extensions#default#layout = [
+              \ [ 'a', 'b', 'c' ],
+              \ [ 'x', 'y', 'z', 'error', 'warning' ]
+              \ ]
   let g:airline#extensions#tabline#enabled = 1
   let g:airline#extensions#tabline#left_sep = ' '
   let g:airline#extensions#tabline#left_alt_sep = '|'
-  let g:airline#extensions#bufferline#enabled = 0
   let g:airline#extensions#tabline#buffer_nr_show = 1
   let g:airline#extensions#tabline#buffer_nr_format = '%s:'
   let g:airline#extensions#tabline#fnamecollapse = 1          "collopsing parent dir
   let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
-  " to use fancy symbols for airline, uncomment the following lines and use a
-  " patched font (more info on the README.rst)
+  let g:airline#extensions#bufferline#enabled = 0
+  let g:airline#extensions#whitespace#enabled = 0
   "if !exists('g:airline_symbols')
   "   let g:airline_symbols = {}
   "endif
-  "let g:airline_left_sep = '⮀'
-  "let g:airline_left_alt_sep = '⮁'
-  "let g:airline_right_sep = '⮂'
-  "let g:airline_right_alt_sep = '⮃'
-  "let g:airline_symbols.branch = '⭠'
-  "let g:airline_symbols.readonly = '⭤'
-  "let g:airline_symbols.linenr = '⭡'
+  " if !exists('g:airline_powerline_fonts')
+  "     let g:airline_left_sep='>'
+  "     let g:airline_right_sep='<'
+  " endif
 endif
 
 if  IsLoad('promptline')
@@ -736,13 +747,13 @@ if IsLoad('syntastic')
   " erlang support
   " let g:syntastic_erlc_include_path = 'ebin'
 
-  " custom icons (enable them if you use a patched font, and enable the previous 
+  " custom icons (enable them if you use a patched font, and enable the previous
   " setting)
   "let g:syntastic_error_symbol = '✗'
   "let g:syntastic_warning_symbol = '⚠'
   "let g:syntastic_style_error_symbol = '✗'
   "let g:syntastic_style_warning_symbol = '⚠'
- 
+
   " whether to show balloons
   let g:syntastic_enable_balloons = 1
 endif
