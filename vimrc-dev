@@ -649,6 +649,37 @@ if IsLoad('ack')
   nmap ,wr :Ack <cword><cr>
 endif
 
+if IsLoad('vim-startify')
+    let g:startify_list_order = [
+                \ ['   Recent Files:'],
+                \ 'files',
+                \ ['   Project:'],
+                \ 'dir',
+                \ ['   Sessions:'],
+                \ 'sessions',
+                \ ['   Bookmarks:'],
+                \ 'bookmarks',
+                \ ['   Commands:'],
+                \ 'commands',
+                \ ]
+    nnoremap <silent><leader>bh :Startify<CR>
+endif
+
+if IsLoad('vim-easymotion')
+  " <leader><leader>w : word, 在单词间移动，往前
+  " <leader><leader>b : back, 在单词间移动，往后
+  " <leader><leader>s : search, 字符搜索跳转，双向
+  " <leader><leader>f : forward, 向前搜索字符
+  " <leader><leader>j
+  " <leader><leader>k
+  " Jump to line
+  map <leader>jl <Plug>(easymotion-bd-jk)
+  nmap <leader>jl <Plug>(easymotion-overwin-line)
+  " Jump to word
+  map  <leader>jw <Plug>(easymotion-bd-w)
+  nmap <leader>jw <Plug>(easymotion-overwin-w)
+endif
+
 if IsLoad('molokai')
   let g:molokai_original=1
   let g:rehash256=1
