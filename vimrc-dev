@@ -56,20 +56,17 @@ call plug#begin('~/.vim/plugged')
 
 " Plugins from github repos:
 " Base
-" Plug 'liuchengxu/vim-better-default'
-Plug 'arielrossanigo/dir-configs-override.vim'  " Override configs by directory 
 Plug 'tomtom/tlib_vim'                          " This library provides some utility functions
 Plug 'auto_mkdir'                               " auto_mkdir
 Plug 'scrooloose/nerdtree'                      " Better file browser
 Plug 'Valloric/ListToggle'                      " ListToggle: toggle quickfix and location-list
-Plug 'easymotion/vim-easymotion'
-Plug 'IndexedSearch'                            " Search results counter
-" Plug 't9md/vim-choosewin'                       " Window chooser
-" Plug 'fisadev/dragvisuals.vim'                  " Drag visual blocks arround
 Plug 'ctrlpvim/ctrlp.vim'                       " Code and files fuzzy finder
 Plug 'fisadev/vim-ctrlp-cmdpalette'             " Extension to ctrlp, for fuzzy command finder
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'IndexedSearch'                            " Search results counter
+Plug 'mhinz/vim-startify'
 if executable('ack')
   " Plug 'mileszs/ack.vim'                      " Ack code search (requires ack)
 endif
@@ -81,8 +78,6 @@ Plug 'fisadev/FixedTaskList.vim'        " Pending tasks list
 Plug 'terryma/vim-multiple-cursors'     " Sublime Text style multiple selections for Vim
 Plug 'tpope/vim-surround'               " surround
 Plug 'Raimondi/delimitMate'             " auto-completion for quotes, parens, brackets
-Plug 'michaeljsmith/vim-indent-object'  " Indent text object
-Plug 'jeetsukumaran/vim-indentwise'     " Indentation based movements
 Plug 'tpope/vim-repeat'
 Plug 'godlygeek/tabular'                " aligning text
 
@@ -93,12 +88,12 @@ Plug 'junegunn/goyo.vim'
 " User Interface
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'flazz/vim-colorschemes'           " all colorschemes of vim.org
+Plug 'flazz/vim-colorschemes'
 Plug 'tomasr/molokai'
 Plug 'altercation/vim-colors-solarized'
-Plug 'fisadev/fisa-vim-colorscheme'     " Terminal Vim with 256 colors colorscheme
-Plug 'morhetz/gruvbox'
+Plug 'fisadev/fisa-vim-colorscheme'
 " Plug 'liuchengxu/space-vim-dark'
+Plug 'morhetz/gruvbox'
 " Plug 'Wombat'                           " Gvim colorscheme
 
 " Develop
@@ -108,13 +103,13 @@ if s:vim8
 else
     Plug 'scrooloose/syntastic'
 endif
-Plug 'scrooloose/syntastic'
+Plug 'michaeljsmith/vim-indent-object'  " Indent text object
 Plug 'majutsushi/tagbar'                " Class/module browser
 Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'           " Git/mercurial/others diff icons on the side of the file lines
+Plug 'airblade/vim-gitgutter'           " Git/mercurial/.. diff icons
 Plug 'matchit.zip'                      " XML/HTML tags navigation
 Plug 'mattn/emmet-vim'                  " Zen coding
-"
+
 " commenter
 Plug 'tpope/vim-commentary'             " comment
 Plug 'scrooloose/nerdcommenter'         " Code commenter
@@ -144,14 +139,12 @@ Plug 'JamshedVesuna/vim-markdown-preview'
 " Plug 'a.vim'                          " navigate btween head and source file
 
 " python
-" python mode (indentation, doc, refactor, lints, code checking, motion and
-" operators, highlighting, run and ipdb breakpoints)
 Plug 'klen/python-mode'
 Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'fisadev/vim-isort'              " Automatically sort python imports
+Plug 'fisadev/vim-isort'                " Automatically sort python imports
 Plug 'tmhedberg/SimpylFold'
 if has('python')
-  Plug 'pignacio/vim-yapf-format'     " YAPF formatter for Python
+  Plug 'pignacio/vim-yapf-format'       " YAPF formatter for Python
 endif
 
 " javascript
@@ -241,12 +234,11 @@ set viminfo^=%                  " Remember info about open buffers on close
 " ============================================================================
 set nu                          " show line numbers
 set ruler                       " Always show current position
-set scrolloff=7                 " Set 7 lines to the cursor
+set scrolloff=7                 " when scrolling, 7 lines away from screen border
 set hid                         " A buffer becomes hidden when it is abandoned
 " status line
-set laststatus=2                " always show status line - use 2 lines
+set laststatus=2
 set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
-set scrolloff=7                 " when scrolling, 7 lines away from screen border
 " autocompletion of files and commands behaves like shell
 " (complete only the common part, list the options that match)
 set wildmode=list:longest
@@ -290,6 +282,7 @@ if (&term =~? 'mlterm\|xterm\|xterm-256\|screen-256\|gnome-terminal') || has('nv
 else
   colorscheme delek
 endif
+set background=dark
 
 " Set extra options when running in GUI mode
 if has('gui_running')
@@ -442,7 +435,7 @@ map <leader>wj <C-W>j
 map <leader>wk <C-W>k
 map <leader>wh <C-W>h
 map <leader>wl <C-W>l
-" nmap <leader>1 :resize -3<cr>
+" nmap <leader>1 :re                " always show status line - use 2 linessize -3<cr>
 " nmap <leader>2 :resize +3<cr>
 " nmap <leader>3 :vertical resize -3<cr>
 " nmap <leader>4 :vertical resize +3<cr>
@@ -576,13 +569,21 @@ if IsLoad('nerdtree')
   let NERDTreeChDirMode=2             "auto set pwd when open bookmarks
   let NERDTreeIgnore=['node_modules', 'bower_components', '\.pyc$', '\.pyo$', '\~$', '\.beam$']     "ignore files in NERDTree
   " open a NERDTree automatically when vim starts up if no files were specified
-  autocmd StdinReadPre * let s:std_in=1
-  autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-  " close vim if the only window left open is a NERDTree
-  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+  " autocmd StdinReadPre * let s:std_in=1
+  " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
   " open NERDTree automatically when vim starts up on opening a directory
   autocmd StdinReadPre * let s:std_in=1
   autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+  " close vim if the only window left open is a NERDTree
+  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+  if !nerdtree#runningWindows()
+      let g:NERDTreeDirArrowExpandable = '▸'
+      let g:NERDTreeDirArrowCollapsible = '▾'
+  else
+      let g:NERDTreeDirArrowExpandable = '+'
+      let g:NERDTreeDirArrowCollapsible = '~'
+endif
 endif
 
 if IsLoad('tagbar')
@@ -653,12 +654,6 @@ if IsLoad('molokai')
   let g:rehash256=1
 endif
 
-if IsLoad('tabman')
-  " mappings to toggle display, and to focus on it
-  let g:tabman_toggle = '<leader>mt'
-  let g:tabman_focus  = '<leader>mf'
-endif
-
 if IsLoad('vim-airline')
   let g:airline_powerline_fonts = 0
   let g:airline_theme = 'bubblegum'
@@ -682,38 +677,6 @@ if IsLoad('vim-airline')
   "     let g:airline_left_sep='>'
   "     let g:airline_right_sep='<'
   " endif
-endif
-
-if  IsLoad('promptline')
-  let g:promptline_preset = 'full'
-  let g:promptline_theme = 'airline'
-endif
-
-if IsLoad('rainbow_parentheses')
-  let g:rbpt_colorpairs = [
-        \ ['brown',       'RoyalBlue3'],
-        \ ['Darkblue',    'SeaGreen3'],
-        \ ['darkgray',    'DarkOrchid3'],
-        \ ['darkgreen',   'firebrick3'],
-        \ ['darkcyan',    'RoyalBlue3'],
-        \ ['darkred',     'SeaGreen3'],
-        \ ['darkmagenta', 'DarkOrchid3'],
-        \ ['brown',       'firebrick3'],
-        \ ['gray',        'RoyalBlue3'],
-        \ ['black',       'SeaGreen3'],
-        \ ['darkmagenta', 'DarkOrchid3'],
-        \ ['Darkblue',    'firebrick3'],
-        \ ['darkgreen',   'RoyalBlue3'],
-        \ ['darkcyan',    'SeaGreen3'],
-        \ ['darkred',     'DarkOrchid3'],
-        \ ['red',         'firebrick3'],
-        \ ]
-  let g:rbpt_max = 16
-  let g:rbpt_loadcmd_toggle = 0
-  au VimEnter * RainbowParenthesesToggle
-  au Syntax * RainbowParenthesesLoadRound
-  au Syntax * RainbowParenthesesLoadSquare
-  au Syntax * RainbowParenthesesLoadBraces
 endif
 
 if IsLoad('delimitmate')
@@ -806,8 +769,7 @@ endif
 
 if IsLoad('neocomplcache')
   " most of them not documented because I'm not sure how they work
-  " (docs aren't good, had to do a lot of trial and error to make 
-  " it play nice)
+  " (docs aren't good, had to do a lot of trial and error to make it play nice)
   let g:neocomplcache_enable_at_startup = 1
   let g:neocomplcache_enable_ignore_case = 1
   let g:neocomplcache_enable_smart_case = 1
@@ -825,16 +787,6 @@ if IsLoad('neocomplcache')
   let g:neocomplcache_same_filetype_lists._ = '_'
 endif
 
-if IsLoad('dragvisuals')
-  " mappings to move blocks in 4 directions
-  vmap <expr> <S-M-LEFT> DVB_Drag('left')
-  vmap <expr> <S-M-RIGHT> DVB_Drag('right')
-  vmap <expr> <S-M-DOWN> DVB_Drag('down')
-  vmap <expr> <S-M-UP> DVB_Drag('up')
-  " mapping to duplicate block
-  vmap <expr> D DVB_Duplicate()
-endif
-
 if IsLoad('signify')
   " this first setting decides in which order try to guess your current vcs
   " UPDATE it to reflect your preferences, it will speed up opening files
@@ -848,11 +800,8 @@ if IsLoad('signify')
   highlight SignifySignChange cterm=bold ctermbg=237  ctermfg=227
 endif
 
-if IsLoad('vim-choosewin')
-  " mapping
-  nmap  -  <Plug>(choosewin)
-  " show big letters
-  let g:choosewin_overlay_enable = 1
+if IsLoad('vim-json')
+  let g:vim_json_syntax_conceal = 0
 endif
 
 if IsLoad('clang_complete')
@@ -894,13 +843,9 @@ endif
 " => ctags
 " ===============================================================================
 " C++ tags: "!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q ."
-" :ts tagselect, :tp 为上一个tag标记文件，:tn 为下一个tag标记文件。
-" g+]直接显示ctag结果列表
-" 让CTRL-]只有一个选择时自动跳转，多个选择时，出现选择列表
 " map <C-]> :tselect <C-R>=expand("<cword>")<cr><cr>
 " map <C-]> g<C-]>
-
-"添加特定的（已经生成tags）的函数库的tags
+" 添加特定的（已经生成tags）的函数库的tags
 autocmd FileType cpp set tags+=~/.vim/cpp_src/tags
 
 " ===============================================================================
@@ -908,15 +853,12 @@ autocmd FileType cpp set tags+=~/.vim/cpp_src/tags
 " ===============================================================================
 if has("cscope")
   set csprg=cscope
-  " Use both cscope and ctag
-  set cscopetag
-  " Show msg when cscope db added
-  set cscopeverbose
-  " Use cscope for definition search first
-  set cscopetagorder=0
+  set cscopetag                       " Use both cscope and ctag
+  set cscopeverbose                   " Show msg when cscope db added
+  set cscopetagorder=0                " Use cscope for definition search first
 endif
 
-"自动加载cscope.out
+" auto load cscope.out
 " function! LoadCscope()
 "     let db = findfile("cscope.out", ".;")    "从当前目录往上找，直到找到 cscope.out 这个命令能到找到cscope.out的路径。
 "     if (!empty(db))
