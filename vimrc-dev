@@ -541,8 +541,12 @@ vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
 
 " grep the word at cursor in current dir
-nnoremap <leader>gr :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
-vnoremap <leader>gr y:grep! '<C-R>"' .<cr>:cw<cr>
+nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
+vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
+
+nnoremap <leader>sk :Maps<CR>
+command -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
+nnoremap <leader>ss :Search<Space>
 
 " ============================================================================
 " => Plugins settings and mappings

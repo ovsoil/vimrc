@@ -75,11 +75,11 @@ a powerful vim config file, some of the keymap refer to spacemacs
     <leader>wl      navigate to right window
 
     # File open
-    <leader>ff      find file in pwd of vim
+    <leader>ff      find file at pwd dir
     <leader>fb      find in opened buffers
     <leader>fr      find in most recently files
     <leader>fe      find in the dir of current buffers
-    <leader>ft      find tag in pwd of vim
+    <leader>ft      find tag at pwd dir
 
     # Buffer navigate
     <leader>bb      find in opened buffers
@@ -92,6 +92,17 @@ a powerful vim config file, some of the keymap refer to spacemacs
     Ngb             jump to buffer N, 
 
     # Search word/tag
+    <leader>ss      search string in all files at pwd dir (-i for case-insensitively, -s for case-sensitively)
+    <leader>sw      search word at cursor or selected text in all files at pwd dir
+    <leader>st      search tag in current file
+    <leader>sT      search tag in all buffer
+    <leader>sl      search line
+    <leader>sc      search cmd
+    <leader>sk      search keymap
+
+    # Jump
+    <leader>jl      jump to line
+    <leader>jw      jump to word
 
     # Edit
     <leader>pp      toggle paste mode
