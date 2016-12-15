@@ -389,6 +389,15 @@ nmap <leader>hh :call ToggleHelp()<cr>
 nmap <leader>hk :Maps<CR>
 
 " ---------------------------------------
+" command line map
+" ---------------------------------------
+:cnoremap <C-A> <Home>
+:cnoremap <C-F> <Right>
+:cnoremap <C-B> <Left>
+:cnoremap <Esc>b <S-Left>
+:cnoremap <Esc>f <S-Right>
+
+" ---------------------------------------
 " files navigation
 " ---------------------------------------
 " Buffer
