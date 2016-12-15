@@ -385,8 +385,8 @@ endfunction
 ca w!! w !sudo tee "%"
 
 nmap <silent><F1> :call ToggleHelp()<cr>
-nmap <leader>th :call ToggleHelp()<cr>
 nmap <leader>hh :call ToggleHelp()<cr>
+nmap <leader>hk :Maps<CR>
 
 " ---------------------------------------
 " files navigation
@@ -537,14 +537,14 @@ nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
 vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N
 
 " replace selected text
-vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
-vnoremap <C-h> ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
+vnoremap <C-r> ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
+vnoremap <leader>sr ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
+vnoremap <leader>sR ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
 
 " grep the word at cursor in current dir
 nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
 vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
 
-nnoremap <leader>sk :Maps<CR>
 command -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
 nnoremap <leader>ss :Search<Space>
 
@@ -568,6 +568,7 @@ if IsLoad('nerdtree')
     silent !curl -fLo ~/.vim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
   endif
   nmap <silent><F2> :NERDTreeToggle<cr><cr>
+  nmap <leader>ft :NERDTreeToggle<cr><cr>
   let g:NERDTree_title="NERDTree"
   let NERDTreeShowBookmarks=1         "allways show bookmarks
   let NERDTreeChDirMode=2             "auto set pwd when open bookmarks
@@ -611,7 +612,6 @@ if IsLoad('ctrlp')
   nmap <leader>fr :CtrlPMRU<cr>
   nmap <leader>fb :CtrlPBuffer<cr>
   nmap <leader>bb :CtrlPBuffer<cr>
-  nmap <leader>ft :CtrlPTag<cr>
   nmap <leader>fe :CtrlP <c-r>=expand("%:p:h")<cr><cr>
   " tags (symbols) in current file finder mapping
   nmap ,g :CtrlPBufTag<cr>

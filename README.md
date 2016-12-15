@@ -32,6 +32,7 @@ still being imaturing...
     eg:
 
     ```bash
+    cd
     git clone https://github.com/ovsoil/vimrc.git ~/repo/vimrc
     ln -s repo/vimrc/vimrc-dev ~/.vimrc
     ```
@@ -40,25 +41,25 @@ still being imaturing...
 
 ## screenshot:
 ## Features
-    
+
 a powerful vim config file, some of the keymap refer to spacemacs
 
-### 1.  Include the Hot Plugins
-
-* vim-plug: easy to install plugins and runtime files
-* syntastic: external syntax checkers and displays any resulting errors
-* nerdtree: explore your file system and to open files and directories
-* vim-airline: provides statuslines and prompts
-* ...
-
-### 2. Little but *usefull* features
+### 1. Little but *usefull* features
 
 * easy way to *search/replace/highlight/grep* current word & selected text
-* good completion
+* easy way to motion in file
 * toggle help window by one key
 * nerdtree keymap similar to neotree in emacs;
 * return to last edit position when opening files
 * convenient to inset date/time/calculate
+* good completion
+
+### 2.  Hot Plugins and spacemacs-like Keymap
+
+* `:PlugStatus` to see which plugins included
+* `:Maps` to see keymap list
+* ...
+
 
 ### keymap
 
@@ -66,6 +67,7 @@ a powerful vim config file, some of the keymap refer to spacemacs
 
     # Help
     <leader>hh      toggle help window (or <F1>)
+    <leader>hk      search keymap
     ... more comming
 
     # Windows navigate
@@ -79,7 +81,7 @@ a powerful vim config file, some of the keymap refer to spacemacs
     <leader>fb      find in opened buffers
     <leader>fr      find in most recently files
     <leader>fe      find in the dir of current buffers
-    <leader>ft      find tag at pwd dir
+    <leader>ft      toggle neotree
 
     # Buffer navigate
     <leader>bb      find in opened buffers
@@ -91,14 +93,15 @@ a powerful vim config file, some of the keymap refer to spacemacs
     <leader>bN      jump to buffer N, for single digit
     Ngb             jump to buffer N, 
 
-    # Search word/tag
+    # Search and replace
     <leader>ss      search string in all files at pwd dir (-i for case-insensitively, -s for case-sensitively)
     <leader>sw      search word at cursor or selected text in all files at pwd dir
+    <leader>sr      search and replace seleted text (need confirm)
+    <leader>sR      search and replace seleted text (not confirm)
     <leader>st      search tag in current file
     <leader>sT      search tag in all buffer
     <leader>sl      search line
     <leader>sc      search cmd
-    <leader>sk      search keymap
 
     # Jump
     <leader>jl      jump to line
