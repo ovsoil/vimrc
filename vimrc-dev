@@ -399,7 +399,9 @@ nmap <leader>hk :Maps<CR>
 " ---------------------------------------
 " map for terminal in neovim
 " ---------------------------------------
-:tnoremap <Esc> <C-\><C-n>
+if has('nvim') 
+  :tnoremap <Esc> <C-\><C-n>
+endif
 
 " ---------------------------------------
 " files navigation
@@ -470,16 +472,19 @@ nnoremap ,z zMzv
 " ---------------------------------------
 set pastetoggle=<leader>pt                      " Toggle paste mode
 nmap <leader>yy "+yy
-vmap <leader>yy "+y
-map <leader>pp "+p
-map <leader>pa "+p
-map <leader>pP "+P
-map <leader>pi "+P
+nmap <leader>d "+d
+vmap <leader>d "+d
+nmap <leader>y "+y
+vmap <leader>y "+y
+nmap <leader>p "+p
+vmap <leader>p "+p
+nmap <leader>P "+P
+vmap <leader>P "+P
 au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
 map <leader>= <Esc>:%!python -m json.tool<cr>   " format json
-if (executable('pbcopy') || executable('xclip') || executable('xsel')) && has('clipboard')
-  set clipboard=unnamed
-endif
+" if (executable('pbcopy') || executable('xclip') || executable('xsel')) && has('clipboard')
+"   set clipboard=unnamed
+" endif
 
 " Delete the blank space or Windows ^M at trail of line
 func! DeleteTrailingWS()
@@ -566,13 +571,14 @@ vnoremap <C-r> ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
 vnoremap <leader>sr ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
 vnoremap <leader>sR ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
 nnoremap <leader>sr :%s/<C-R><C-W>//gc"<left><left><left><left>
+nnoremap <leader>sr :%s/<C-R><C-W>//g"<left><left><left>
 
 " grep the word at cursor in current dir
 nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
 vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
 
 command -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
-nnoremap <leader>ss :Search<Space>
+nnoremap <leader>ss :Search<Space>''<left>
 
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]

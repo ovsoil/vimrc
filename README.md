@@ -47,10 +47,11 @@ a powerful vim config file, some of the keymap refer to spacemacs
 
 * easy way to *search/replace/highlight/grep* current word & selected text
 * easy way to motion in file
-* toggle help window by one key
-* nerdtree keymap similar to neotree in emacs;
+* easy to toggle help(<leader>hh), quickfix(<leader>q), Locate(<leader>l) windows
+* nerdtree keymap similar to neotree in spacemacs;
 * return to last edit position when opening files
-* convenient to inset date/time/calculate
+* convenient to insert date/time/calculate at insert mode
+* automatically jump to the last position of paste text
 * good completion
 
 ### 2.  Hot Plugins and spacemacs-like Keymap
@@ -106,11 +107,18 @@ a powerful vim config file, some of the keymap refer to spacemacs
     <leader>jl      jump to line
     <leader>jw      jump to word
 
+    # yank and paste
+    <leader>pt      toggle paste mode
+    <leader>y       copy to clipboard
+    <leader>d       delete to clipboard
+    <leader>yy      copy current line to clipboard
+    <leader>p       paste from clipboard
+    <leader>P       paste before current cursor from clipboard
+
     # Edit
-    <leader>pp      toggle paste mode
     <leader>=       format json file
-    <leader>dm      delete the Windows ^M in file
-    <leader>db      delete blank space in linend
+    <leader>dm      delete all Windows ^M in file
+    <leader>db      delete all lined blank space
 
     # Insert Mode
     <c-d><c-d>      insert date
