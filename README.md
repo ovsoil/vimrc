@@ -1,7 +1,6 @@
 # vimrc
-a powerful vim config file, the key map refer to spacemacs
-
-still being imaturing...
+A powerful vim config file.
+keymap similar with spacemacs
 
 ## Description
 
