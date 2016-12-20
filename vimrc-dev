@@ -565,6 +565,7 @@ vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N
 vnoremap <C-r> ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
 vnoremap <leader>sr ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
 vnoremap <leader>sR ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
+nnoremap <leader>sr :%s/<C-R><C-W>//gc"<left><left><left><left>
 
 " grep the word at cursor in current dir
 nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
