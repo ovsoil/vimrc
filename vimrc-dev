@@ -1,8 +1,7 @@
 " ============================================================================
-" ovsoil-vimrc for develop
-" Maintainer:
-"       ovsoil
-"       hxyumail@126.com
+" vimrc for develop
+" Maintainer: ovsoil
+"       hxyumail@gmail.com
 "       http://ovsoil.com
 " Create Date:
 "       01/09/2015
@@ -27,7 +26,7 @@ if vim_plug_just_installed
 endif
 
 " ============================================================================
-" =>Platform
+" Platform
 " ============================================================================
 let g:system=""
 let g:homedir=""
@@ -229,7 +228,7 @@ autocmd BufReadPost *
 set viminfo^=%                  " Remember info about open buffers on close
 
 " ============================================================================
-" => User Interface
+" User Interface
 " ============================================================================
 set nu                          " show line numbers
 set ruler                       " Always show current position
@@ -286,7 +285,13 @@ set background=dark
 " Set extra options when running in GUI mode
 if has('gui_running')
   colorscheme wombat
-  set guifont=Monaco:h12
+  " colorscheme gruvbox
+  if has("mac") || has("macunix")
+    set guifont=Monaco\ for\ Powerline:h13
+  elseif has("win32") || has("win64")
+    set guifont=Monaco\ for\ Powerline:h14:cANSI
+    set renderoptions=type:directx,renmode:5
+  endif
   " set guifont=Source_Code_Pro:h13
   set guioptions-=T   " no toobar
   set guioptions-=r   " no right scroolbar
@@ -296,6 +301,8 @@ if has('gui_running')
   set linespace=2
   set noimd
   set t_Co=256
+  set lines=40
+  set columns=160
 endif
 
 set smarttab                      " Be smart when using tabs
@@ -348,7 +355,7 @@ set foldmethod=syntax           " default
 set foldlevel=20                " start out with everything folded
 
 " ============================================================================
-" => Mapping
+" Mapping
 " ============================================================================
 let mapleader = "\<Space>"
 let g:mapleader = "\<Space>"
@@ -584,7 +591,7 @@ vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
 " ============================================================================
-" => Plugins settings and mappings
+" Plugins settings and mappings
 " ============================================================================
 function! IsLoad(pluginname)
   if &runtimepath =~ a:pluginname
@@ -740,13 +747,6 @@ if IsLoad('vim-airline')
   let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
   let g:airline#extensions#bufferline#enabled = 0
   let g:airline#extensions#whitespace#enabled = 0
-  if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-  endif
-  if !exists('g:airline_powerline_fonts')
-      let g:airline_left_sep='>'
-      let g:airline_right_sep='<'
-  endif
 endif
 
 if IsLoad('vim-expand-region')
@@ -931,7 +931,7 @@ if IsLoad('ultisnips')
 endif
 
 " ===============================================================================
-" => ctags
+" ctags
 " ===============================================================================
 " C++ tags: "!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q ."
 " map <C-]> :tselect <C-R>=expand("<cword>")<cr><cr>
@@ -940,7 +940,7 @@ endif
 autocmd FileType cpp set tags+=~/.vim/cpp_src/tags
 
 " ===============================================================================
-" => cscope
+" cscope
 " ===============================================================================
 if has("cscope")
   set csprg=cscope
