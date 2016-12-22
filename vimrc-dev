@@ -472,14 +472,14 @@ nnoremap ,z zMzv
 " ---------------------------------------
 set pastetoggle=<leader>pt                      " Toggle paste mode
 nmap <leader>yy "+yy
-nmap <leader>d "+d
-vmap <leader>d "+d
-nmap <leader>y "+y
-vmap <leader>y "+y
-nmap <leader>p "+p
-vmap <leader>p "+p
-nmap <leader>P "+P
-vmap <leader>P "+P
+nmap <leader>dd "+d
+vmap <leader>dd "+d
+nmap <leader>yy "+y
+vmap <leader>yy "+y
+nmap <leader>pp "+p
+vmap <leader>pp "+p
+nmap <leader>pP "+P
+vmap <leader>pP "+P
 au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
 map <leader>= <Esc>:%!python -m json.tool<cr>   " format json
 " if (executable('pbcopy') || executable('xclip') || executable('xsel')) && has('clipboard')
@@ -724,7 +724,7 @@ if IsLoad('molokai')
 endif
 
 if IsLoad('vim-airline')
-  let g:airline_powerline_fonts = 0
+  let g:airline_powerline_fonts = 1
   let g:airline_theme = 'bubblegum'
   let g:airline#extensions#default#layout = [
         \ [ 'a', 'b', 'c' ],
@@ -739,13 +739,13 @@ if IsLoad('vim-airline')
   let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
   let g:airline#extensions#bufferline#enabled = 0
   let g:airline#extensions#whitespace#enabled = 0
-  "if !exists('g:airline_symbols')
-  "   let g:airline_symbols = {}
-  "endif
-  " if !exists('g:airline_powerline_fonts')
-  "     let g:airline_left_sep='>'
-  "     let g:airline_right_sep='<'
-  " endif
+  if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+  endif
+  if !exists('g:airline_powerline_fonts')
+      let g:airline_left_sep='>'
+      let g:airline_right_sep='<'
+  endif
 endif
 
 if IsLoad('vim-expand-region')

@@ -109,11 +109,11 @@ a powerful vim config file, some of the keymap refer to spacemacs
 
     # yank and paste
     <leader>pt      toggle paste mode
-    <leader>y       copy to clipboard
-    <leader>d       delete to clipboard
+    <leader>yy      copy to clipboard
+    <leader>dd      delete to clipboard
     <leader>yy      copy current line to clipboard
-    <leader>p       paste from clipboard
-    <leader>P       paste before current cursor from clipboard
+    <leader>pp      paste from clipboard
+    <leader>pP      paste before current cursor from clipboard
 
     # Edit
     <leader>=       format json file
