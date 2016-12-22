@@ -274,7 +274,7 @@ set wrap                        " Wrap lines
 set cinoptions=g0
 
 " use 256 colors when possible
-if (&term =~? 'mlterm\|xterm\|xterm-256\|screen-256\|gnome-terminal') || has('nvim')
+if (&term =~? 'mlterm\|xterm\|xterm-256\|screen-256\|gnome-terminal\|rxvt-unicode-256color') || has('nvim')
   let &t_Co = 256
   colorscheme gruvbox
   "colorscheme molokai
@@ -567,7 +567,6 @@ nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
 vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N
 
 " replace selected text
-vnoremap <C-r> ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
 vnoremap <leader>sr ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
 vnoremap <leader>sR ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
 nnoremap <leader>sr :%s/<C-R><C-W>//gc"<left><left><left><left>
@@ -724,7 +723,9 @@ if IsLoad('molokai')
 endif
 
 if IsLoad('vim-airline')
-  let g:airline_powerline_fonts = 1
+  if(g:system=="mac")
+    let g:airline_powerline_fonts = 1
+  endif
   let g:airline_theme = 'bubblegum'
   let g:airline#extensions#default#layout = [
         \ [ 'a', 'b', 'c' ],
