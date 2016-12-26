@@ -11,12 +11,22 @@
 " Vim-plug initialization
 " ============================================================================
 let vim_plug_just_installed = 0
-let vim_plug_path = expand('~/.vim/autoload/plug.vim')
+if has('nvim')
+  let vim_plug_path = expand('~/.local/share/nvim/site/autoload/plug.vim')
+else
+  let vim_plug_path = expand('~/.vim/autoload/plug.vim')
+endif
 if !filereadable(vim_plug_path)
-  echo "Installing Vim-plug..."
+  echo "Installing vim-plug ..."
   echo ""
-  silent !mkdir -p ~/.vim/autoload
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  if has('nvim')
+    silent !mkdir -p ~/.local/share/nvim/site/autoload 
+    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    " silent !curl -fLo fnameescape(vim_plug_path) --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  else
+    silent !mkdir -p ~/.vim/autoload
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  endif
   let vim_plug_just_installed = 1
 endif
 
@@ -97,12 +107,13 @@ Plug 'morhetz/gruvbox'
 " Plug 'Wombat'                           " Gvim colorscheme
 
 " Develop
-let s:vim8 = has('patch-8.0.0039') && exists('*job_start')      " if vim8 or neovim
-if s:vim8
-  Plug 'w0rp/ale'
-else
-  Plug 'scrooloose/syntastic'
-endif
+Plug 'scrooloose/syntastic'
+" let s:vim8 = has('patch-8.0.0039') && exists('*job_start')      " if vim8 or neovim
+" if s:vim8
+"   Plug 'w0rp/ale'
+" else
+"   Plug 'scrooloose/syntastic'
+" endif
 Plug 'michaeljsmith/vim-indent-object'  " Indent text object
 Plug 'majutsushi/tagbar'                " Class/module browser
 Plug 'tpope/vim-fugitive'
@@ -200,32 +211,35 @@ set ambiwidth=single
 set nrformats=                                    " 无论前面是否加零，都把数字作为十进制处理(在使用<C-x>, <C-a>的时候)
 set autoread                                      " Set to auto read when a file is changed from the outside
 
-" backup, swap and undos storage
-set noswapfile
-set directory=~/.vim/dirs/tmp     " directory to place swap files in
-set backup                        " make backup files
-" set nobackup                      " default: off
-" set nowritebackup                 " default: on
-set backupdir=~/.vim/dirs/backups " where to put backup files
-set undofile                      " persistent undos - undo after you re-open the file
-set undodir=~/.vim/dirs/undos
-set viminfo+=n~/.vim/dirs/viminfo
-" create needed directories if they don't exist
-if !isdirectory(&backupdir)
-  call mkdir(&backupdir, "p")
+if !has('nvim') 
+  " backup, swap and undos storage
+  set noswapfile
+  set directory=~/.vim/dirs/tmp     " directory to place swap files in
+  set backup                        " make backup files
+  " set nobackup                      " default: off
+  " set nowritebackup                 " default: on
+  set backupdir=~/.vim/dirs/backups " where to put backup files
+  set undofile                      " persistent undos - undo after you re-open the file
+  set undodir=~/.vim/dirs/undos
+  set viminfo+=n~/.vim/dirs/viminfo
+  " create needed directories if they don't exist
+  if !isdirectory(&backupdir)
+    call mkdir(&backupdir, "p")
+  endif
+  if !isdirectory(&directory)
+    call mkdir(&directory, "p")
+  endif
+  if !isdirectory(&undodir)
+    call mkdir(&undodir, "p")
+  endif
+  set viminfo^=%                  " Remember info about open buffers on close
 endif
-if !isdirectory(&directory)
-  call mkdir(&directory, "p")
-endif
-if !isdirectory(&undodir)
-  call mkdir(&undodir, "p")
-endif
+
 " Return to last edit position when opening files
 autocmd BufReadPost *
       \ if line("'\"") > 0 && line("'\"") <= line("$") |
       \   exe "normal! g`\"" |
       \ endif
-set viminfo^=%                  " Remember info about open buffers on close
 
 " ============================================================================
 " User Interface
@@ -406,8 +420,32 @@ nmap <leader>hk :Maps<CR>
 " ---------------------------------------
 " map for terminal in neovim
 " ---------------------------------------
-if has('nvim') 
-  :tnoremap <Esc> <C-\><C-n>
+if has('nvim')
+"   let g:term_buf = 0
+"   function! Term_toggle()
+"     1wincmd w
+"     if g:term_buf == bufnr("")
+"       setlocal bufhidden=hide
+"       close
+"     else
+"       rightbelow new
+"       12winc -
+"       try
+"         exec "buffer ".g:term_buf
+"       catch
+"         call termopen("bash", {"detach": 0})
+"         let g:term_buf = bufnr("")
+"       endtry
+"       set laststatus=0
+"       startinsert!
+"     endif
+"   endfunction
+"   nnoremap <space>tt :call Term_toggle()<cr>
+
+  " Terminal go back to normal mode
+  tnoremap <Esc> <C-\><C-n>
+  " When switching to terminal windows it goes into insert mode automatically
+  au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 endif
 
 " ---------------------------------------
@@ -602,12 +640,21 @@ function! IsLoad(pluginname)
 endfunction
 
 if IsLoad('nerdtree')
-  let mymapping_file = expand('~/.vim/nerdtree_plugin/mymapping.vim')
+  if has('nvim')
+    let mymapping_file = expand('~/.config/nvim/nerdtree_plugin/mymapping.vim')
+  else
+    let mymapping_file = expand('~/.vim/nerdtree_plugin/mymapping.vim')
+  endif
   if !filereadable(mymapping_file)
     echo "Installing custom mapping for nerdtree ..."
     echo ""
-    silent !mkdir -p ~/.vim/nerdtree_plugin
-    silent !curl -fLo ~/.vim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
+    if has('nvim')
+      silent !mkdir -p ~/.config/nvim/nerdtree_plugin
+      silent !curl -fLo ~/.config/nvim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
+    else
+      silent !mkdir -p ~/.vim/nerdtree_plugin
+      silent !curl -fLo ~/.vim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
+    endif
   endif
   nmap <silent><F2> :NERDTreeToggle<cr><cr>
   nmap <leader>ft :NERDTreeToggle<cr><cr>
@@ -694,18 +741,18 @@ if IsLoad('ack')
 endif
 
 if IsLoad('vim-startify')
-  let g:startify_list_order = [
-        \ ['   Recent Files:'],
-        \ 'files',
-        \ ['   Project:'],
-        \ 'dir',
-        \ ['   Sessions:'],
-        \ 'sessions',
-        \ ['   Bookmarks:'],
-        \ 'bookmarks',
-        \ ['   Commands:'],
-        \ 'commands',
-        \ ]
+  " let g:startify_list_order = [
+  "       \ ['   Recent Files:'],
+  "       \ 'files',
+  "       \ ['   Project:'],
+  "       \ 'dir',
+  "       \ ['   Sessions:'],
+  "       \ 'sessions',
+  "       \ ['   Bookmarks:'],
+  "       \ 'bookmarks',
+  "       \ ['   Commands:'],
+  "       \ 'commands',
+  "       \ ]
   nnoremap <silent><leader>bh :Startify<CR>
 endif
 
