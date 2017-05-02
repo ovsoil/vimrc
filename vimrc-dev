@@ -20,7 +20,7 @@ if !filereadable(vim_plug_path)
   echo "Installing vim-plug ..."
   echo ""
   if has('nvim')
-    silent !mkdir -p ~/.local/share/nvim/site/autoload 
+    silent !mkdir -p ~/.local/share/nvim/site/autoload
     silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     " silent !curl -fLo fnameescape(vim_plug_path) --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   else
@@ -211,7 +211,7 @@ set ambiwidth=single
 set nrformats=                                    " 无论前面是否加零，都把数字作为十进制处理(在使用<C-x>, <C-a>的时候)
 set autoread                                      " Set to auto read when a file is changed from the outside
 
-if !has('nvim') 
+if !has('nvim')
   " backup, swap and undos storage
   set noswapfile
   set directory=~/.vim/dirs/tmp     " directory to place swap files in
@@ -326,7 +326,7 @@ set softtabstop=4
 set shiftwidth=4                  " insert 1 tab == 4 spaces
 set list
 nmap <leader>l :set list!<cr>
-" set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend 
+" set listchars=tab:\|\ ,eol:$    " display tab with '|    ', display lineend
 set listchars=tab:\|\             " display tab with '|    '
 highlight BadWhitespace ctermbg=Red guibg=DarkRed
 au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
@@ -546,6 +546,35 @@ autocmd BufWrite *.coffee :call DeleteTrailingWS()
 imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<cr>
 imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<cr>
 imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<cr>
+
+" get selected text
+func! s:get_visual_selection()
+  " Why is this not a built-in Vim script function?!
+  let [lnum1, col1] = getpos("'<")[1:2]
+  let [lnum2, col2] = getpos("'>")[1:2]
+  let lines = getline(lnum1, lnum2)
+  let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
+  let lines[0] = lines[0][col1 - 1:]
+  return join(lines, "\n")
+endfunc
+
+" Replace the selected text which is path of an image with URL in QiuNiu Cloudu
+" Upload the image to QiuNiu Cloud
+function! ReplaceWithQiuniuURL()
+  " yank current visual selection to reg x
+  normal gv"xy
+  " upload image to 'blog' bucket of qiniu cloud
+  let basename = fnamemodify(@x, ":t")
+  echo printf("!qshell fput blog %s %s", basename, @x)
+  " put new string value in reg x
+  " would do your processing here in actual script
+  let @x = printf("![Alt](http://op9wke666.bkt.clouddn.com/%s)", basename)
+  " re-select area and delete
+  normal gvd
+  " paste new string value back in
+  normal "xp
+endfunction
+vnoremap <leader>ii :call ReplaceWithQiuniuURL()<cr>
 
 " ---------------------------------------
 " search, vimgrep
@@ -799,7 +828,7 @@ endif
 if IsLoad('vim-expand-region')
   vmap v <Plug>(expand_region_expand)
   vmap <C-v> <Plug>(expand_region_shrink)
-endif 
+endif
 
 if IsLoad('delimitmate')
   let delimitMate_quotes = "\" ' `"
@@ -824,6 +853,8 @@ if IsLoad('ale')
   " Map movement through errors without wrapping.
   nmap <silent> <C-k> <Plug>(ale_previous)
   nmap <silent> <C-j> <Plug>(ale_next)
+
+  let g:ale_python_flake8_args = '--ignore=E501'
 endif
 
 
