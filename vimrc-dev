@@ -567,11 +567,11 @@ endfunc
 function! ReplaceWithQiuniuURL()
   " yank current visual selection to reg x
   normal gv"xy
-  " upload image to 'blog' bucket of qiniu cloud
+  " get basename of the image
   let basename = fnamemodify(@x, ":t")
-  echo printf("!qshell fput blog %s %s", basename, @x)
+  " upload image to 'blog' bucket of qiniu cloud
+  exe printf("!qshell fput blog %s %s", basename, @x)
   " put new string value in reg x
-  " would do your processing here in actual script
   let @x = printf("![Alt](http://op9wke666.bkt.clouddn.com/%s)", basename)
   " re-select area and delete
   normal gvd
