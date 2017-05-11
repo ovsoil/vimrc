@@ -8,49 +8,57 @@
 " ============================================================================
 
 " ============================================================================
+" Platform
+" ============================================================================
+let g:system='unix'
+let g:rcpath=$HOME
+if (has('win32') || has('win95') || has('win64') || has('win16'))
+  let g:system='windows'
+  if has('nvim')
+    let g:rcpath=$LOCALAPPDATA.'\nvim'
+  endif
+elseif (has('unix'))
+  if has('nvim')
+    let g:rcpath=$HOME.'/.local/share/nvim'
+  endif
+  if ( system('uname') =~ 'Darwin')
+    let g:system='mac'
+  endif
+endif
+
+
+" ============================================================================
 " Vim-plug initialization
 " ============================================================================
 let vim_plug_just_installed = 0
 if has('nvim')
-  let vim_plug_path = expand('~/.local/share/nvim/site/autoload/plug.vim')
+  if g:system=='windows'
+    let vim_plug = fnameescape(g:rcpath.'\site\autoload\plug.vim')
+  else
+    let vim_plug = fnameescape(g:rcpath.'/site/autoload/plug.vim')
+  endif
 else
-  let vim_plug_path = expand('~/.vim/autoload/plug.vim')
+  if g:system=='windows'
+    let vim_plug = fnameescape(g:rcpath.'\vimfiles\autoload\plug.vim')
+  else
+    let vim_plug = fnameescape(g:rcpath.'/.vim/autoload/plug.vim')
+  endif
 endif
-if !filereadable(vim_plug_path)
+let vim_plug_path = fnamemodify(vim_plug, ":p:h")
+
+if !filereadable(vim_plug)
   echo "Installing vim-plug ..."
   echo ""
-  if has('nvim')
-    silent !mkdir -p ~/.local/share/nvim/site/autoload
-    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    " silent !curl -fLo fnameescape(vim_plug_path) --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  else
-    silent !mkdir -p ~/.vim/autoload
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  endif
+  silent execute '!mkdir '.vim_plug_path
+  silent execute '!curl -fLo '.vim_plug.' --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   let vim_plug_just_installed = 1
 endif
-silent !mkdir -p ~/.vim/bin
-silent !curl -fLo ~/.vim/bin/markdown2ctags.py --create-dirs https://raw.githubusercontent.com/tamlok/vimconf/master/markdown2ctags.py
+" silent !mkdir -p ~/.vim/bin
+" silent !curl -fLo ~/.vim/bin/markdown2ctags.py --create-dirs https://raw.githubusercontent.com/tamlok/vimconf/master/markdown2ctags.py
 
 " manually load vim-plug the first time
 if vim_plug_just_installed
-  :execute 'source '.fnameescape(vim_plug_path)
-endif
-
-" ============================================================================
-" Platform
-" ============================================================================
-let g:system=""
-let g:homedir=""
-if (has("win32") || has("win95") || has("win64") || has("win16"))
-  let g:system="windows"
-elseif (has('win32unix'))  " Cygwin
-  let g:system="cygwin"
-elseif (has("unix"))
-  let g:system="unix"
-  if ( system('uname') =~ "Darwin")          " ~:去除控制字符
-    let g:system="mac"
-  endif
+  :execute 'source '.fnameescape(vim_plug)
 endif
 
 if(g:system=="windows")
@@ -110,12 +118,6 @@ Plug 'morhetz/gruvbox'
 
 " Develop
 Plug 'w0rp/ale'
-" let s:vim8 = has('patch-8.0.0039') && exists('*job_start')      " if vim8 or neovim
-" if s:vim8
-"   Plug 'w0rp/ale'
-" else
-"   Plug 'scrooloose/syntastic'
-" endif
 Plug 'michaeljsmith/vim-indent-object'  " Indent text object
 Plug 'majutsushi/tagbar'                " Class/module browser
 Plug 'tpope/vim-fugitive'
@@ -129,13 +131,6 @@ Plug 'scrooloose/nerdcommenter'         " Code commenter
 Plug 'DoxygenToolkit.vim'               " doxygen
 " complete
 Plug 'Shougo/neocomplcache.vim'         " Better autocompletion
-" if g:system == 'mac' && executable('clang') == 1 && (v:version > 703 || (v:version == 703 && has('patch584')))
-"   Plug 'Rip-Rip/clang_complete'
-"   Plug 'Valloric/YouCompleteMe'
-" endif
-" snippets manager (SnipMate), dependencies, and snippets repo
-" Plug 'drmingdrmer/xptemplate'         " xptemplate
-" Plug 'sirver/ultisnips'               " ultisnips
 Plug 'honza/vim-snippets'
 Plug 'garbas/vim-snipmate'
 
@@ -165,8 +160,6 @@ Plug 'pangloss/vim-javascript'
 Plug 'kchmck/vim-coffee-script'
 " html
 Plug 'mattn/emmet-vim'
-" css
-" Plug 'lilydjwg/colorizer'           " Paint css colors with the real color
 
 " ruby on rail
 Plug 'tpope/vim-rails'
@@ -425,27 +418,6 @@ nmap <leader>hk :Maps<CR>
 " map for terminal in neovim
 " ---------------------------------------
 if has('nvim')
-"   let g:term_buf = 0
-"   function! Term_toggle()
-"     1wincmd w
-"     if g:term_buf == bufnr("")
-"       setlocal bufhidden=hide
-"       close
-"     else
-"       rightbelow new
-"       12winc -
-"       try
-"         exec "buffer ".g:term_buf
-"       catch
-"         call termopen("bash", {"detach": 0})
-"         let g:term_buf = bufnr("")
-"       endtry
-"       set laststatus=0
-"       startinsert!
-"     endif
-"   endfunction
-"   nnoremap <space>tt :call Term_toggle()<cr>
-
   " Terminal go back to normal mode
   tnoremap <Esc> <C-\><C-n>
   " When switching to terminal windows it goes into insert mode automatically
@@ -499,7 +471,7 @@ map <leader>wj <C-W>j
 map <leader>wk <C-W>k
 map <leader>wh <C-W>h
 map <leader>wl <C-W>l
-" nmap <leader>1 :re                " always show status line - use 2 linessize -3<cr>
+" nmap <leader>1 :re
 " nmap <leader>2 :resize +3<cr>
 " nmap <leader>3 :vertical resize -3<cr>
 " nmap <leader>4 :vertical resize +3<cr>
@@ -662,20 +634,20 @@ vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
 " Add support for markdown files in tagbar.
-let g:tagbar_type_markdown = {
-      \ 'ctagstype': 'markdown',
-      \ 'ctagsbin' : '~/.vim/bin/markdown2ctags.py',
-      \ 'ctagsargs' : '-f - --sort=yes',
-      \ 'kinds' : [
-      \ 's:sections',
-      \ 'i:images'
-      \ ],
-      \ 'sro' : '|',
-      \ 'kind2scope' : {
-      \ 's' : 'section',
-      \ },
-      \ 'sort': 0,
-      \ }
+" let g:tagbar_type_markdown = {
+"       \ 'ctagstype': 'markdown',
+"       \ 'ctagsbin' : '~/.vim/bin/markdown2ctags.py',
+"       \ 'ctagsargs' : '-f - --sort=yes',
+"       \ 'kinds' : [
+"       \ 's:sections',
+"       \ 'i:images'
+"       \ ],
+"       \ 'sro' : '|',
+"       \ 'kind2scope' : {
+"       \ 's' : 'section',
+"       \ },
+"       \ 'sort': 0,
+"       \ }
 
 " ============================================================================
 " Plugins settings and mappings
@@ -689,22 +661,22 @@ function! IsLoad(pluginname)
 endfunction
 
 if IsLoad('nerdtree')
-  if has('nvim')
-    let mymapping_file = expand('~/.config/nvim/nerdtree_plugin/mymapping.vim')
-  else
-    let mymapping_file = expand('~/.vim/nerdtree_plugin/mymapping.vim')
-  endif
-  if !filereadable(mymapping_file)
-    echo "Installing custom mapping for nerdtree ..."
-    echo ""
-    if has('nvim')
-      silent !mkdir -p ~/.config/nvim/nerdtree_plugin
-      silent !curl -fLo ~/.config/nvim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
-    else
-      silent !mkdir -p ~/.vim/nerdtree_plugin
-      silent !curl -fLo ~/.vim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
-    endif
-  endif
+  " if has('nvim')
+  "   let mymapping_file = expand('~/.config/nvim/nerdtree_plugin/mymapping.vim')
+  " else
+  "   let mymapping_file = expand('~/.vim/nerdtree_plugin/mymapping.vim')
+  " endif
+  " if !filereadable(mymapping_file)
+  "   echo "Installing custom mapping for nerdtree ..."
+  "   echo ""
+  "   if has('nvim')
+  "     silent !mkdir -p ~/.config/nvim/nerdtree_plugin
+  "     silent !curl -fLo ~/.config/nvim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
+  "   else
+  "     silent !mkdir -p ~/.vim/nerdtree_plugin
+  "     silent !curl -fLo ~/.vim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
+  "   endif
+  " endif
   nmap <silent><F2> :NERDTreeToggle<cr><cr>
   nmap <leader>ft :NERDTreeToggle<cr><cr>
   let g:NERDTree_title="NERDTree"
@@ -806,12 +778,6 @@ if IsLoad('vim-startify')
 endif
 
 if IsLoad('vim-easymotion')
-  " <leader><leader>w : word, 在单词间移动，往前
-  " <leader><leader>b : back, 在单词间移动，往后
-  " <leader><leader>s : search, 字符搜索跳转，双向
-  " <leader><leader>f : forward, 向前搜索字符
-  " <leader><leader>j
-  " <leader><leader>k
   " Jump to line
   map <leader>jl <Plug>(easymotion-bd-jk)
   nmap <leader>jl <Plug>(easymotion-overwin-line)
@@ -1007,9 +973,6 @@ if IsLoad('clang_complete')
     let g:clang_library_path= "/usr/lib/clang"
   elseif (g:system == 'windows')
     let g:clang_use_library = 0
-  elseif(g:system == 'cygwin')
-    let g:clang_use_library = 1
-    let g:clang_library_path= "/usr/bin"
   endif
 endif
 
