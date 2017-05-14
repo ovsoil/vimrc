@@ -61,13 +61,6 @@ if vim_plug_just_installed
   :execute 'source '.fnameescape(vim_plug)
 endif
 
-if(g:system=="windows")
-  set ffs=dos,unix,mac
-else
-  set ffs=unix,dos,mac
-  set encoding=utf8
-endif
-
 " ============================================================================
 " Active plugins
 " ============================================================================
@@ -100,6 +93,7 @@ Plug 'terryma/vim-expand-region'        " visually select increasingly larger re
 Plug 'Raimondi/delimitMate'             " auto-completion for quotes, parens, brackets
 Plug 'tpope/vim-repeat'
 Plug 'godlygeek/tabular'                " aligning text
+Plug 'vitalk/vim-simple-todo'
 
 " Write
 Plug 'junegunn/limelight.vim'
@@ -176,6 +170,10 @@ Plug 'aerosol/vim-compot'
 " lisp
 Plug 'kovisoft/slimv'
 
+if exists('g:nyaovim_version')
+  Plug 'rhysd/nyaovim-markdown-preview'
+endif
+
 call plug#end()
 
 " ============================================================================
@@ -192,6 +190,14 @@ endif
 " ============================================================================
 set nocompatible                                   " no vi-compatible
 filetype plugin indent on                          " allow plugins by file type (required for plugins!)
+
+if(g:system=="windows")
+  set fileformats=dos,unix,mac
+else
+  set fileformats=unix,dos,mac
+  set encoding=utf8
+endif
+
 set wildignore+=*.o,*~,*.so,*.swp,*.zip,*.pyc      " Ignore compiled files
 set wildignore+=*_build/*
 if(g:system=="windows")
@@ -340,8 +346,6 @@ endif
 
 " set cursorcolumn          "高亮当前列 cuc
 " set cursorline            "高亮当前行 cul
-" autocmd! InsertEnter * set cul
-" autocmd! InsertLeave * set nocul
 
 "设置标记一列的背景颜色和数字一行颜色一致
 hi! link SignColumn   LineNr
@@ -358,12 +362,12 @@ highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
 
 "auto save folding
-"au BufWinLeave *.* silent mkview
-"au BufWinLeave *.* silent! loadview
+au BufWinLeave *.* silent mkview
+au BufWinLeave *.* silent! loadview
 set foldenable                  " enable folding
 " set foldcolumn=2                " add a fold column
-set foldmethod=syntax           " default
-set foldlevel=20                " start out with everything folded
+set foldmethod=syntax
+set foldlevel=20
 
 " ============================================================================
 " Mapping
@@ -626,7 +630,7 @@ nnoremap <leader>sr :%s/<C-R><C-W>//g"<left><left><left>
 nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
 vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
 
-command -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
+command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
 nnoremap <leader>ss :Search<Space>''<left>
 
 vnoremap <silent> y y`]
@@ -712,6 +716,14 @@ endif
 if IsLoad('fixedtasklist')
   map <F4> :TaskList<cr>                " show pending tasks list
   map <leader>lt :TaskList<cr>          " show pending tasks list
+endif
+
+if IsLoad('vim-simple-todo')
+  let g:simple_todo_map_keys = 0        " Disable default key bindings
+  nmap ,i <Plug>(simple-todo-new)
+  imap ,i <Plug>(simple-todo-new)
+
+  let g:simple_todo_tick_symbol = 'y'
 endif
 
 if IsLoad('ctrlp')
