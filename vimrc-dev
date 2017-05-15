@@ -69,7 +69,7 @@ call plug#begin('~/.vim/plugged')
 " Plugins from github repos:
 " Base
 Plug 'tomtom/tlib_vim'                          " This library provides some utility functions
-Plug 'auto_mkdir'                               " auto_mkdir
+Plug 'vim-scripts/auto_mkdir'                               " auto_mkdir
 Plug 'scrooloose/nerdtree'                      " Better file browser
 Plug 'Valloric/ListToggle'                      " ListToggle: toggle quickfix and location-list
 Plug 'ctrlpvim/ctrlp.vim'                       " Code and files fuzzy finder
@@ -77,7 +77,7 @@ Plug 'fisadev/vim-ctrlp-cmdpalette'             " Extension to ctrlp, for fuzzy 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'easymotion/vim-easymotion'
-Plug 'IndexedSearch'                            " Search results counter
+Plug 'vim-scripts/IndexedSearch'                            " Search results counter
 Plug 'mhinz/vim-startify'
 if executable('ack')
   " Plug 'mileszs/ack.vim'                      " Ack code search (requires ack)
@@ -116,13 +116,13 @@ Plug 'michaeljsmith/vim-indent-object'  " Indent text object
 Plug 'majutsushi/tagbar'                " Class/module browser
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'           " Git/mercurial/.. diff icons
-Plug 'matchit.zip'                      " XML/HTML tags navigation
+Plug 'vim-scripts/matchit.zip'                      " XML/HTML tags navigation
 Plug 'mattn/emmet-vim'                  " Zen coding
 
 " commenter
 " Plug 'tpope/vim-commentary'             " comment
 Plug 'scrooloose/nerdcommenter'         " Code commenter
-Plug 'DoxygenToolkit.vim'               " doxygen
+Plug 'vim-scripts/DoxygenToolkit.vim'               " doxygen
 " complete
 Plug 'Shougo/neocomplcache.vim'         " Better autocompletion
 Plug 'honza/vim-snippets'
