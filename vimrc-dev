@@ -170,6 +170,9 @@ Plug 'aerosol/vim-compot'
 " lisp
 Plug 'kovisoft/slimv'
 
+" golang
+Plug 'fatih/vim-go'
+
 if exists('g:nyaovim_version')
   Plug 'rhysd/nyaovim-markdown-preview'
 endif
@@ -967,6 +970,10 @@ if IsLoad('signify')
   highlight SignifySignAdd    cterm=bold ctermbg=237  ctermfg=119
   highlight SignifySignDelete cterm=bold ctermbg=237  ctermfg=167
   highlight SignifySignChange cterm=bold ctermbg=237  ctermfg=227
+endif
+
+if IsLoad('vim-go')
+  " :execute 'GoInstallBinaries'
 endif
 
 if IsLoad('vim-json')
