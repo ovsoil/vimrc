@@ -69,13 +69,13 @@ call plug#begin('~/.vim/plugged')
 " Plugins from github repos:
 " Base
 Plug 'tomtom/tlib_vim'                          " This library provides some utility functions
-Plug 'vim-scripts/auto_mkdir'                               " auto_mkdir
+Plug 'vim-scripts/auto_mkdir'                   " auto_mkdir
 Plug 'scrooloose/nerdtree'                      " Better file browser
 Plug 'Valloric/ListToggle'                      " ListToggle: toggle quickfix and location-list
 Plug 'ctrlpvim/ctrlp.vim'                       " Code and files fuzzy finder
 Plug 'fisadev/vim-ctrlp-cmdpalette'             " Extension to ctrlp, for fuzzy command finder
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
+" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+" Plug 'junegunn/fzf.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-scripts/IndexedSearch'                            " Search results counter
 Plug 'mhinz/vim-startify'
@@ -85,18 +85,19 @@ endif
 
 " Enhancement
 Plug 'Shougo/denite.nvim'
+Plug 'hecal3/vim-leader-guide'
 Plug 'rosenfeld/conque-term'            " Consoles as buffers
-Plug 'fisadev/FixedTaskList.vim'        " Pending tasks list
+" Plug 'fisadev/FixedTaskList.vim'        " Pending tasks list
 Plug 'terryma/vim-multiple-cursors'     " Sublime Text style multiple selections for Vim
 Plug 'tpope/vim-surround'               " surround
 Plug 'terryma/vim-expand-region'        " visually select increasingly larger regions
 Plug 'Raimondi/delimitMate'             " auto-completion for quotes, parens, brackets
-Plug 'tpope/vim-repeat'
+" Plug 'tpope/vim-repeat'
 Plug 'godlygeek/tabular'                " aligning text
-Plug 'vitalk/vim-simple-todo'
+" Plug 'vitalk/vim-simple-todo'
 
 " Write
-Plug 'junegunn/limelight.vim'
+" Plug 'junegunn/limelight.vim'
 Plug 'junegunn/goyo.vim'
 
 " User Interface
@@ -106,7 +107,6 @@ Plug 'flazz/vim-colorschemes'
 Plug 'tomasr/molokai'
 Plug 'altercation/vim-colors-solarized'
 Plug 'fisadev/fisa-vim-colorscheme'
-" Plug 'liuchengxu/space-vim-dark'
 Plug 'morhetz/gruvbox'
 " Plug 'Wombat'                           " Gvim colorscheme
 
@@ -116,15 +116,18 @@ Plug 'michaeljsmith/vim-indent-object'  " Indent text object
 Plug 'majutsushi/tagbar'                " Class/module browser
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'           " Git/mercurial/.. diff icons
-Plug 'vim-scripts/matchit.zip'                      " XML/HTML tags navigation
-Plug 'mattn/emmet-vim'                  " Zen coding
 
 " commenter
 " Plug 'tpope/vim-commentary'             " comment
 Plug 'scrooloose/nerdcommenter'         " Code commenter
-Plug 'vim-scripts/DoxygenToolkit.vim'               " doxygen
+Plug 'vim-scripts/DoxygenToolkit.vim'   " doxygen
+
 " complete
-Plug 'Shougo/neocomplcache.vim'         " Better autocompletion
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim' 
+else
+  Plug 'Shougo/neocomplete.vim'
+endif
 Plug 'honza/vim-snippets'
 Plug 'garbas/vim-snipmate'
 
@@ -152,7 +155,9 @@ endif
 " javascript
 Plug 'pangloss/vim-javascript'
 Plug 'kchmck/vim-coffee-script'
+
 " html
+Plug 'vim-scripts/matchit.zip'          " XML/HTML tags navigation
 Plug 'mattn/emmet-vim'
 
 " ruby on rail
@@ -296,7 +301,6 @@ set cinoptions=g0
 if (&term =~? 'mlterm\|xterm\|xterm-256\|screen-256\|gnome-terminal\|rxvt-unicode-256color') || has('nvim')
   let &t_Co = 256
   colorscheme gruvbox
-  "colorscheme molokai
 else
   colorscheme delek
 endif
@@ -337,24 +341,22 @@ set listchars=tab:\|\             " display tab with '|    '
 highlight BadWhitespace ctermbg=LightYellow guibg=Yellow
 au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
 
-" set filetype
+" Specific filetype
 au BufNewFile,BufRead *.spacemacs setf lisp
 " FileType Specific Changes
 if has ( "autocmd" )
   autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
-  " autocmd FileType erlang setlocal ts=2 sts=2 sw=2 expandtab
   autocmd FileType json,html,xhtml,xml,css,htmldjango setlocal ts=2 sts=2 sw=2 expandtab
-  " autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
 endif
 
-" set cursorcolumn          "高亮当前列 cuc
-" set cursorline            "高亮当前行 cul
+" set cursorcolumn          " highlight current column
+" set cursorline            " highlight current line
 
-"设置标记一列的背景颜色和数字一行颜色一致
+" 设置标记一列的背景颜色和数字一行颜色一致
 hi! link SignColumn   LineNr
 hi! link ShowMarksHLl DiffAdd
 hi! link ShowMarksHLu DiffChange
-"" for error highlight，防止错误整行标红导致看不清
+" for error highlight，防止错误整行标红导致看不清
 highlight clear SpellBad
 highlight SpellBad term=standout ctermfg=1 term=underline cterm=underline
 highlight clear SpellCap
@@ -364,7 +366,7 @@ highlight SpellRare term=underline cterm=underline
 highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
 
-"auto save folding
+" auto save folding
 au BufWinLeave *.* silent mkview
 au BufWinLeave *.* silent! loadview
 set foldenable                  " enable folding
@@ -374,6 +376,7 @@ set foldlevel=20
 
 " ============================================================================
 " Mapping
+" F1 - help; F2 - file(nerdtree); F3 - tag(tagbar); F4 - tasklist
 " ============================================================================
 let mapleader = "\<Space>"
 let g:mapleader = "\<Space>"
@@ -404,13 +407,12 @@ function! ToggleHelp()
   endif
 endfunction
 
-" F1 - help; F2 - file(nerdtree); F3 - tag(tagbar); F4 - tasklist
 " save as sudo
 ca w!! w !sudo tee "%"
 
 nmap <silent><F1> :call ToggleHelp()<cr>
-nmap <leader>hh :call ToggleHelp()<cr>
-nmap <leader>hk :Maps<CR>
+nmap <leader>hh :call ToggleHelp()<cr>  " Toggle help window
+" nmap <leader>hk :Maps<CR>               " Toggle keymap window
 
 " ---------------------------------------
 " command line map
@@ -435,28 +437,28 @@ endif
 " files navigation
 " ---------------------------------------
 " Buffer
-nmap <leader>bn :bnext<cr>
-nmap <leader>bp :bprevious<cr>
-nmap <Leader>b1 :1b<CR>
-nmap <Leader>b2 :2b<CR>
-nmap <Leader>b3 :3b<CR>
-nmap <Leader>b4 :4b<CR>
-nmap <Leader>b5 :5b<CR>
-nmap <Leader>b6 :6b<CR>
-nmap <Leader>b7 :7b<CR>
-nmap <Leader>b8 :8b<CR>
-nmap <Leader>b9 :9b<CR>
-nmap <Leader>b0 :10b<CR>
-nmap <leader>bd :bdelete<cr>          " Close the current buffer
-nmap <leader>ba :1,1000 bd!<cr>       " Close all the buffers
-nmap <leader>b<tab> :b#<cr>           " switch between most recently buffer
+nmap <leader>bn :bnext<cr>          " next buffer
+nmap <leader>bp :bprevious<cr>      " previous buffer
+nmap <Leader>b1 :1b<CR>             " open buffer 1
+nmap <Leader>b2 :2b<CR>             " open buffer 2
+nmap <Leader>b3 :3b<CR>             " open buffer 3
+nmap <Leader>b4 :4b<CR>             " open buffer 4
+nmap <Leader>b5 :5b<CR>             " open buffer 5
+nmap <Leader>b6 :6b<CR>             " open buffer 6
+nmap <Leader>b7 :7b<CR>             " open buffer 7
+nmap <Leader>b8 :8b<CR>             " open buffer 8
+nmap <Leader>b9 :9b<CR>             " open buffer 9
+nmap <Leader>b0 :10b<CR>            " open buffer 10
+nmap <leader>bd :bdelete<cr>        " close current buffer
+nmap <leader>ba :1,1000 bd!<cr>     " close all the buffers
+nmap <leader>b<tab> :b#<cr>         " switch to most recently buffer
 " Ngb to jump to buffer number N
 let c = 1
 while c <= 99
   execute "nnoremap " . c . "gb :" . c . "b\<CR>"
   let c += 1
 endwhile
-nmap <leader>cd :cd %:p:h<cr>:pwd<cr>       " Switch CWD to the directory of the open buffer
+nmap <leader>cd :cd %:p:h<cr>:pwd<cr>       " switch CWD to the directory of the open buffer
 " Specify the behavior when switching between buffers
 try
   set switchbuf=useopen,usetab        " newtab
@@ -465,7 +467,7 @@ catch
 endtry
 
 " Tab
-" No Tab, I rarely use tab
+" I rarely use tab :)
 
 " ---------------------------------------
 " windows Moving
@@ -474,14 +476,12 @@ map j gj
 map k gk
 nmap H ^
 nmap L $
-map <leader>wj <C-W>j
-map <leader>wk <C-W>k
-map <leader>wh <C-W>h
-map <leader>wl <C-W>l
-" nmap <leader>1 :re
-" nmap <leader>2 :resize +3<cr>
-" nmap <leader>3 :vertical resize -3<cr>
-" nmap <leader>4 :vertical resize +3<cr>
+map <leader>wj <C-W>j     " move to below window
+map <leader>wk <C-W>k     " move to above window
+map <leader>wh <C-W>h     " move to left window
+map <leader>wl <C-W>l     " move to right window
+map <leader>ws :split<CR> " horizontal split
+map <leader>wv :vs<CR>    " vertical split
 if (g:system=="mac")
   nmap <D-j> <M-j>
   nmap <D-k> <M-k>
@@ -619,9 +619,9 @@ endif
 let &cpo = s:save_cpo | unlet s:save_cpo
 
 " highlight but not search the word at cursor
-nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
+nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>  " highlight the cursor word
 " highlight but not search the selected text
-vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N
+vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N            " highlight selected word
 
 " replace selected text
 vnoremap <leader>sr ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
@@ -630,11 +630,11 @@ nnoremap <leader>sr :%s/<C-R><C-W>//gc"<left><left><left><left>
 nnoremap <leader>sr :%s/<C-R><C-W>//g"<left><left><left>
 
 " grep the word at cursor in current dir
-nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
-vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
+nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>  " grep the cursor word
+vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>       " grep selected word
 
 command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
-nnoremap <leader>ss :Search<Space>''<left>
+nnoremap <leader>ss :Search<Space>''<left>              " grep
 
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
@@ -668,34 +668,21 @@ function! IsLoad(pluginname)
 endfunction
 
 if IsLoad('nerdtree')
-  " if has('nvim')
-  "   let mymapping_file = expand('~/.config/nvim/nerdtree_plugin/mymapping.vim')
-  " else
-  "   let mymapping_file = expand('~/.vim/nerdtree_plugin/mymapping.vim')
-  " endif
-  " if !filereadable(mymapping_file)
-  "   echo "Installing custom mapping for nerdtree ..."
-  "   echo ""
-  "   if has('nvim')
-  "     silent !mkdir -p ~/.config/nvim/nerdtree_plugin
-  "     silent !curl -fLo ~/.config/nvim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
-  "   else
-  "     silent !mkdir -p ~/.vim/nerdtree_plugin
-  "     silent !curl -fLo ~/.vim/nerdtree_plugin/mymapping.vim --create-dirs https://raw.githubusercontent.com/ovsoil/vimrc/master/nerdtree_plugin/mymapping.vim
-  "   endif
-  " endif
   nmap <silent><F2> :NERDTreeToggle<cr><cr>
   nmap <leader>ft :NERDTreeToggle<cr><cr>
   let g:NERDTree_title="NERDTree"
   let NERDTreeShowBookmarks=1         "allways show bookmarks
   let NERDTreeChDirMode=2             "auto set pwd when open bookmarks
   let NERDTreeIgnore=['node_modules', 'bower_components', '\.pyc$', '\.pyo$', '\~$', '\.beam$']     "ignore files in NERDTree
+
   " open a NERDTree automatically when vim starts up if no files were specified
   " autocmd StdinReadPre * let s:std_in=1
   " autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
   " open NERDTree automatically when vim starts up on opening a directory
   autocmd StdinReadPre * let s:std_in=1
   autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+
   " close vim if the only window left open is a NERDTree
   autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
@@ -706,6 +693,67 @@ if IsLoad('nerdtree')
     let g:NERDTreeDirArrowExpandable = '+'
     let g:NERDTreeDirArrowCollapsible = '~'
   endif
+endif
+
+if IsLoad('vim-leader-guide')
+  " Define prefix dictionary
+  let g:lmap =  {}
+
+  " Second level dictionaries:
+  " 'name' is a special field. It will define the name of the group.
+  " leader-f is the "File Menu" group.
+  let g:lmap.f = { 'name' : 'File Menu' }
+  let g:lmap.b = { 'name' : 'Buffer Menu' }
+  let g:lmap.s = { 'name' : 'Search Menu' }
+  let g:lmap.t = { 'name' : 'Toggle Menu' }
+  let g:lmap.d = { 'name' : 'Delete Menu'}
+  " let g:lmap.o = { 'name' : 'Open Stuff' }
+
+  " Provide commands and descriptions for existing mappings
+  let g:lmap.f.d = ['e $MYVIMRC', 'Open vimrc']
+  let g:lmap.f.s = ['so %', 'Source current file']
+  let g:lmap.f.w = ['w', 'Save current file']
+  " let g:lmap.f.b = ['CtrlPBuffer', 'Find file in opened buffer']
+  " let g:lmap.f.r = ['CtrlPMRU', 'Find a recent file']
+  " let g:lmap.f.j = ['e .', 'Nagative in current directory']
+
+  " nmap <silent> <leader>oo  :copen<CR>
+  " let g:lmap.o.o = ['copen', 'Open quickfix']
+
+  " nmap <silent> <leader>ol  :lopen<CR>
+  " let g:lmap.o.l = ['lopen', 'Open locationlist']
+
+
+  " Create new menus not based on existing mappings:
+  let g:lmap.g = {
+        \'name' : 'Git Menu',
+        \'s' : ['Gstatus', 'Git Status'],
+        \'p' : ['Gpull',   'Git Pull'],
+        \'u' : ['Gpush',   'Git Push'],
+        \'c' : ['Gcommit', 'Git Commit'],
+        \'w' : ['Gwrite',  'Git Write'],
+        \}
+
+  " If you use NERDCommenter:
+  let g:lmap.c = { 'name' : 'Comments' }
+  " Define some descriptions
+  let g:lmap.c.c = ['call feedkeys("\<Plug>NERDCommenterComment")','Comment']
+  let g:lmap.c['T'] = ['call feedkeys("\<Plug>NERDCommenterToggle")','Toggle']
+  " The Descriptions for other mappings defined by NerdCommenter, will default
+  " to their respective commands.
+  call leaderGuide#register_prefix_descriptions("<Space>", "g:lmap")
+  nnoremap <silent> <leader> :<c-u>LeaderGuide '<Space>'<CR>
+  vnoremap <silent> <leader> :<c-u>LeaderGuideVisual '<Space>'<CR
+
+  nnoremap <localleader> :<c-u>LeaderGuide  ','<CR>
+  vnoremap <localleader> :<c-u>LeaderGuideVisual  ','<CR>
+  " This variant won't habe any group names.
+
+  " Group names can be defined by filetype. Add the following lines:
+  let g:llmap = {}
+  autocmd FileType tex let g:llmap.l = { 'name' : 'vimtex' }
+  call leaderGuide#register_prefix_descriptions(",", "g:llmap")
+  " to name the <localleader>-n group vimtex in tex files.
 endif
 
 if IsLoad('tagbar')
@@ -789,7 +837,7 @@ if IsLoad('vim-startify')
   "       \ ['   Commands:'],
   "       \ 'commands',
   "       \ ]
-  nnoremap <silent><leader>bh :Startify<CR>
+  nnoremap <silent><leader>bh :Startify<CR>       " open home page 
 endif
 
 if IsLoad('vim-easymotion')
@@ -939,24 +987,80 @@ if IsLoad("simpyfold")
   let g:SimpylFold_docstring_preview=1
 endif
 
-if IsLoad('neocomplcache')
-  " most of them not documented because I'm not sure how they work
-  " (docs aren't good, had to do a lot of trial and error to make it play nice)
-  let g:neocomplcache_enable_at_startup = 1
-  let g:neocomplcache_enable_ignore_case = 1
-  let g:neocomplcache_enable_smart_case = 1
-  let g:neocomplcache_enable_auto_select = 1
-  let g:neocomplcache_enable_fuzzy_completion = 1
-  let g:neocomplcache_enable_camel_case_completion = 1
-  let g:neocomplcache_enable_underbar_completion = 1
-  let g:neocomplcache_fuzzy_completion_start_length = 1
-  let g:neocomplcache_auto_completion_start_length = 1
-  let g:neocomplcache_manual_completion_start_length = 1
-  let g:neocomplcache_min_keyword_length = 1
-  let g:neocomplcache_min_syntax_length = 1
-  " complete with workds from any opened file
-  let g:neocomplcache_same_filetype_lists = {}
-  let g:neocomplcache_same_filetype_lists._ = '_'
+if IsLoad('neocomplete')
+  " Disable AutoComplPop.
+  let g:acp_enableAtStartup = 0
+  " Use neocomplete.
+  let g:neocomplete#enable_at_startup = 1
+  " Use smartcase.
+  let g:neocomplete#enable_smart_case = 1
+  " Set minimum syntax keyword length.
+  let g:neocomplete#sources#syntax#min_keyword_length = 3
+
+  " Define dictionary.
+  let g:neocomplete#sources#dictionary#dictionaries = {
+        \ 'default' : '',
+        \ 'vimshell' : $HOME.'/.vimshell_hist',
+        \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+
+  " Define keyword.
+  if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+  endif
+  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+  " Plugin key-mappings.
+  inoremap <expr><C-g>     neocomplete#undo_completion()
+  inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+  " Recommended key-mappings.
+  " <CR>: close popup and save indent.
+  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+  function! s:my_cr_function()
+    return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+    " For no inserting <CR> key.
+    "return pumvisible() ? "\<C-y>" : "\<CR>"
+  endfunction
+  " <TAB>: completion.
+  inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+  " <C-h>, <BS>: close popup and delete backword char.
+  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+  inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+  " Close popup by <Space>.
+  "inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
+
+  " AutoComplPop like behavior.
+  "let g:neocomplete#enable_auto_select = 1
+
+  " Shell like behavior(not recommended).
+  "set completeopt+=longest
+  "let g:neocomplete#enable_auto_select = 1
+  "let g:neocomplete#disable_auto_complete = 1
+  "inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+
+  " Enable omni completion.
+  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+  " Enable heavy omni completion.
+  if !exists('g:neocomplete#sources#omni#input_patterns')
+    let g:neocomplete#sources#omni#input_patterns = {}
+  endif
+  "let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+  "let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+  "let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+  " For perlomni.vim setting.
+  " https://github.com/c9s/perlomni.vim
+  let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+endif
+
+if IsLoad('deoplete')
+  let g:deoplete#enable_at_startup = 1
 endif
 
 if IsLoad('signify')
