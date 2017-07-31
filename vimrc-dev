@@ -123,11 +123,17 @@ Plug 'scrooloose/nerdcommenter'         " Code commenter
 Plug 'vim-scripts/DoxygenToolkit.vim'   " doxygen
 
 " complete
+"
 if has('nvim')
-  Plug 'Shougo/deoplete.nvim' 
+  if has('python3')
+    Plug 'Shougo/deoplete.nvim'
+  else
+    Plug 'Shougo/neocomplcache.vim'
+  endif
 else
   Plug 'Shougo/neocomplete.vim'
 endif
+
 Plug 'honza/vim-snippets'
 Plug 'garbas/vim-snipmate'
 
@@ -837,7 +843,7 @@ if IsLoad('vim-startify')
   "       \ ['   Commands:'],
   "       \ 'commands',
   "       \ ]
-  nnoremap <silent><leader>bh :Startify<CR>       " open home page 
+  nnoremap <silent><leader>bh :Startify<CR>       " open home page
 endif
 
 if IsLoad('vim-easymotion')
@@ -985,6 +991,26 @@ endif
 
 if IsLoad("simpyfold")
   let g:SimpylFold_docstring_preview=1
+endif
+
+if IsLoad('neocomplcache')
+  " most of them not documented because I'm not sure how they work
+  " (docs aren't good, had to do a lot of trial and error to make it play nice)
+  let g:neocomplcache_enable_at_startup = 1
+  let g:neocomplcache_enable_ignore_case = 1
+  let g:neocomplcache_enable_smart_case = 1
+  let g:neocomplcache_enable_auto_select = 1
+  let g:neocomplcache_enable_fuzzy_completion = 1
+  let g:neocomplcache_enable_camel_case_completion = 1
+  let g:neocomplcache_enable_underbar_completion = 1
+  let g:neocomplcache_fuzzy_completion_start_length = 1
+  let g:neocomplcache_auto_completion_start_length = 1
+  let g:neocomplcache_manual_completion_start_length = 1
+  let g:neocomplcache_min_keyword_length = 1
+  let g:neocomplcache_min_syntax_length = 1
+  " complete with workds from any opened file
+  let g:neocomplcache_same_filetype_lists = {}
+  let g:neocomplcache_same_filetype_lists._ = '_'
 endif
 
 if IsLoad('neocomplete')
