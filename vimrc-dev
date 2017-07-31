@@ -74,8 +74,8 @@ Plug 'scrooloose/nerdtree'                      " Better file browser
 Plug 'Valloric/ListToggle'                      " ListToggle: toggle quickfix and location-list
 Plug 'ctrlpvim/ctrlp.vim'                       " Code and files fuzzy finder
 Plug 'fisadev/vim-ctrlp-cmdpalette'             " Extension to ctrlp, for fuzzy command finder
-" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-" Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-scripts/IndexedSearch'                            " Search results counter
 Plug 'mhinz/vim-startify'
@@ -98,7 +98,7 @@ Plug 'godlygeek/tabular'                " aligning text
 
 " Write
 " Plug 'junegunn/limelight.vim'
-Plug 'junegunn/goyo.vim'
+Plug 'junegunn/goyo.vim', { 'for': 'markdown' }
 
 " User Interface
 Plug 'vim-airline/vim-airline'
@@ -185,7 +185,7 @@ Plug 'kovisoft/slimv'
 Plug 'fatih/vim-go'
 
 " ttcn
-Plug 'mincore/vim-ttcn'
+Plug 'mincore/vim-ttcn', { 'for': 'ttcn'}
 
 if exists('g:nyaovim_version')
   Plug 'rhysd/nyaovim-markdown-preview'
@@ -716,19 +716,20 @@ if IsLoad('vim-leader-guide')
   " leader-f is the "File Menu" group.
   let g:lmap.f = { 'name' : 'File Menu' }
   let g:lmap.b = { 'name' : 'Buffer Menu' }
+  let g:lmap.w = { 'name' : 'Window Menu'}
   let g:lmap.s = { 'name' : 'Search Menu' }
   let g:lmap.t = { 'name' : 'Toggle Menu' }
   let g:lmap.d = { 'name' : 'Delete Menu'}
-  let g:lmap.w = { 'name' : 'Window Menu'}
   " let g:lmap.o = { 'name' : 'Open Stuff' }
 
   " Provide commands and descriptions for existing mappings
   let g:lmap.f.d = ['e $MYVIMRC', 'Open vimrc']
   let g:lmap.f.s = ['so %', 'Source current file']
   let g:lmap.f.w = ['w', 'Save current file']
-  " let g:lmap.f.b = ['CtrlPBuffer', 'Find file in opened buffer']
-  " let g:lmap.f.r = ['CtrlPMRU', 'Find a recent file']
-  " let g:lmap.f.j = ['e .', 'Nagative in current directory']
+  let g:lmap.f.b = ['', 'Find file in opened buffer']
+  let g:lmap.f.r = ['', 'Find a recent file']
+  let g:lmap.f.j = ['', 'Nagative in current directory']
+
   let g:lmap.b.n = ['', 'next buffer']
   let g:lmap.b.p = ['', 'previous buffer']
   let g:lmap.b.1 = ['', 'open buffer 1']
@@ -752,6 +753,13 @@ if IsLoad('vim-leader-guide')
   let g:lmap.w.v = ['', 'vertical split']
   let g:lmap.w.c = ['', 'close current windows']
 
+  let g:lmap.s.s = ['', 'grep in pwd']
+  let g:lmap.s.w = ['', 'grep cursor word in pwd']
+  let g:lmap.s.t = ['', 'search cursor tag in current file']
+  let g:lmap.s.T = ['', 'search cursor tag in pwd']
+  let g:lmap.s.l = ['', 'search line in current file']
+  let g:lmap.s.c = ['', 'search command']
+  let g:lmap.s.r = ['', 'search and replace']
 
   " nmap <silent> <leader>oo  :copen<CR>
   " let g:lmap.o.o = ['copen', 'Open quickfix']
@@ -1024,23 +1032,6 @@ if IsLoad("simpyfold")
 endif
 
 if IsLoad('neocomplcache')
-  " " most of them not documented because I'm not sure how they work
-  " " (docs aren't good, had to do a lot of trial and error to make it play nice)
-  " let g:neocomplcache_enable_at_startup = 1
-  " let g:neocomplcache_enable_ignore_case = 1
-  " let g:neocomplcache_enable_smart_case = 1
-  " let g:neocomplcache_enable_auto_select = 1
-  " let g:neocomplcache_enable_fuzzy_completion = 1
-  " let g:neocomplcache_enable_camel_case_completion = 1
-  " let g:neocomplcache_enable_underbar_completion = 1
-  " let g:neocomplcache_fuzzy_completion_start_length = 1
-  " let g:neocomplcache_auto_completion_start_length = 1
-  " let g:neocomplcache_manual_completion_start_length = 1
-  " let g:neocomplcache_min_keyword_length = 1
-  " let g:neocomplcache_min_syntax_length = 1
-  " " complete with workds from any opened file
-  " let g:neocomplcache_same_filetype_lists = {}
-  " let g:neocomplcache_same_filetype_lists._ = '_'
     " Disable AutoComplPop.
   let g:acp_enableAtStartup = 0
   " Use neocomplcache.
