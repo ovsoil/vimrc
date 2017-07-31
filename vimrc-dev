@@ -184,6 +184,9 @@ Plug 'kovisoft/slimv'
 " golang
 Plug 'fatih/vim-go'
 
+" ttcn
+Plug 'mincore/vim-ttcn'
+
 if exists('g:nyaovim_version')
   Plug 'rhysd/nyaovim-markdown-preview'
 endif
@@ -349,6 +352,7 @@ au BufNewFile,BufRead *.py,*.pyw,*.c,*.h,*.coffee match BadWhitespace /\s\+$/
 
 " Specific filetype
 au BufNewFile,BufRead *.spacemacs setf lisp
+au BufNewFile,BufRead *.ttcn setf ttcn
 " FileType Specific Changes
 if has ( "autocmd" )
   autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
