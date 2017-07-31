@@ -421,7 +421,7 @@ endfunction
 ca w!! w !sudo tee "%"
 
 nmap <silent><F1> :call ToggleHelp()<cr>
-nmap <leader>hh :call ToggleHelp()<cr>  " Toggle help window
+nmap <leader>hh :call ToggleHelp()<cr>
 " nmap <leader>hk :Maps<CR>               " Toggle keymap window
 
 " ---------------------------------------
@@ -447,28 +447,29 @@ endif
 " files navigation
 " ---------------------------------------
 " Buffer
-nmap <leader>bn :bnext<cr>          " next buffer
-nmap <leader>bp :bprevious<cr>      " previous buffer
-nmap <Leader>b1 :1b<CR>             " open buffer 1
-nmap <Leader>b2 :2b<CR>             " open buffer 2
-nmap <Leader>b3 :3b<CR>             " open buffer 3
-nmap <Leader>b4 :4b<CR>             " open buffer 4
-nmap <Leader>b5 :5b<CR>             " open buffer 5
-nmap <Leader>b6 :6b<CR>             " open buffer 6
-nmap <Leader>b7 :7b<CR>             " open buffer 7
-nmap <Leader>b8 :8b<CR>             " open buffer 8
-nmap <Leader>b9 :9b<CR>             " open buffer 9
-nmap <Leader>b0 :10b<CR>            " open buffer 10
-nmap <leader>bd :bdelete<cr>        " close current buffer
-nmap <leader>ba :1,1000 bd!<cr>     " close all the buffers
-nmap <leader>b<tab> :b#<cr>         " switch to most recently buffer
+nmap <leader>bn :bnext<cr>
+nmap <leader>bp :bprevious<cr>
+nmap <Leader>b1 :1b<CR>
+nmap <Leader>b2 :2b<CR>
+nmap <Leader>b3 :3b<CR>
+nmap <Leader>b4 :4b<CR>
+nmap <Leader>b5 :5b<CR>
+nmap <Leader>b6 :6b<CR>
+nmap <Leader>b7 :7b<CR>
+nmap <Leader>b8 :8b<CR>
+nmap <Leader>b9 :9b<CR>
+nmap <Leader>b0 :10b<CR>
+nmap <leader>bd :bdelete<cr>
+nmap <leader>ba :1,1000 bd!<cr>
+nmap <leader>b<tab> :b#<cr>
 " Ngb to jump to buffer number N
 let c = 1
 while c <= 99
   execute "nnoremap " . c . "gb :" . c . "b\<CR>"
   let c += 1
 endwhile
-nmap <leader>cd :cd %:p:h<cr>:pwd<cr>       " switch CWD to the directory of the open buffer
+" switch CWD to the directory of the open buffer
+nmap <leader>cd :cd %:p:h<cr>:pwd<cr>
 " Specify the behavior when switching between buffers
 try
   set switchbuf=useopen,usetab        " newtab
@@ -486,12 +487,13 @@ map j gj
 map k gk
 nmap H ^
 nmap L $
-map <leader>wj <C-W>j     " move to below window
-map <leader>wk <C-W>k     " move to above window
-map <leader>wh <C-W>h     " move to left window
-map <leader>wl <C-W>l     " move to right window
-map <leader>ws :split<CR> " horizontal split
-map <leader>wv :vs<CR>    " vertical split
+map <leader>wj <C-W>j
+map <leader>wk <C-W>k
+map <leader>wh <C-W>h
+map <leader>wl <C-W>l
+map <leader>ws :split<CR>
+map <leader>wv :vs<CR>
+map <leader>wc :close<CR>
 if (g:system=="mac")
   nmap <D-j> <M-j>
   nmap <D-k> <M-k>
@@ -519,7 +521,7 @@ vmap <leader>pp "+p
 nmap <leader>pP "+P
 vmap <leader>pP "+P
 au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
-map <leader>= <Esc>:%!python -m json.tool<cr>   " format json
+map <leader>= <Esc>:%!python -m json.tool<cr>
 " if (executable('pbcopy') || executable('xclip') || executable('xsel')) && has('clipboard')
 "   set clipboard=unnamed
 " endif
@@ -530,8 +532,8 @@ func! DeleteTrailingWS()
   %s/\s\+$//ge
   exe "normal `z"
 endfunc
-nmap <leader>db :call DeleteTrailingWS()<cr>       " Remove blank space in lineend
-nmap <leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm   " Remove the Windows ^M
+nmap <leader>db :call DeleteTrailingWS()<cr>
+nmap <leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
@@ -629,9 +631,9 @@ endif
 let &cpo = s:save_cpo | unlet s:save_cpo
 
 " highlight but not search the word at cursor
-nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>  " highlight the cursor word
+nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
 " highlight but not search the selected text
-vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N            " highlight selected word
+vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N
 
 " replace selected text
 vnoremap <leader>sr ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
@@ -640,11 +642,11 @@ nnoremap <leader>sr :%s/<C-R><C-W>//gc"<left><left><left><left>
 nnoremap <leader>sr :%s/<C-R><C-W>//g"<left><left><left>
 
 " grep the word at cursor in current dir
-nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>  " grep the cursor word
-vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>       " grep selected word
+nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
+vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
 
 command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
-nnoremap <leader>ss :Search<Space>''<left>              " grep
+nnoremap <leader>ss :Search<Space>''<left>
 
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
@@ -717,6 +719,7 @@ if IsLoad('vim-leader-guide')
   let g:lmap.s = { 'name' : 'Search Menu' }
   let g:lmap.t = { 'name' : 'Toggle Menu' }
   let g:lmap.d = { 'name' : 'Delete Menu'}
+  let g:lmap.w = { 'name' : 'Window Menu'}
   " let g:lmap.o = { 'name' : 'Open Stuff' }
 
   " Provide commands and descriptions for existing mappings
@@ -726,6 +729,29 @@ if IsLoad('vim-leader-guide')
   " let g:lmap.f.b = ['CtrlPBuffer', 'Find file in opened buffer']
   " let g:lmap.f.r = ['CtrlPMRU', 'Find a recent file']
   " let g:lmap.f.j = ['e .', 'Nagative in current directory']
+  let g:lmap.b.n = ['', 'next buffer']
+  let g:lmap.b.p = ['', 'previous buffer']
+  let g:lmap.b.1 = ['', 'open buffer 1']
+  let g:lmap.b.2 = ['', 'open buffer 2']
+  let g:lmap.b.3 = ['', 'open buffer 3']
+  let g:lmap.b.4 = ['', 'open buffer 4']
+  let g:lmap.b.5 = ['', 'open buffer 5']
+  let g:lmap.b.6 = ['', 'open buffer 6']
+  let g:lmap.b.7 = ['', 'open buffer 7']
+  let g:lmap.b.8 = ['', 'open buffer 8']
+  let g:lmap.b.9 = ['', 'open buffer 9']
+  let g:lmap.b.0 = ['', 'open buffer 10']
+  let g:lmap.b.d = ['', 'close current buffer']
+  let g:lmap.b.a = ['', 'close all buffers']
+
+  let g:lmap.w.j = ['', 'move to below window']
+  let g:lmap.w.k = ['', 'move to above window']
+  let g:lmap.w.h = ['', 'move to left window']
+  let g:lmap.w.l = ['', 'move to right window']
+  let g:lmap.w.s = ['', 'horizontal split']
+  let g:lmap.w.v = ['', 'vertical split']
+  let g:lmap.w.c = ['', 'close current windows']
+
 
   " nmap <silent> <leader>oo  :copen<CR>
   " let g:lmap.o.o = ['copen', 'Open quickfix']
@@ -847,7 +873,7 @@ if IsLoad('vim-startify')
   "       \ ['   Commands:'],
   "       \ 'commands',
   "       \ ]
-  nnoremap <silent><leader>bh :Startify<CR>       " open home page
+  nnoremap <silent><leader>bh :Startify<CR>
 endif
 
 if IsLoad('vim-easymotion')
@@ -1077,7 +1103,7 @@ if IsLoad('neocomplcache')
   "let g:neocomplcache_enable_insert_char_pre = 1
 
   " AutoComplPop like behavior.
-  let g:neocomplcache_enable_auto_select = 1
+  " let g:neocomplcache_enable_auto_select = 1
 
   " Shell like behavior(not recommended).
   "set completeopt+=longest
@@ -1149,7 +1175,7 @@ if IsLoad('neocomplete')
   "inoremap <expr><Space> pumvisible() ? "\<C-y>" : "\<Space>"
 
   " AutoComplPop like behavior.
-  let g:neocomplete#enable_auto_select = 1
+  " let g:neocomplete#enable_auto_select = 1
 
   " Shell like behavior(not recommended).
   "set completeopt+=longest
