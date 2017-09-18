@@ -84,10 +84,11 @@ if executable('ack')
 endif
 
 " Enhancement
-Plug 'Shougo/denite.nvim'
-Plug 'hecal3/vim-leader-guide'
+" Plug 'hecal3/vim-leader-guide'
+if has('nvim') && has('python3')
+  Plug 'Shougo/denite.nvim'
+endif
 Plug 'rosenfeld/conque-term'            " Consoles as buffers
-" Plug 'fisadev/FixedTaskList.vim'        " Pending tasks list
 Plug 'terryma/vim-multiple-cursors'     " Sublime Text style multiple selections for Vim
 Plug 'tpope/vim-surround'               " surround
 Plug 'terryma/vim-expand-region'        " visually select increasingly larger regions
@@ -113,7 +114,7 @@ Plug 'morhetz/gruvbox'
 " Develop
 Plug 'w0rp/ale'
 Plug 'michaeljsmith/vim-indent-object'  " Indent text object
-Plug 'majutsushi/tagbar'                " Class/module browser
+" Plug 'majutsushi/tagbar'                " Class/module browser
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'           " Git/mercurial/.. diff icons
 
@@ -123,7 +124,6 @@ Plug 'scrooloose/nerdcommenter'         " Code commenter
 Plug 'vim-scripts/DoxygenToolkit.vim'   " doxygen
 
 " complete
-"
 if has('nvim')
   if has('python3')
     Plug 'Shougo/deoplete.nvim'
@@ -157,6 +157,7 @@ Plug 'tmhedberg/SimpylFold'
 if has('python')
   Plug 'pignacio/vim-yapf-format'       " YAPF formatter for Python
 endif
+Plug 'tell-k/vim-autopep8'
 
 " javascript
 Plug 'pangloss/vim-javascript'
@@ -487,13 +488,13 @@ map j gj
 map k gk
 nmap H ^
 nmap L $
-map <leader>wj <C-W>j
-map <leader>wk <C-W>k
-map <leader>wh <C-W>h
-map <leader>wl <C-W>l
-map <leader>ws :split<CR>
-map <leader>wv :vs<CR>
-map <leader>wc :close<CR>
+nmap <leader>wj <C-W>j
+nmap <leader>wk <C-W>k
+nmap <leader>wh <C-W>h
+nmap <leader>wl <C-W>l
+nmap <leader>ws :split<CR>
+nmap <leader>wv :vs<CR>
+nmap <leader>wc :close<CR>
 if (g:system=="mac")
   nmap <D-j> <M-j>
   nmap <D-k> <M-k>
@@ -510,7 +511,7 @@ nnoremap ,z zMzv
 " ---------------------------------------
 " Edit
 " ---------------------------------------
-set pastetoggle=<leader>pt                      " Toggle paste mode
+" set pastetoggle=<leader>pt                      " Toggle paste mode (disable it for insert space issue)
 nmap <leader>yy "+yy
 nmap <leader>dd "+d
 vmap <leader>dd "+d
@@ -521,7 +522,7 @@ vmap <leader>pp "+p
 nmap <leader>pP "+P
 vmap <leader>pP "+P
 au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
-map <leader>= <Esc>:%!python -m json.tool<cr>
+nmap <leader>= <Esc>:%!python -m json.tool<cr>
 " if (executable('pbcopy') || executable('xclip') || executable('xsel')) && has('clipboard')
 "   set clipboard=unnamed
 " endif
@@ -798,6 +799,22 @@ if IsLoad('vim-leader-guide')
   autocmd FileType tex let g:llmap.l = { 'name' : 'vimtex' }
   call leaderGuide#register_prefix_descriptions(",", "g:llmap")
   " to name the <localleader>-n group vimtex in tex files.
+endif
+
+if IsLoad('denite.nvim')
+  call denite#custom#map(
+        \ 'insert',
+        \ '<C-j>',
+        \ '<denite:move_to_next_line>',
+        \ 'noremap'
+        \)
+
+  call denite#custom#map(
+        \ 'insert',
+        \ '<C-k>',
+        \ '<denite:move_to_previous_line>',
+        \ 'noremap'
+        \)
 endif
 
 if IsLoad('tagbar')
