@@ -114,7 +114,7 @@ Plug 'morhetz/gruvbox'
 " Develop
 Plug 'w0rp/ale'
 Plug 'michaeljsmith/vim-indent-object'  " Indent text object
-" Plug 'majutsushi/tagbar'                " Class/module browser
+Plug 'majutsushi/tagbar'                " Class/module browser
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'           " Git/mercurial/.. diff icons
 
@@ -126,7 +126,8 @@ Plug 'vim-scripts/DoxygenToolkit.vim'   " doxygen
 " complete
 if has('nvim')
   if has('python3')
-    Plug 'Shougo/deoplete.nvim'
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    Plug 'zchee/deoplete-go', { 'do': 'make'}
   else
     Plug 'Shougo/neocomplcache.vim'
   endif
@@ -163,6 +164,9 @@ Plug 'tell-k/vim-autopep8'
 Plug 'pangloss/vim-javascript'
 Plug 'kchmck/vim-coffee-script'
 
+" solidity
+Plug 'tomlion/vim-solidity'
+
 " html
 Plug 'vim-scripts/matchit.zip'          " XML/HTML tags navigation
 Plug 'mattn/emmet-vim'
@@ -183,7 +187,7 @@ Plug 'aerosol/vim-compot'
 Plug 'kovisoft/slimv'
 
 " golang
-Plug 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 " ttcn
 Plug 'mincore/vim-ttcn', { 'for': 'ttcn'}
@@ -357,7 +361,7 @@ au BufNewFile,BufRead *.ttcn setf ttcn
 " FileType Specific Changes
 if has ( "autocmd" )
   autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType json,html,xhtml,xml,css,htmldjango setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType html,xhtml,xml,css,htmldjango,yaml setlocal ts=2 sts=2 sw=2 expandtab
 endif
 
 " set cursorcolumn          " highlight current column
@@ -521,6 +525,7 @@ nmap <leader>pp "+p
 vmap <leader>pp "+p
 nmap <leader>pP "+P
 vmap <leader>pP "+P
+map <leader>p "0p
 au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
 nmap <leader>= <Esc>:%!python -m json.tool<cr>
 " if (executable('pbcopy') || executable('xclip') || executable('xsel')) && has('clipboard')
@@ -652,22 +657,6 @@ nnoremap <leader>ss :Search<Space>''<left>
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]
-
-" Add support for markdown files in tagbar.
-" let g:tagbar_type_markdown = {
-"       \ 'ctagstype': 'markdown',
-"       \ 'ctagsbin' : '~/.vim/bin/markdown2ctags.py',
-"       \ 'ctagsargs' : '-f - --sort=yes',
-"       \ 'kinds' : [
-"       \ 's:sections',
-"       \ 'i:images'
-"       \ ],
-"       \ 'sro' : '|',
-"       \ 'kind2scope' : {
-"       \ 's' : 'section',
-"       \ },
-"       \ 'sort': 0,
-"       \ }
 
 " ============================================================================
 " Plugins settings and mappings
@@ -822,7 +811,25 @@ if IsLoad('tagbar')
   let g:tagbar_ctags_bin = 'ctags'
   let g:tagbar_width     = 30
   let g:tagbar_autofocus = 1      " autofocus on tagbar open
+  let g:tagbar_left = 1
   "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+
+  "" Add support for markdown files in tagbar.
+  " let g:tagbar_type_markdown = {
+  "       \ 'ctagstype': 'markdown',
+  "       \ 'ctagsbin' : '~/.vim/bin/markdown2ctags.py',
+  "       \ 'ctagsargs' : '-f - --sort=yes',
+  "       \ 'kinds' : [
+  "       \ 's:sections',
+  "       \ 'i:images'
+  "       \ ],
+  "       \ 'sro' : '|',
+  "       \ 'kind2scope' : {
+  "       \ 's' : 'section',
+  "       \ },
+  "       \ 'sort': 0,
+  "       \ }
+  
 endif
 
 if IsLoad('fixedtasklist')
@@ -877,6 +884,16 @@ if IsLoad('ctrlp')
         \ 'dir':  '\v[\/](\.git|\.hg|\.svn|node_modules)$',
         \ 'file': '\.(o|swp|beam|pyc|pyo|wav|mp3|ogg|blend)$\|\.(log|jpg|png|jpeg)$|__init__\.py',
         \ }
+
+  let g:ctrlp_buftag_types = {'go': '--language-force=go --golang-types=ftv'}
+  " let g:ctrlp_buftag_types = {
+  "     \ 'go'         : '--language-force=go --golang-types=ftv',
+  "     \ 'coffee'     : '--language-force=coffee --coffee-types=cmfvf',
+  "     \ 'markdown'   : '--language-force=markdown --markdown-types=hik',
+  "     \ 'objc'       : '--language-force=objc --objc-types=mpci',
+  "     \ 'rc'         : '--language-force=rust --rust-types=fTm',
+  "     \ 'clojure'    : '--langmap=Lisp:+.clj'
+  "     \ }
 endif
 
 if IsLoad('ack')
@@ -899,6 +916,10 @@ if IsLoad('vim-startify')
   "       \ 'commands',
   "       \ ]
   nnoremap <silent><leader>bh :Startify<CR>
+endif
+
+if IsLoad('vid-gitgutter')
+  let g:gitgutter_max_signs=2000
 endif
 
 if IsLoad('vim-easymotion')
@@ -1268,14 +1289,16 @@ if IsLoad('ultisnips')
   let g:UltiSnipsEditSplit="vertical"
 endif
 
+
 " ===============================================================================
 " ctags
+" how to generate C++ tags: !ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .
 " ===============================================================================
-" C++ tags: "!ctags -R --c++-kinds=+px --fields=+iaS --extra=+q ."
-" map <C-]> :tselect <C-R>=expand("<cword>")<cr><cr>
-" map <C-]> g<C-]>
-" 添加特定的（已经生成tags）的函数库的tags
-autocmd FileType cpp set tags+=~/.vim/cpp_src/tags
+map <C-]> :tselect <C-R>=expand("<cword>")<cr><cr>
+map <C-]> g<C-]>
+
+" add custom tags file
+" autocmd FileType cpp set tags+=~/.vim/cpp_src/tags
 
 " ===============================================================================
 " cscope
@@ -1284,35 +1307,28 @@ if has("cscope")
   set csprg=cscope
   set cscopetag                       " Use both cscope and ctag
   set cscopeverbose                   " Show msg when cscope db added
-  set cscopetagorder=0                " Use cscope for definition search first
+  set cscopetagorder=0                " Use cscope, not ctags for definition search first
 endif
 
 " auto load cscope.out
-" function! LoadCscope()
-"     let db = findfile("cscope.out", ".;")    "从当前目录往上找，直到找到 cscope.out 这个命令能到找到cscope.out的路径。
-"     if (!empty(db))
-"         let path = strpart(db, 0, match(db, "/cscope.out$"))
-"         set nocsverb                                "suppress 'duplicate connection' error
-"         exe "cs add " . db . " " . path
-"         set csverb
-"     endif
-" endfunction
-" autocmd BufRead,BufEnter *.cpp,*.hpp call LoadCscope()
+function! LoadCscope()
+    let db = findfile("cscope.out", ".;")    " find cscope.out
+    if (!empty(db))
+        let path = strpart(db, 0, match(db, "/cscope.out$"))
+        set nocsverb                         " suppress 'duplicate connection' error
+        exe "cs add " . db . " " . path
+        set csverb
+    endif
+endfunction
+autocmd BufRead,BufEnter *.cpp,*.hpp,*.go, call LoadCscope()
 
-"s: 查找C语言符号，即查找函数名、宏、枚举值等出现的地方
-"g: 查找函数、宏、枚举等定义的位置，类似ctags所提供的功能
-"d: 查找本函数调用的函数
-"c: 查找调用本函数的函数
-"t: 查找指定的字符串
-"e: 查找egrep模式，相当于egrep功能，但查找速度快多了
-"f: 查找并打开文件，类似vim的find功能
-"i: 查找包含本文件的文
 set cscopequickfix=s-,g-,c-,t-,e-,f-,i-,d-
-nmap <C-@>s :cs find s <C-R>=expand("<cword>")<cr><cr>:copen<cr>
-nmap <C-@>g :cs find g <C-R>=expand("<cword>")<cr><cr>:copen<cr>
-nmap <C-@>c :cs find c <C-R>=expand("<cword>")<cr><cr>:copen<cr>
-nmap <C-@>t :cs find t <C-R>=expand("<cword>")<cr><cr>:copen<cr>
-nmap <C-@>e :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>
-nmap <C-@>f :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>
-nmap <C-@>i :cs find i ^<C-R>=expand("<cfile>")<cr>$<cr>:copen<cr>
-nmap <C-@>d :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <leader>gs :cs find s <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this C symbol
+nmap <leader>gg :cs find g <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this definition
+nmap <leader>gd :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find functions called by this function
+nmap <leader>gc :cs find c <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find functions calling this function
+nmap <leader>gt :cs find t <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this text string
+nmap <leader>ge :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this egrep pattern
+nmap <leader>gf :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find this file
+nmap <leader>gi :cs find i ^<C-R>=expand("<cfile>")<cr>$<cr>:copen<cr>  " Find files #including this file
+nmap <leader>ga :cs find a <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find places where this symbol is assigned a value
