@@ -1,68 +1,73 @@
 # vimrc
-A powerful vim config file.
+A powerful vim config file for developer.
 keymap similar with spacemacs
 
 ## Description
 
-* `vimrc-server`: Simple vimrc for server without any plugin
 * `vimrc-dev`: vimrc for develop
+* `vimrc-server`: Simple vimrc for server without any plugin
 
 ## Install | Upgrade
 
 1. Prerequisites
 
-    * vim compiled with python support. Check it with vim --version | grep +python
+    * vim compiled with python support. Check it with vim --version | grep +python ([neovim](https://neovim.io) is recommend)
     * Install the required dependencies:
     ```bash
+    # mac
+    brew install ctags
+    brew install the_silver_searcher
+    sudo pip install pep8 flake8 pyflakes isort yapf
+
     # ubuntu
     sudo apt-get install exuberant-ctags git ack-grep
     sudo apt-get install silversearcher-ag
     sudo pip install pep8 flake8 pyflakes isort yapf
 
-    # mac
-    brew install ctags
-    brew install the_silver_searcher
-    sudo pip install pep8 flake8 pyflakes isort yapf
     ```
-    * backup your old .vimrc file and .vim folder, create an empty .vim folder
 
-2. Clone this repo, and create a soft symbolic links `~/.vimrc` target the vimrc file which you want to use
+    * If you are using [neovim](https://neovim.io), python neovim package is need.
+    ```bash
+    sudo pip install neovim
+    ```
+    * backup your old `.vimrc` file (`$HOME/.config/nvim/init.vim` for neovim ) and `.vim` folder, create an empty `.vim` folder
+
+2. Clone this repo, and create a soft symbolic links which target the vimrc file which you want to use
 
     eg:
 
     ```bash
-    cd
-    git clone https://github.com/ovsoil/vimrc.git ~/repo/vimrc
-    ln -s repo/vimrc/vimrc-dev ~/.vimrc
+    git clone https://github.com/ovsoil/vimrc.git $HOME/repo/vimrc
+    # vim
+    ln -s $HOME/repo/vimrc/vimrc-dev $HOME/.vimrc
+    # neovim
+    ln -s $HOME/repo/vimrc/vimrc-dev $HOME/.config/nvim/init.vim
+
     ```
-3. Open vim and it will continue the installation by itself. Wait for it to finish... and done! You now have your new shiny powerful vim :)
+3. Open vim and it will continue the installation by itself. Wait for it to finish... and Done!
+   You now have your new shiny powerful vim :)
 
-
-## screenshot:
-
-...
 
 ## Features
 
 a powerful vim config file, some of the keymap refer to spacemacs
 
-### 1. Little but *usefull* features
+### 1. *Usefull* small features
 
-* easy way to *search/replace/highlight/grep* current word & selected text
-* easy way to motion in file
-* easy to toggle help(<leader>hh), quickfix(<leader>q), Locate(<leader>l) windows
-* nerdtree keymap similar to neotree in spacemacs;
+* easy to *search/replace/highlight/grep* current word & selected text
+* support copy and paste with clipboard
+* easy to motion in file
+* good completion
+* toggle windows: help(<leader>hh), quickfix(<leader>q), Locate(<leader>l)
 * return to last edit position when opening files
 * convenient to insert date/time/calculate at insert mode
 * automatically jump to the last position of paste text
-* good completion
 
 ### 2.  Hot Plugins and spacemacs-like Keymap
 
 * `:PlugStatus` to see which plugins included
 * `:Maps` to see keymap list
 * ...
-
 
 ### keymap
 
@@ -94,7 +99,7 @@ a powerful vim config file, some of the keymap refer to spacemacs
     <leader>ba      close all buffers
     <leader>b<tab>  switch between most recently buffer
     <leader>bN      jump to buffer N, for single digit
-    Ngb             jump to buffer N, 
+    Ngb             jump to buffer N,
 
     # Search and replace
     <leader>ss      search string in all files at pwd dir (-i for case-insensitively, -s for case-sensitively)
@@ -118,6 +123,17 @@ a powerful vim config file, some of the keymap refer to spacemacs
     <leader>pp      paste from clipboard
     <leader>pP      paste before current cursor from clipboard
 
+    # cscope
+    <leader>gs      Find this C symbol
+    <leader>gg      Find this definition
+    <leader>gd      Find functions called by this function
+    <leader>gc      Find functions calling this function
+    <leader>gt      Find this text string
+    <leader>ge      Find this egrep pattern
+    <leader>gf      Find this file
+    <leader>gi      Find files #including this file
+    <leader>ga      Find places where this symbol is assigned a value
+
     # Edit
     <leader>=       format json file
     <leader>dm      delete all Windows ^M in file
@@ -134,7 +150,10 @@ a powerful vim config file, some of the keymap refer to spacemacs
 
 ### git
 
-## Vim 简明教程
+## screenshot:
+
+
+## Reference: Simple Vim Tutorial
 
 ### VIM的模式
 
