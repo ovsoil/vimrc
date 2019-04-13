@@ -1,18 +1,15 @@
-"==========================================
-" ProjectLink: https://github.com/wklken/vim-for-server
-" Author:  wklken
-" Version: 0.2
-" Email: wklken@yeah.net
-" BlogPost: http://www.wklken.me
-" Donation: http://www.wklken.me/pages/donation.html
-" ReadMe: README.md
-" Last_modify: 2015-07-07
-" Desc: simple vim config for server, without any plugins.
-"==========================================
+" ============================================================================
+" simple vim config without any plugins
+" Maintainer: ovsoil
+"       hxyumail@gmail.com
+"       http://ovsoil.com
+" Create Date:
+"       01/09/2015
+" ============================================================================
 
 " leader
-let mapleader = ','
-let g:mapleader = ','
+let mapleader = "\<Space>"
+let g:mapleader = "\<Space>"
 
 " syntax
 syntax on
@@ -44,7 +41,7 @@ set tm=500
 
 
 " show location
-set cursorcolumn
+" set cursorcolumn
 set cursorline
 
 
@@ -213,16 +210,16 @@ set pastetoggle=<F5>            "    when in insert mode, press <F5> to go to
 au InsertLeave * set nopaste
 nnoremap <F6> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 
-" kj 替换 Esc
-inoremap kj <Esc>
+" kj replace Esc
+" inoremap kj <Esc>
 
 " Quickly close the current window
-nnoremap <leader>q :q<CR>
+" nnoremap <leader>q :q<CR>
 " Quickly save the current file
-nnoremap <leader>w :w<CR>
+" nnoremap <leader>w :w<CR>
 
 " select all
-map <Leader>sa ggVG"
+" map <Leader>sa ggVG"
 
 " remap U to <C-r> for easier redo
 nnoremap U <C-r>
@@ -245,7 +242,8 @@ nnoremap <silent> # #zz
 nnoremap <silent> g* g*zz
 
 " remove highlight
-noremap <silent><leader>/ :nohls<CR>
+" noremap <silent><leader>/ :nohls<CR>
+nnoremap <leader><cr> :nohl<cr>
 
 "Reselect visual block after indent/outdent.调整缩进后自动选中，方便再次操作
 vnoremap < <gv
@@ -266,3 +264,94 @@ cnoremap <C-j> <t_kd>
 cnoremap <C-k> <t_ku>
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
+
+
+nmap <leader>dd "+d
+vmap <leader>dd "+d
+nmap <leader>yy "+yy
+vmap <leader>yy "+y
+nmap <leader>pp "+p
+vmap <leader>pp "+p
+nmap <leader>pP "+P
+vmap <leader>pP "+P
+map <leader>p "0p
+au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
+nmap <leader>= <Esc>:%!python -m json.tool<cr>
+
+" Delete the blank space or Windows ^M at trail of line
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+nmap <leader>db :call DeleteTrailingWS()<cr>
+nmap <leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+" autocmd BufWrite *.py :call DeleteTrailingWS()
+" autocmd BufWrite *.coffee :call DeleteTrailingWS()
+" insert some usefull text
+imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<cr>
+imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<cr>
+imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<cr>
+
+if executable('ag')             " The Silver Searcher
+  set grepprg=ag\ --nogroup\ --nocolor
+else
+  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
+endif
+let s:save_cpo = &cpo | set cpo&vim
+if !exists('g:VeryLiteral')
+  let g:VeryLiteral = 0
+endif
+
+
+function! s:VSetSearch(cmd)
+  let old_reg = getreg('"')
+  let old_regtype = getregtype('"')
+  normal! gvy
+  if @@ =~? '^[0-9a-z,_]*$' || @@ =~? '^[0-9a-z ,_]*$' && g:VeryLiteral
+    let @/ = @@
+  else
+    let pat = escape(@@, a:cmd.'\')
+    if g:VeryLiteral
+      let pat = substitute(pat, '\n', '\\n', 'g')
+    else
+      let pat = substitute(pat, '^\_s\+', '\\s\\+', '')
+      let pat = substitute(pat, '\_s\+$', '\\s\\*', '')
+      let pat = substitute(pat, '\_s\+', '\\_s\\+', 'g')
+    endif
+    let @/ = '\V'.pat
+  endif
+  normal! gV
+  call setreg('"', old_reg, old_regtype)
+endfunction
+vnoremap <silent> * :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>
+vnoremap <silent> # :<C-U>call <SID>VSetSearch('?')<cr>?<C-R>/<cr>
+vmap <kMultiply> *
+nmap <silent> <Plug>VLToggle :let g:VeryLiteral = !g:VeryLiteral
+      \\| echo "VeryLiteral " . (g:VeryLiteral ? "On" : "Off")<cr>
+if !hasmapto("<Plug>VLToggle")
+  nmap <unique> <Leader>vl <Plug>VLToggle
+endif
+let &cpo = s:save_cpo | unlet s:save_cpo
+
+" highlight but not search the word at cursor
+nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
+" highlight but not search the selected text
+vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N
+
+" replace selected text
+vnoremap <leader>sr ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
+vnoremap <leader>sR ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
+nnoremap <leader>sr :%s/<C-R><C-W>//gc"<left><left><left><left>
+nnoremap <leader>sr :%s/<C-R><C-W>//g"<left><left><left>
+
+" grep the word at cursor in current dir
+nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
+vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
+
+command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
+nnoremap <leader>ss :Search<Space>''<left>
+
+vnoremap <silent> y y`]
+vnoremap <silent> p p`]
+nnoremap <silent> p p`]

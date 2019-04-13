@@ -115,7 +115,17 @@ Plug 'morhetz/gruvbox'
 Plug 'w0rp/ale'
 Plug 'michaeljsmith/vim-indent-object'  " Indent text object
 Plug 'majutsushi/tagbar'                " Class/module browser
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive', { 'on': [] }
+command! Gstatus call LazyLoadFugitive('Gstatus')
+command! Gdiff call LazyLoadFugitive('Gdiff')
+command! Glog call LazyLoadFugitive('Glog')
+command! Gblame call LazyLoadFugitive('Gblame')
+
+function! LazyLoadFugitive(cmd)
+  call plug#load('vim-fugitive')
+  call fugitive#detect(expand('%:p'))
+  exe a:cmd
+endfunction
 Plug 'airblade/vim-gitgutter'           " Git/mercurial/.. diff icons
 
 " commenter
@@ -164,12 +174,18 @@ Plug 'tell-k/vim-autopep8'
 Plug 'pangloss/vim-javascript'
 Plug 'kchmck/vim-coffee-script'
 
+" typescript
+Plug 'leafgarland/typescript-vim'
+
 " solidity
 Plug 'tomlion/vim-solidity'
 
 " html
 Plug 'vim-scripts/matchit.zip'          " XML/HTML tags navigation
 Plug 'mattn/emmet-vim'
+
+" vue
+Plug 'posva/vim-vue'
 
 " ruby on rail
 Plug 'tpope/vim-rails'
@@ -361,7 +377,8 @@ au BufNewFile,BufRead *.ttcn setf ttcn
 " FileType Specific Changes
 if has ( "autocmd" )
   autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType html,xhtml,xml,css,htmldjango,yaml setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType html,xhtml,xml,css,htmldjango,yaml,vue setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType javascript,json setlocal ts=2 sts=2 sw=2 expandtab
 endif
 
 " set cursorcolumn          " highlight current column
@@ -526,6 +543,12 @@ vmap <leader>pp "+p
 nmap <leader>pP "+P
 vmap <leader>pP "+P
 map <leader>p "0p
+
+noremap ty "+y
+noremap tY "+Y  // copy a whole line to the clipboard
+noremap tp "+p  // put the text from clipboard after the cursor
+noremap tP "+P  // put the text from clipboard before the cursor
+
 au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
 nmap <leader>= <Esc>:%!python -m json.tool<cr>
 " if (executable('pbcopy') || executable('xclip') || executable('xsel')) && has('clipboard')
@@ -675,7 +698,7 @@ if IsLoad('nerdtree')
   let g:NERDTree_title="NERDTree"
   let NERDTreeShowBookmarks=1         "allways show bookmarks
   let NERDTreeChDirMode=2             "auto set pwd when open bookmarks
-  let NERDTreeIgnore=['node_modules', 'bower_components', '\.pyc$', '\.pyo$', '\~$', '\.beam$']     "ignore files in NERDTree
+  let NERDTreeIgnore=['node_modules', 'bower_components', '__pycache__', '\.pyc$', '\.pyo$', '\~$', '\.beam$']     "ignore files in NERDTree
 
   " open a NERDTree automatically when vim starts up if no files were specified
   " autocmd StdinReadPre * let s:std_in=1
@@ -811,7 +834,11 @@ if IsLoad('tagbar')
   let g:tagbar_ctags_bin = 'ctags'
   let g:tagbar_width     = 30
   let g:tagbar_autofocus = 1      " autofocus on tagbar open
-  let g:tagbar_left = 1
+  let g:tagbar_left = 0
+  " let g:tagbar_map_togglefold = ['t', 'za']
+  " let g:tagbar_map_closefold = ['x', 'zc']
+  " let g:tagbar_map_zoomwin = 'm'
+  " let g:tagbar_map_jump = 'o'
   "autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 
   "" Add support for markdown files in tagbar.
@@ -829,7 +856,18 @@ if IsLoad('tagbar')
   "       \ },
   "       \ 'sort': 0,
   "       \ }
-  
+
+  let g:tagbar_type_solidity = {
+    \ 'ctagstype': 'solidity',
+    \ 'kinds' : [
+        \ 'c:contracts',
+        \ 'e:events',
+        \ 'f:functions',
+        \ 'm:mappings',
+        \ 'v:varialbes',
+    \ ]
+    \ }
+
 endif
 
 if IsLoad('fixedtasklist')
@@ -975,16 +1013,24 @@ if IsLoad('ale')
         \   'erlang': ['erlc'],
         \   'python': ['flake8'],
         \}
+  let g:ale_fixers = {
+        \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+        \   'javascript': ['eslint'],
+        \   'python': ['autopep8'],
+        \}
   let g:ale_sign_column_always = 1
   let g:ale_sign_error = '>'
   let g:ale_sign_warning = '-'
   let g:ale_lint_on_save = 1
   let g:ale_lint_on_text_changed = 1
   let g:ale_lint_on_enter = 1
+  " let g:ale_fix_on_save = 1
   " Map movement through errors without wrapping.
   nmap <silent> <C-k> <Plug>(ale_previous)
   nmap <silent> <C-j> <Plug>(ale_next)
 
+
+  let g:ale_python_flake8_executable = '/usr/local/bin/flake8'
   let g:ale_python_flake8_args = '--ignore=E501'
 endif
 
@@ -1063,6 +1109,7 @@ if IsLoad('python-mode')
 
   let g:pymode_virtualenv = 1
   " let g:pymode_virtualenv_path = $VIRTUAL_ENV
+  let g:pymode_python = 'python3'
 endif
 
 if IsLoad("simpyfold")
