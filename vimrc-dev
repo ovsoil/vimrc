@@ -983,13 +983,13 @@ if IsLoad('vim-airline')
         \ [ 'a', 'b', 'c' ],
         \ [ 'x', 'y', 'z', 'error', 'warning' ]
         \ ]
-  let g:airline#extensions#tabline#enabled = 1
-  let g:airline#extensions#tabline#left_sep = ' '
-  let g:airline#extensions#tabline#left_alt_sep = '|'
-  let g:airline#extensions#tabline#buffer_nr_show = 1
-  let g:airline#extensions#tabline#buffer_nr_format = '%s:'
-  let g:airline#extensions#tabline#fnamecollapse = 1          "collopsing parent dir
-  let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
+  " let g:airline#extensions#tabline#enabled = 1
+  " let g:airline#extensions#tabline#left_sep = ' '
+  " let g:airline#extensions#tabline#left_alt_sep = '|'
+  " let g:airline#extensions#tabline#buffer_nr_show = 1
+  " let g:airline#extensions#tabline#buffer_nr_format = '%s:'
+  " let g:airline#extensions#tabline#fnamecollapse = 1          "collopsing parent dir
+  " let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
   let g:airline#extensions#bufferline#enabled = 0
   let g:airline#extensions#whitespace#enabled = 0
 endif
@@ -1159,7 +1159,7 @@ if IsLoad('neocomplcache')
     "return pumvisible() ? neocomplcache#close_popup() : "\<CR>"
   endfunction
   " <TAB>: completion.
-  inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+  " inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
   " <C-h>, <BS>: close popup and delete backword char.
   inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
   inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
@@ -1243,7 +1243,7 @@ if IsLoad('neocomplete')
     "return pumvisible() ? "\<C-y>" : "\<CR>"
   endfunction
   " <TAB>: completion.
-  inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+  " inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
   " <C-h>, <BS>: close popup and delete backword char.
   inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
   inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
