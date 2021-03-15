@@ -96,6 +96,7 @@ Plug 'Raimondi/delimitMate'             " auto-completion for quotes, parens, br
 " Plug 'tpope/vim-repeat'
 Plug 'godlygeek/tabular'                " aligning text
 " Plug 'vitalk/vim-simple-todo'
+Plug 'mbbill/fencview'
 
 " Write
 " Plug 'junegunn/limelight.vim'
@@ -170,6 +171,9 @@ if has('python')
 endif
 Plug 'tell-k/vim-autopep8'
 
+" rust
+Plug 'rust-lang/rust.vim'
+
 " javascript
 Plug 'pangloss/vim-javascript'
 Plug 'kchmck/vim-coffee-script'
@@ -179,6 +183,7 @@ Plug 'leafgarland/typescript-vim'
 
 " solidity
 Plug 'tomlion/vim-solidity'
+Plug 'jacqueswww/vim-vyper'
 
 " html
 Plug 'vim-scripts/matchit.zip'          " XML/HTML tags navigation
@@ -379,6 +384,7 @@ if has ( "autocmd" )
   autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
   autocmd FileType html,xhtml,xml,css,htmldjango,yaml,vue setlocal ts=2 sts=2 sw=2 expandtab
   autocmd FileType javascript,json setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType rust setlocal ts=4 sts=4 sw=4 expandtab
 endif
 
 " set cursorcolumn          " highlight current column
@@ -438,6 +444,17 @@ function! ToggleHelp()
     :help
   endif
 endfunction
+
+function! Tab2()
+  setlocal ts=2 sts=2 sw=2 expandtab
+endfunction
+
+function! Tab4()
+  setlocal ts=4 sts=4 sw=4 expandtab
+endfunction
+
+nmap t2 :call Tab2()<cr>
+nmap t4 :call Tab4()<cr>
 
 " save as sudo
 ca w!! w !sudo tee "%"
@@ -675,7 +692,7 @@ nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
 vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
 
 command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
-nnoremap <leader>ss :Search<Space>''<left>
+noremap <leader>ss :Search<Space>''<left>
 
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
@@ -691,6 +708,10 @@ function! IsLoad(pluginname)
     return 0
   endif
 endfunction
+
+if IsLoad('fencview')
+  let g:fencview_autodetect = 1
+endif
 
 if IsLoad('nerdtree')
   nmap <silent><F2> :NERDTreeToggle<cr><cr>
@@ -990,6 +1011,7 @@ if IsLoad('vim-airline')
   " let g:airline#extensions#tabline#buffer_nr_format = '%s:'
   " let g:airline#extensions#tabline#fnamecollapse = 1          "collopsing parent dir
   " let g:airline#extensions#tabline#fnametruncate = 10         "non-active buffer name specified length
+  let g:airline#extensions#tagbar#enabled = 0
   let g:airline#extensions#bufferline#enabled = 0
   let g:airline#extensions#whitespace#enabled = 0
 endif
