@@ -5,6 +5,7 @@
 " Create Date:
 "       01/09/2015
 " ============================================================================
+let g:python3_host_prog = '~/.pyenv/versions/neovim/bin/python3.9'
 set nocompatible
 " Use utf-8 if Vim was complied with multi-byte support
 if has("multi_byte")
@@ -22,7 +23,6 @@ endif
 if filereadable(expand("~/.vimrc.before"))
   source ~/.vimrc.before
 endif
-let g:python3_host_prog = '~/.pyenv/versions/neovim/bin/python3.9'
 
 " base
 set nocompatible                " don't bother with vi compatibility
@@ -38,7 +38,7 @@ set visualbell t_vb=            " turn off error beep/flash
 set t_vb=
 set tm=500
 set history=1000                " lines of history
-set cmdheight=2                 " Give more space for displaying messages.
+" set cmdheight=2                 " Give more space for displaying messages.
 
 " filetype
 filetype on
@@ -62,17 +62,18 @@ call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
 
 call dein#add('luochen1990/rainbow')
 call dein#add('majutsushi/tagbar')
+call dein#add('google/vim-searchindex')
 call dein#add('tpope/vim-surround')
-
+call dein#add('tpope/vim-fugitive')
 call dein#add('airblade/vim-gitgutter')
 call dein#add('APZelos/blamer.nvim')
 call dein#add('preservim/nerdcommenter')
 
+call dein#add('octol/vim-cpp-enhanced-highlight')
 call dein#add('neoclide/coc.nvim', { 'merged': 0, 'rev': 'release' })
 
 " plugins to try:
 " grep - Ag or ripgrep
-" git - tpope/vim-fugitive
 " debug - vimspector
 " highlight - Nvim Treesitter
 " workflow -  asyncrun.vim + asynctasks.vim
@@ -205,6 +206,34 @@ fun! <SID>StripTrailingWhitespaces()
 endfun
 
 " ============================ key map ============================
+function! HasHelp()
+  " Save current window number to revert.
+  let nwin = 1
+  while 1
+    let nbuf = winbufnr(nwin)
+    " all window processed, there is no help buftype, return 0
+    if nbuf == -1
+      return 0
+    endif
+    " if there is help buftype, return 1
+    if getbufvar(nbuf, '&buftype') ==# 'help'
+      return 1
+    else
+      let nwin = nwin + 1
+    endif
+  endwhile
+endfunction
+
+function! ToggleHelp()
+  if HasHelp()
+    :helpclose
+  else
+    :help
+  endif
+endfunction
+nmap <silent><F1> :call ToggleHelp()<cr>
+nmap <leader>hh :call ToggleHelp()<cr>
+
 nnoremap k gk
 nnoremap gk k
 nnoremap j gj
@@ -250,7 +279,7 @@ nnoremap ; :
 " save
 cmap w!! w !sudo tee >/dev/null %
 
-" command mode, ctrl-a to head， ctrl-e to tail
+" command mode, ctrl-a to head, ctrl-e to tail
 cnoremap <C-j> <t_kd>
 cnoremap <C-k> <t_ku>
 cnoremap <C-a> <Home>
@@ -315,6 +344,7 @@ function! s:VSetSearch(cmd)
 endfunction
 vnoremap <silent> * :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>
 vnoremap <silent> # :<C-U>call <SID>VSetSearch('?')<cr>?<C-R>/<cr>
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 vmap <kMultiply> *
 nmap <silent> <Plug>VLToggle :let g:VeryLiteral = !g:VeryLiteral
       \\| echo "VeryLiteral " . (g:VeryLiteral ? "On" : "Off")<cr>
@@ -334,12 +364,27 @@ vnoremap <leader>sR ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
 nnoremap <leader>sr :%s/<C-R><C-W>//gc"<left><left><left><left>
 nnoremap <leader>sr :%s/<C-R><C-W>//g"<left><left><left>
 
+function! s:get_visual_selection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
+endfunction
 " grep the word at cursor in current dir
-nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
-vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
+"nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
+"vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
+nnoremap <leader>sw :Ag \b<C-R><C-W>\b<CR>
+vnoremap <leader>sw y:Ag <C-R>=escape(@",'/\')<CR><CR>
 
-command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
-nnoremap <leader>ss :Search<Space>''<left>
+"command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
+"nnoremap <leader>ss :Search<Space>''<left>
+nnoremap <leader>ss :Ag<cr>
 
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
@@ -348,9 +393,10 @@ nnoremap <silent> p p`]
 
 " keybind ----------------------------------------------------------------
 " 设置 ff 为开关defx的快捷键, 其中【-search=`expand('%:p')`】表示打开defx树后，光标自动放在当前buffer上
+nmap <silent><F2> :Defx  -search=`expand('%:p')` -toggle <cr>
 nmap <leader>ft :Defx  -search=`expand('%:p')` -toggle <cr>
 nmap <Leader>ff :Files <cr>
-nmap <Leader>fp :GFiles <cr>
+nmap <Leader>fp :GFiles --cached --others --exclude-standard<cr>
 nmap <leader>fj :e .<cr>
 nmap <leader>fr :History <cr>
 nmap <leader>fb :Buffers <cr>
@@ -378,11 +424,51 @@ let g:blamer_show_in_visual_modes = 0
 "" fzf
 " ---
 " let g:fzf_preview_window = ['right:50%', 'ctrl-/']
-let g:fzf_preview_window = []
+"let g:fzf_preview_window = []
+
+"" tagbar
+" ---
+nmap <silent><F3> :TagbarToggle<cr>
+let g:tagbar_ctags_bin = 'ctags'
+let g:tagbar_width     = 30
+let g:tagbar_autofocus = 1      " autofocus on tagbar open
+let g:tagbar_left = 0
+" let g:tagbar_map_togglefold = ['t', 'za']
+" let g:tagbar_map_closefold = ['x', 'zc']
+" let g:tagbar_map_zoomwin = 'm'
+" let g:tagbar_map_jump = 'o'
+"autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+
+"" Add support for markdown files in tagbar.
+" let g:tagbar_type_markdown = {
+"       \ 'ctagstype': 'markdown',
+"       \ 'ctagsbin' : '~/.vim/bin/markdown2ctags.py',
+"       \ 'ctagsargs' : '-f - --sort=yes',
+"       \ 'kinds' : [
+"       \ 's:sections',
+"       \ 'i:images'
+"       \ ],
+"       \ 'sro' : '|',
+"       \ 'kind2scope' : {
+"       \ 's' : 'section',
+"       \ },
+"       \ 'sort': 0,
+"       \ }
+
+let g:tagbar_type_solidity = {
+\ 'ctagstype': 'solidity',
+\ 'kinds' : [
+    \ 'c:contracts',
+    \ 'e:events',
+    \ 'f:functions',
+    \ 'm:mappings',
+    \ 'v:varialbes',
+\ ]
+\ }
 
 " defx
 " ---
-"打开vim自动打开defx
+" 打开vim自动打开defx
 func! ArgFunc() abort
     let s:arg = argv(0)
     if isdirectory(s:arg)
@@ -404,18 +490,19 @@ call defx#custom#option('_', {
 	\ 'profile': 1,
 	\ })
 
+
 call defx#custom#column('git', {
-	\   'indicators': {
-	\     'Modified'  : '•',
-	\     'Staged'    : '✚',
-	\     'Untracked' : 'ᵁ',
-	\     'Renamed'   : '≫',
-	\     'Unmerged'  : '≠',
-	\     'Ignored'   : 'ⁱ',
-	\     'Deleted'   : '✖',
-	\     'Unknown'   : '⁇'
-	\   }
-	\ })
+    \   'indicators': {
+    \     'Modified'  : '•',
+    \     'Staged'    : '✚',
+    \     'Untracked' : 'ᵁ',
+    \     'Renamed'   : '≫',
+    \     'Unmerged'  : '≠',
+    \     'Ignored'   : 'ⁱ',
+    \     'Deleted'   : '✖',
+    \     'Unknown'   : '⁇'
+    \   }
+    \ })
 
 call defx#custom#column('mark', { 'readonly_icon': '', 'selected_icon': '' })
 
@@ -481,6 +568,7 @@ function! s:defx_my_settings() abort
     nnoremap <silent><buffer><expr> cd		defx#do_action('change_vim_cwd')
 endfunction
 
+nmap <leader>fj :Defx -search-recursive=`expand('%:p')` <cr>
 
 " TextEdit might fail if hidden is not set.
 set hidden
@@ -605,3 +693,45 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+
+" development
+nmap <leader>ja :CocCommand clangd.switchSourceHeader <cr>
+set tagfunc=CocTagFunc
+
+" ctags
+" how to generate C++ tags: !ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .
+" map <C-]> :tselect <C-R>=expand("<cword>")<cr><cr>
+" map <C-]> g<C-]>
+" autocmd FileType cpp set tags+=~/.vim/cpp_src/tags    " add custom tags file
+
+" cscope
+if has("cscope")
+  set csprg=cscope
+  set cscopetag                       " Use both cscope and ctag
+  set cscopeverbose                   " Show msg when cscope db added
+  set cscopetagorder=0                " Use cscope, not ctags for definition search first
+endif
+
+" auto load cscope.out
+function! LoadCscope()
+    let db = findfile("cscope.out", ".;")    " find cscope.out
+    if (!empty(db))
+        let path = strpart(db, 0, match(db, "/cscope.out$"))
+        set nocsverb                         " suppress 'duplicate connection' error
+        exe "cs add " . db . " " . path
+        set csverb
+    endif
+endfunction
+autocmd BufRead,BufEnter *.cpp,*.hpp,*.go, call LoadCscope()
+
+set cscopequickfix=s-,g-,c-,t-,e-,f-,i-,d-
+nmap <leader>gs :cs find s <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this C symbol
+nmap <leader>gg :cs find g <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this definition
+nmap <leader>gd :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find functions called by this function
+nmap <leader>gc :cs find c <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find functions calling this function
+nmap <leader>gt :cs find t <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this text string
+nmap <leader>ge :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this egrep pattern
+nmap <leader>gf :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find this file
+nmap <leader>gi :cs find i ^<C-R>=expand("<cfile>")<cr>$<cr>:copen<cr>  " Find files #including this file
+nmap <leader>ga :cs find a <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find places where this symbol is assigned a value
