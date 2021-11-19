@@ -5,7 +5,20 @@
 " Create Date:
 "       01/09/2015
 " ============================================================================
-let g:python3_host_prog = '~/.pyenv/versions/neovim/bin/python3.9'
+let g:system='unix'
+if (has('win32') || has('win95') || has('win64') || has('win16'))
+  let g:system='windows'
+elseif (has('unix'))
+  if ( system('uname') =~ 'Darwin')
+    let g:system='mac'
+  endif
+endif
+
+let g:python3_host_prog = '/usr/bin/python3'
+if (g:system=="mac")
+  let g:python3_host_prog = '~/.pyenv/versions/neovim/bin/python3'
+endif
+
 set nocompatible
 " Use utf-8 if Vim was complied with multi-byte support
 if has("multi_byte")
@@ -60,6 +73,7 @@ endif
 call dein#add('junegunn/fzf', { 'build': './install --all', 'merged': 0 }) 
 call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
 
+call dein#add('ojroques/vim-oscyank')
 call dein#add('luochen1990/rainbow')
 call dein#add('majutsushi/tagbar')
 call dein#add('google/vim-searchindex')
@@ -176,7 +190,7 @@ set laststatus=2   " Always show the status line - use 2 lines for the status ba
 set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
 
 " ============================ specific file type ===========================
-autocmd FileType python set tabstop=4 shiftwidth=4 expandtab ai
+autocmd FileType vim,json,yaml,javascript,html,xhtml,xml,css,vue setlocal ts=2 sts=2 sw=2 expandtab
 autocmd BufRead,BufNew *.md,*.mkd,*.markdown  set filetype=markdown.mkd
 
 autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
@@ -295,6 +309,7 @@ vmap <leader>pP "+P
 map <leader>p "0p
 au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
 "nmap <leader>= <Esc>:%!python -m json.tool<cr>
+autocmd TextYankPost * if v:event.operator is 'y' && v:event.regname is '+' | execute 'OSCYankReg +' | endif
 
 " Delete the blank space or Windows ^M at trail of line
 func! DeleteTrailingWS()
@@ -393,8 +408,8 @@ nnoremap <silent> p p`]
 
 " keybind ----------------------------------------------------------------
 " 设置 ff 为开关defx的快捷键, 其中【-search=`expand('%:p')`】表示打开defx树后，光标自动放在当前buffer上
-nmap <silent><F2> :Defx  -search=`expand('%:p')` -toggle <cr>
-nmap <leader>ft :Defx  -search=`expand('%:p')` -toggle <cr>
+nmap <silent><F2> :Defx -search=`expand('%:p')` -toggle <cr>
+nmap <leader>ft :Defx -search=`expand('%:p')` -toggle <cr>
 nmap <Leader>ff :Files <cr>
 nmap <Leader>fp :GFiles --cached --others --exclude-standard<cr>
 nmap <leader>fj :e .<cr>
@@ -403,6 +418,7 @@ nmap <leader>fb :Buffers <cr>
 nmap <leader>bb :Buffers <cr>
 nmap <leader>bn :bnext<cr>
 nmap <leader>bp :bprevious<cr>
+nmap <leader>bd ::bdelete<cr>
 nmap <leader>b<tab> :b#<cr>
 
 nmap <leader>tb :BlamerToggle <cr>
@@ -698,6 +714,8 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " development
 nmap <leader>ja :CocCommand clangd.switchSourceHeader <cr>
 set tagfunc=CocTagFunc
+
+let g:NERDSpaceDelims = 1
 
 " ctags
 " how to generate C++ tags: !ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .

@@ -382,7 +382,7 @@ au BufNewFile,BufRead *.ttcn setf ttcn
 " FileType Specific Changes
 if has ( "autocmd" )
   autocmd FileType vim setlocal ts=2 sts=2 sw=2 expandtab
-  autocmd FileType html,xhtml,xml,css,htmldjango,yaml,vue setlocal ts=2 sts=2 sw=2 expandtab
+  autocmd FileType json, html,xhtml,xml,css,htmldjango,yaml,vue setlocal ts=2 sts=2 sw=2 expandtab
   autocmd FileType javascript,json setlocal ts=2 sts=2 sw=2 expandtab
   autocmd FileType rust setlocal ts=4 sts=4 sw=4 expandtab
 endif
