@@ -72,6 +72,8 @@ endif
 
 call dein#add('junegunn/fzf', { 'build': './install --all', 'merged': 0 }) 
 call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
+call dein#add('dyng/ctrlsf.vim')
+call dein#add('Yggdroot/indentLine')
 
 call dein#add('ojroques/vim-oscyank')
 call dein#add('luochen1990/rainbow')
