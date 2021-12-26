@@ -14,6 +14,7 @@ elseif (has('unix'))
   endif
 endif
 
+" FIXME
 let g:python3_host_prog = '/usr/bin/python3'
 if (g:system=="mac")
   let g:python3_host_prog = '~/.pyenv/versions/neovim/bin/python3'
@@ -68,41 +69,56 @@ call dein#add('Shougo/defx.nvim')
 if !has('nvim')
   call dein#add('roxma/nvim-yarp')
   call dein#add('roxma/vim-hug-neovim-rpc')
+  call dein#add('nvim-lua/plenary.nvim')
+  call dein#add('sindrets/diffview.nvim')
 endif
 
 call dein#add('junegunn/fzf', { 'build': './install --all', 'merged': 0 }) 
 call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
-call dein#add('dyng/ctrlsf.vim')
+call dein#add('Yggdroot/LeaderF')
 call dein#add('Yggdroot/indentLine')
 
 call dein#add('ojroques/vim-oscyank')
-call dein#add('luochen1990/rainbow')
-call dein#add('majutsushi/tagbar')
 call dein#add('google/vim-searchindex')
 call dein#add('tpope/vim-surround')
-call dein#add('tpope/vim-fugitive')
-call dein#add('airblade/vim-gitgutter')
-call dein#add('APZelos/blamer.nvim')
 call dein#add('preservim/nerdcommenter')
 
+" pro
+call dein#add('ovsoil/vsearch.vim')
+call dein#add('jiangmiao/auto-pairs')
+call dein#add('michaeljsmith/vim-indent-object')
+call dein#add('gaving/vim-textobj-argument')
+call dein#add('luochen1990/rainbow')
+call dein#add('vim-airline/vim-airline')
+call dein#add('APZelos/blamer.nvim')
+call dein#add('dyng/ctrlsf.vim')
+call dein#add('mtdl9/vim-log-highlighting')
+call dein#add('easymotion/vim-easymotion')
+
+" git
+call dein#add('tpope/vim-fugitive')
+call dein#add('mhinz/vim-signify')
+
+" development
+" call dein#add('ludovicchabant/vim-gutentags')
 call dein#add('octol/vim-cpp-enhanced-highlight')
 call dein#add('neoclide/coc.nvim', { 'merged': 0, 'rev': 'release' })
+call dein#add('dense-analysis/ale')
 
 " plugins to try:
 " grep - Ag or ripgrep
 " debug - vimspector
 " highlight - Nvim Treesitter
 " workflow -  asyncrun.vim + asynctasks.vim
-" fuzzy finder - LeaderF
 
 call dein#end()
 
 " call map(dein#check_clean(), { _, val -> delete(val, 'rf') })
 " call dein#recache_runtimepath()
 
-"if dein#check_install()
-"  call dein#install()
-"endif
+" if dein#check_install()
+ " call dein#install()
+" endif
 "dein end-------------------------
 
 " movement
@@ -117,6 +133,9 @@ set showcmd                     " show incomplete commands
 set showmode                    " show current modes
 set showmatch                   " jump to matches when entering parentheses
 set matchtime=2                 " tenths of a second to show the matching parenthesis
+set hidden
+set updatetime=250
+set signcolumn=auto
 
 " tab/indent
 set expandtab                   " expand tabs to spaces
@@ -145,6 +164,7 @@ set wildignore=*.o,*~,*.pyc,*.class
 set backspace=indent,eol,start  " make that backspace key work the way it should
 set whichwrap+=<,>,h,l
 " set mouse=a                   " enable basic mouse behavior such as resizing buffers.
+set shortmess+=c                " Don't pass messages to |ins-completion-menu|.
 
 " leader
 let mapleader = "\<Space>"
@@ -192,64 +212,11 @@ set laststatus=2   " Always show the status line - use 2 lines for the status ba
 set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
 
 " ============================ specific file type ===========================
+autocmd FileType python set tabstop=4 shiftwidth=4 expandtab ai
 autocmd FileType vim,json,yaml,javascript,html,xhtml,xml,css,vue setlocal ts=2 sts=2 sw=2 expandtab
 autocmd BufRead,BufNew *.md,*.mkd,*.markdown  set filetype=markdown.mkd
 
-autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
-function! AutoSetFileHead()
-    " .sh
-    if &filetype == 'sh'
-        call setline(1, "\#!/bin/bash")
-    endif
-
-    " python
-    if &filetype == 'python'
-        call setline(1, "\#!/usr/bin/env python")
-        call append(1, "\# encoding: utf-8")
-    endif
-
-    normal G
-    normal o
-    normal o
-endfunc
-
-autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
-fun! <SID>StripTrailingWhitespaces()
-    let l = line(".")
-    let c = col(".")
-    %s/\s\+$//e
-    call cursor(l, c)
-endfun
-
 " ============================ key map ============================
-function! HasHelp()
-  " Save current window number to revert.
-  let nwin = 1
-  while 1
-    let nbuf = winbufnr(nwin)
-    " all window processed, there is no help buftype, return 0
-    if nbuf == -1
-      return 0
-    endif
-    " if there is help buftype, return 1
-    if getbufvar(nbuf, '&buftype') ==# 'help'
-      return 1
-    else
-      let nwin = nwin + 1
-    endif
-  endwhile
-endfunction
-
-function! ToggleHelp()
-  if HasHelp()
-    :helpclose
-  else
-    :help
-  endif
-endfunction
-nmap <silent><F1> :call ToggleHelp()<cr>
-nmap <leader>hh :call ToggleHelp()<cr>
-
 nnoremap k gk
 nnoremap gk k
 nnoremap j gj
@@ -257,10 +224,6 @@ nnoremap gj j
 nnoremap H ^
 nnoremap L $
 
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
 nmap <leader>wj <C-W>j
 nmap <leader>wk <C-W>k
 nmap <leader>wh <C-W>h
@@ -333,53 +296,12 @@ if executable('ag')             " The Silver Searcher
 else
   set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
 endif
-let s:save_cpo = &cpo | set cpo&vim
-if !exists('g:VeryLiteral')
-  let g:VeryLiteral = 0
-endif
-
-
-function! s:VSetSearch(cmd)
-  let old_reg = getreg('"')
-  let old_regtype = getregtype('"')
-  normal! gvy
-  if @@ =~? '^[0-9a-z,_]*$' || @@ =~? '^[0-9a-z ,_]*$' && g:VeryLiteral
-    let @/ = @@
-  else
-    let pat = escape(@@, a:cmd.'\')
-    if g:VeryLiteral
-      let pat = substitute(pat, '\n', '\\n', 'g')
-    else
-      let pat = substitute(pat, '^\_s\+', '\\s\\+', '')
-      let pat = substitute(pat, '\_s\+$', '\\s\\*', '')
-      let pat = substitute(pat, '\_s\+', '\\_s\\+', 'g')
-    endif
-    let @/ = '\V'.pat
-  endif
-  normal! gV
-  call setreg('"', old_reg, old_regtype)
-endfunction
-vnoremap <silent> * :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>
-vnoremap <silent> # :<C-U>call <SID>VSetSearch('?')<cr>?<C-R>/<cr>
-vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
-vmap <kMultiply> *
-nmap <silent> <Plug>VLToggle :let g:VeryLiteral = !g:VeryLiteral
-      \\| echo "VeryLiteral " . (g:VeryLiteral ? "On" : "Off")<cr>
-if !hasmapto("<Plug>VLToggle")
-  nmap <unique> <Leader>vl <Plug>VLToggle
-endif
-let &cpo = s:save_cpo | unlet s:save_cpo
-
-" highlight but not search the word at cursor
-nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
-" highlight but not search the selected text
-vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N
 
 " replace selected text
-vnoremap <leader>sr ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
-vnoremap <leader>sR ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
-nnoremap <leader>sr :%s/<C-R><C-W>//gc"<left><left><left><left>
-nnoremap <leader>sr :%s/<C-R><C-W>//g"<left><left><left>
+vnoremap <leader>rs ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
+vnoremap <leader>rS ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
+nnoremap <leader>rs :%s/<C-R><C-W>//gc"<left><left><left><left>
+nnoremap <leader>rS :%s/<C-R><C-W>//g"<left><left><left>
 
 function! s:get_visual_selection()
     " Why is this not a built-in Vim script function?!
@@ -394,14 +316,14 @@ function! s:get_visual_selection()
     return join(lines, "\n")
 endfunction
 " grep the word at cursor in current dir
-"nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
-"vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
-nnoremap <leader>sw :Ag \b<C-R><C-W>\b<CR>
-vnoremap <leader>sw y:Ag <C-R>=escape(@",'/\')<CR><CR>
+nnoremap <silent> <leader>sW :Ag \b<C-R><C-W>\b<CR>
+nnoremap <silent> <leader>sA :Ag <C-R><C-W><CR>
+
+" vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
+" vnoremap <leader>sw y:Ag <C-R>=escape(@",'/\')<CR><CR>
 
 "command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
 "nnoremap <leader>ss :Search<Space>''<left>
-nnoremap <leader>ss :Ag<cr>
 
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
@@ -411,13 +333,10 @@ nnoremap <silent> p p`]
 " keybind ----------------------------------------------------------------
 " 设置 ff 为开关defx的快捷键, 其中【-search=`expand('%:p')`】表示打开defx树后，光标自动放在当前buffer上
 nmap <silent><F2> :Defx -search=`expand('%:p')` -toggle <cr>
-nmap <leader>ft :Defx -search=`expand('%:p')` -toggle <cr>
-nmap <Leader>ff :Files <cr>
-nmap <Leader>fp :GFiles --cached --others --exclude-standard<cr>
-nmap <leader>fj :e .<cr>
-nmap <leader>fr :History <cr>
-nmap <leader>fb :Buffers <cr>
-nmap <leader>bb :Buffers <cr>
+" nmap <leader>ft :Defx -search=`expand('%:p')` -toggle <cr>
+nmap <leader>tf :Defx -search=`expand('%:p')` -toggle <cr>
+nmap <leader>fj :Defx -search-recursive=`expand('%:p')` <cr>
+
 nmap <leader>bn :bnext<cr>
 nmap <leader>bp :bprevious<cr>
 nmap <leader>bd ::bdelete<cr>
@@ -458,12 +377,25 @@ let g:rainbow_conf = {
 \		'css': 0,
 \	}
 \}
+
 " auto-pairs
 let g:AutoPairsFlyMode = 0
 
+" easymotion
+let g:EasyMotion_smartcase = 1
+"let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
+map <Leader><leader>h <Plug>(easymotion-linebackward)
+map <Leader><Leader>j <Plug>(easymotion-j)
+map <Leader><Leader>k <Plug>(easymotion-k)
+map <Leader><leader>l <Plug>(easymotion-lineforward)
+map <Leader><leader>. <Plug>(easymotion-repeat)
+
+autocmd User EasyMotionPromptBegin silent! CocDisable
+autocmd User EasyMotionPromptEnd silent! CocEnable
+
 " gitgutter
 " ---
-autocmd BufWritePost * GitGutter
+" autocmd BufWritePost * GitGutter
 
 " blamer
 " ---
@@ -471,50 +403,112 @@ let g:blamer_enabled = 0
 let g:blamer_delay = 500
 let g:blamer_show_in_visual_modes = 0
 
-"" fzf
+" fzf
 " ---
-" let g:fzf_preview_window = ['right:50%', 'ctrl-/']
-"let g:fzf_preview_window = []
+let g:fzf_buffers_jump = 1
+let g:fzf_preview_window = ['right:50%', 'ctrl-/']
 
-"" tagbar
+nmap <Leader>ff :Files <cr>
+nmap <Leader>fp :GFiles --cached --others --exclude-standard<cr>
+nmap <leader>fr :History <cr>
+nmap <leader>fb :Buffers <cr>
+nmap <leader>bb :Buffers <cr>
+nmap <leader>sc :History: <cr>
+nmap <leader>s/ :History/ <cr>
+
+" Mapping selecting mappings
+nmap <leader><tab> <plug>(fzf-maps-n)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
+
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
+" leaderf
 " ---
-nmap <silent><F3> :TagbarToggle<cr>
-let g:tagbar_ctags_bin = 'ctags'
-let g:tagbar_width     = 30
-let g:tagbar_autofocus = 1      " autofocus on tagbar open
-let g:tagbar_left = 0
-" let g:tagbar_map_togglefold = ['t', 'za']
-" let g:tagbar_map_closefold = ['x', 'zc']
-" let g:tagbar_map_zoomwin = 'm'
-" let g:tagbar_map_jump = 'o'
-"autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+let g:Lf_HideHelp = 1     " don't show the help in normal mode
+let g:Lf_UseCache = 0
+let g:Lf_UseVersionControlTool = 1
+let g:Lf_IgnoreCurrentBufferName = 1
 
-"" Add support for markdown files in tagbar.
-" let g:tagbar_type_markdown = {
-"       \ 'ctagstype': 'markdown',
-"       \ 'ctagsbin' : '~/.vim/bin/markdown2ctags.py',
-"       \ 'ctagsargs' : '-f - --sort=yes',
-"       \ 'kinds' : [
-"       \ 's:sections',
-"       \ 'i:images'
-"       \ ],
-"       \ 'sro' : '|',
-"       \ 'kind2scope' : {
-"       \ 's' : 'section',
-"       \ },
-"       \ 'sort': 0,
-"       \ }
+let g:Lf_ShowDevIcons = 0
+let g:Lf_WindowPosition = 'bottom'
+let g:Lf_PreviewInPopup = 1
+let g:Lf_StlSeparator = { 'left': "\ue0b0", 'right': "\ue0b2"}
+let g:Lf_PreviewResult = {
+        \ 'File': 0,
+        \ 'Buffer': 0,
+        \ 'Mru': 0,
+        \ 'Tag': 0,
+        \ 'BufTag': 1,
+        \ 'Function': 1,
+        \ 'Line': 1,
+        \ 'Colorscheme': 0,
+        \ 'Rg': 0,
+        \ 'Gtags': 0
+        \}
+let g:Lf_ReverseOrder = 1
+let g:Lf_RootMarkers = ['.git', '.hg', '.svn', '.root']
+let g:Lf_WildIgnore = {
+        \ 'dir': ['.cache'],
+        \ 'file': []
+        \}
 
-let g:tagbar_type_solidity = {
-\ 'ctagstype': 'solidity',
-\ 'kinds' : [
-    \ 'c:contracts',
-    \ 'e:events',
-    \ 'f:functions',
-    \ 'm:mappings',
-    \ 'v:varialbes',
-\ ]
-\ }
+let g:Lf_CacheDirectory = expand('~/.cache/nvim')
+let g:Lf_GtagsAutoGenerate = 1    " use `Leaderf gtags --update` generate if 0
+let g:Lf_GtagsSource = 1
+let g:Lf_Gtagsconf = '/usr/local/share/gtags/gtags.conf'
+let g:Lf_Gtagslabel = 'native-pygments'
+" let g:Lf_GtagsGutentags = 1
+
+let g:Lf_ShortcutF = "<leader>fp"
+let g:Lf_CommandMap = {'<Up>': ['<C-P>'], '<Down>': ['<C-N>'], '<C-C>': ['<M-C>']}
+let g:Lf_NormalMap = {
+    \ "_":      [["<C-j>", "j"],
+    \            ["<C-k>", "k"]],
+    \ "File":   [["<ESC>", ':exec g:Lf_py "fileExplManager.quit()"<CR>']],
+    \ "Buffer": [["<ESC>", ':exec g:Lf_py "bufExplManager.quit()"<CR>']],
+    \ "Mru":    [["<ESC>", ':exec g:Lf_py "mruExplManager.quit()"<CR>']],
+    \ }
+noremap <leader>fx :<C-U><C-R>=printf("Leaderf file --no-ignore %s", "")<CR><CR>
+" noremap <leader>bb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
+noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
+noremap <leader>fc :LeaderfMruCwd<CR>
+
+noremap <C-B> :<C-U><C-R>=printf("Leaderf! rg --current-buffer -e %s ", expand("<cword>"))<CR>
+noremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+" search visually selected text literally
+xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
+noremap go :<C-U>Leaderf! rg --recall<CR>
+
+nmap <unique> <leader>ss :Leaderf<Space>rg<Space>-e<Space>""<left>
+nmap <unique> <leader>sS :LeaderfRgInteractive<CR>
+noremap <leader>ts :<C-U>Leaderf! rg --recall<CR>
+nmap <unique> <leader>sa <Plug>LeaderfRgCwordLiteralNoBoundary<CR>
+nmap <unique> <leader>sw <Plug>LeaderfRgCwordLiteralBoundary<CR>
+vmap <unique> <leader>sa <Plug>LeaderfRgVisualLiteralNoBoundary
+vmap <unique> <leader>sw <Plug>LeaderfRgVisualLiteralBoundary
+
+noremap <leader>st :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+noremap <leader>tt :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
+noremap <leader>sr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>sd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>sj :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
+noremap <leader>sk :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
+noremap <leader>sf :LeaderfFunction<CR>
+
+" CtrlSF
+" nnoremap <leader>ss :CtrlSF<Space>""<left>
+" nnoremap <leader>ts :CtrlSFToggle<cr>
+let g:ctrlsf_winsize = '30%'
 
 " defx
 " ---
@@ -618,28 +612,8 @@ function! s:defx_my_settings() abort
     nnoremap <silent><buffer><expr> cd		defx#do_action('change_vim_cwd')
 endfunction
 
-nmap <leader>fj :Defx -search-recursive=`expand('%:p')` <cr>
-
-" TextEdit might fail if hidden is not set.
-set hidden
-
-
-" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
-" delays and poor user experience.
-set updatetime=300
-
-" Don't pass messages to |ins-completion-menu|.
-set shortmess+=c
-
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved.
-if has("nvim-0.5.0") || has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
-
+" coc.nvim
+" ========
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
@@ -736,7 +710,7 @@ nnoremap <silent><nowait> <space>lc  :<C-u>CocList commands<cr>
 " Find symbol of current document.
 nnoremap <silent><nowait> <space>lo  :<C-u>CocList outline<cr>
 " Search workspace symbols.
-nnoremap <silent><nowait> <space>st  :<C-u>CocList -I symbols<cr>
+nnoremap <silent><nowait> <space>sT  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
 nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
@@ -746,7 +720,7 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 
 " development
-nmap <leader>ja :CocCommand clangd.switchSourceHeader <cr>
+nmap <leader>fa :CocCommand clangd.switchSourceHeader <cr>
 set tagfunc=CocTagFunc
 
 let g:NERDSpaceDelims = 1
@@ -787,3 +761,7 @@ nmap <leader>ge :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find t
 nmap <leader>gf :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find this file
 nmap <leader>gi :cs find i ^<C-R>=expand("<cfile>")<cr>$<cr>:copen<cr>  " Find files #including this file
 nmap <leader>ga :cs find a <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find places where this symbol is assigned a value
+
+if has('nvim') == 0
+  lua require('lua/plugins/diffview')
+endif
