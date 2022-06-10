@@ -38,6 +38,10 @@ if filereadable(expand("~/.vimrc.before"))
   source ~/.vimrc.before
 endif
 
+" leader
+let mapleader = "\<Space>"
+let g:mapleader = "\<Space>"
+
 " base
 set nocompatible                " don't bother with vi compatibility
 set autoread                    " reload files when changed on disk, i.e. via `git checkout`
@@ -66,7 +70,7 @@ call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
 call dein#add('lifepillar/vim-gruvbox8')
 
 call dein#add('Shougo/defx.nvim')
-if !has('nvim')
+if has('nvim')
   call dein#add('roxma/nvim-yarp')
   call dein#add('roxma/vim-hug-neovim-rpc')
   call dein#add('nvim-lua/plenary.nvim')
@@ -82,6 +86,8 @@ call dein#add('ojroques/vim-oscyank')
 call dein#add('google/vim-searchindex')
 call dein#add('tpope/vim-surround')
 call dein#add('preservim/nerdcommenter')
+call dein#add('SirVer/ultisnips')
+call dein#add('honza/vim-snippets')
 
 " pro
 call dein#add('ovsoil/vsearch.vim')
@@ -94,6 +100,7 @@ call dein#add('APZelos/blamer.nvim')
 call dein#add('dyng/ctrlsf.vim')
 call dein#add('mtdl9/vim-log-highlighting')
 call dein#add('easymotion/vim-easymotion')
+call dein#add('dhruvasagar/vim-zoom')
 
 " git
 call dein#add('tpope/vim-fugitive')
@@ -103,7 +110,14 @@ call dein#add('mhinz/vim-signify')
 " call dein#add('ludovicchabant/vim-gutentags')
 call dein#add('octol/vim-cpp-enhanced-highlight')
 call dein#add('neoclide/coc.nvim', { 'merged': 0, 'rev': 'release' })
-call dein#add('dense-analysis/ale')
+" call dein#add('dense-analysis/ale')
+call dein#add('w0rp/ale',{'on_cmd': 'ALEToggle'})  
+
+if (g:system!="unix")
+  call dein#add('aklt/plantuml-syntax')
+  call dein#add('tyru/open-browser.vim')
+  call dein#add('weirongxu/plantuml-previewer.vim')
+endif
 
 " plugins to try:
 " grep - Ag or ripgrep
@@ -158,18 +172,13 @@ set selectmode=mouse,key
 set completeopt=longest,menu
 set wildmenu                           " show a navigable menu for tab completion"
 set wildmode=longest,list,full
-set wildignore=*.o,*~,*.pyc,*.class
+set wildignore=*.o,*~,*.pyc,*.class,*.swp,*.bak,*.pyc,.svn
 
 " others
 set backspace=indent,eol,start  " make that backspace key work the way it should
 set whichwrap+=<,>,h,l
 " set mouse=a                   " enable basic mouse behavior such as resizing buffers.
 set shortmess+=c                " Don't pass messages to |ins-completion-menu|.
-
-" leader
-let mapleader = "\<Space>"
-let g:mapleader = "\<Space>"
-
 
 " fold
 set foldenable
@@ -212,9 +221,10 @@ set laststatus=2   " Always show the status line - use 2 lines for the status ba
 set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
 
 " ============================ specific file type ===========================
-autocmd FileType python set tabstop=4 shiftwidth=4 expandtab ai
+autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab ai
 autocmd FileType vim,json,yaml,javascript,html,xhtml,xml,css,vue setlocal ts=2 sts=2 sw=2 expandtab
-autocmd BufRead,BufNew *.md,*.mkd,*.markdown  set filetype=markdown.mkd
+" autocmd BufRead,BufNew *.md,*.mkd,*.markdown  setlocal filetype=markdown.mkd
+" autocmd BufRead,BufNew *.conf setlocal filetype=json
 
 " ============================ key map ============================
 nnoremap k gk
@@ -334,8 +344,8 @@ nnoremap <silent> p p`]
 " 设置 ff 为开关defx的快捷键, 其中【-search=`expand('%:p')`】表示打开defx树后，光标自动放在当前buffer上
 nmap <silent><F2> :Defx -search=`expand('%:p')` -toggle <cr>
 " nmap <leader>ft :Defx -search=`expand('%:p')` -toggle <cr>
-nmap <leader>tf :Defx -search=`expand('%:p')` -toggle <cr>
-nmap <leader>fj :Defx -search-recursive=`expand('%:p')` <cr>
+nmap <silent> <leader>tf :Defx -search=`expand('%:p')` -toggle <cr>
+nmap <silent> <leader>fj :Defx -search-recursive=`expand('%:p')` <cr>
 
 nmap <leader>bn :bnext<cr>
 nmap <leader>bp :bprevious<cr>
@@ -399,7 +409,7 @@ autocmd User EasyMotionPromptEnd silent! CocEnable
 
 " blamer
 " ---
-let g:blamer_enabled = 0
+let g:blamer_enabled = 1
 let g:blamer_delay = 500
 let g:blamer_show_in_visual_modes = 0
 
@@ -413,6 +423,8 @@ nmap <Leader>fp :GFiles --cached --others --exclude-standard<cr>
 nmap <leader>fr :History <cr>
 nmap <leader>fb :Buffers <cr>
 nmap <leader>bb :Buffers <cr>
+nmap <leader>st :BTags <cr>
+nmap <leader>sS :Rg<cr>
 nmap <leader>sc :History: <cr>
 nmap <leader>s/ :History/ <cr>
 
@@ -447,9 +459,9 @@ let g:Lf_PreviewResult = {
         \ 'Buffer': 0,
         \ 'Mru': 0,
         \ 'Tag': 0,
-        \ 'BufTag': 1,
-        \ 'Function': 1,
-        \ 'Line': 1,
+        \ 'BufTag': 0,
+        \ 'Function': 0,
+        \ 'Line': 0,
         \ 'Colorscheme': 0,
         \ 'Rg': 0,
         \ 'Gtags': 0
@@ -490,15 +502,15 @@ xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
 noremap go :<C-U>Leaderf! rg --recall<CR>
 
 nmap <unique> <leader>ss :Leaderf<Space>rg<Space>-e<Space>""<left>
-nmap <unique> <leader>sS :LeaderfRgInteractive<CR>
+nmap <unique> <leader>si :LeaderfRgInteractive<CR>
 noremap <leader>ts :<C-U>Leaderf! rg --recall<CR>
 nmap <unique> <leader>sa <Plug>LeaderfRgCwordLiteralNoBoundary<CR>
 nmap <unique> <leader>sw <Plug>LeaderfRgCwordLiteralBoundary<CR>
 vmap <unique> <leader>sa <Plug>LeaderfRgVisualLiteralNoBoundary
 vmap <unique> <leader>sw <Plug>LeaderfRgVisualLiteralBoundary
 
-noremap <leader>st :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
-noremap <leader>tt :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
+" noremap <leader>st :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+" noremap <leader>tt :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
 noremap <leader>sr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
 noremap <leader>sd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
 noremap <leader>sj :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
@@ -513,15 +525,23 @@ let g:ctrlsf_winsize = '30%'
 " defx
 " ---
 " 打开vim自动打开defx
-func! ArgFunc() abort
-    let s:arg = argv(0)
-    if isdirectory(s:arg)
-        return s:arg
-    else
-        return fnamemodify(s:arg, ':h')
-    endif
-endfunc
-" autocmd VimEnter * Defx `ArgFunc()` -no-focus -search=`expand('%:p')`
+autocmd VimEnter
+      \ * if isdirectory(expand('<amatch>'))
+      \   | call s:browse_check(expand('<amatch>')) | endif
+
+function! s:browse_check(path) abort
+  if bufnr('%') != expand('<abuf>')
+    return
+  endif
+
+  " Disable netrw.
+  augroup FileExplorer
+    autocmd!
+  augroup END
+
+  execute 'Defx' a:path
+  wincmd l
+endfunction
 
 call defx#custom#option('_', {
 	\ 'resume': 1,
@@ -529,6 +549,7 @@ call defx#custom#option('_', {
 	\ 'split': 'vertical',
 	\ 'direction': 'topleft',
 	\ 'show_ignored_files': 0,
+  \ 'ignored_files':'.*,*.png,*.hdr,bin,pkg',
 	\ 'columns': 'indent:git:icons:filename',
 	\ 'root_marker': ' ',
 	\ 'profile': 1,
@@ -576,6 +597,10 @@ function! s:jump_dirty(dir) abort
 endfunction
 
 function! s:defx_my_settings() abort
+    setl cursorline
+    setl nospell
+    setl signcolumn=no
+    " setl nonumber
     " Define mappings
     nnoremap <silent><buffer><expr> <CR>    defx#do_action('drop')
     nnoremap <silent><buffer><expr> c       defx#do_action('copy')
@@ -607,7 +632,7 @@ function! s:defx_my_settings() abort
     nnoremap <silent><buffer><expr> *		defx#do_action('toggle_select_all')
     nnoremap <silent><buffer><expr> j		line('.') == line('$') ? 'gg' : 'j'
     nnoremap <silent><buffer><expr> k		line('.') == 1 ? 'G' : 'k'
-    nnoremap <silent><buffer><expr> <C-l>	defx#do_action('redraw')
+    nnoremap <silent><buffer><expr> <C-r>	defx#do_action('redraw')
     nnoremap <silent><buffer><expr> <C-g>	defx#do_action('print')
     nnoremap <silent><buffer><expr> cd		defx#do_action('change_vim_cwd')
 endfunction
@@ -616,8 +641,8 @@ endfunction
 " ========
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              " \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -710,13 +735,13 @@ nnoremap <silent><nowait> <space>lc  :<C-u>CocList commands<cr>
 " Find symbol of current document.
 nnoremap <silent><nowait> <space>lo  :<C-u>CocList outline<cr>
 " Search workspace symbols.
-nnoremap <silent><nowait> <space>sT  :<C-u>CocList -I symbols<cr>
+nnoremap <silent><nowait> <space>lT  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+nnoremap <silent><nowait> <space>lj  :<C-u>CocNext<CR>
 " Do default action for previous item.
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+nnoremap <silent><nowait> <space>lk  :<C-u>CocPrev<CR>
 " Resume latest coc list.
-nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+nnoremap <silent><nowait> <space>tl  :<C-u>CocListResume<CR>
 
 
 " development
@@ -765,3 +790,5 @@ nmap <leader>ga :cs find a <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find p
 if has('nvim') == 0
   lua require('lua/plugins/diffview')
 endif
+
+let tlist_pyrex_settings='python;c:classe;m:memder;f:function'

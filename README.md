@@ -4,15 +4,15 @@ keymap similar with spacemacs
 
 ## Description
 
-* `vimrc-dev`: vimrc for develop
-* `vimrc-server`: Simple vimrc for server without any plugin
+* `init.vim`: vimrc for develop
+* `vimrc`: vimrc without any plugin
 
 ## Install | Upgrade
 
 1. Prerequisites
 
     * vim compiled with python support. Check it with vim --version | grep +python ([neovim](https://neovim.io) is recommend)
-    * Install the required dependencies:
+    * other dependencies:
     ```bash
     # mac
     brew install ctags
