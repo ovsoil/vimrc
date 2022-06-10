@@ -1,7 +1,7 @@
 " ============================================================================
 " Maintainer: ovsoil
 "       hxyumail@gmail.com
-"       http://ovsoil.com
+"       www.ovsoil.cn
 " Create Date:
 "       01/09/2015
 " ============================================================================
@@ -14,8 +14,8 @@ elseif (has('unix'))
   endif
 endif
 
-" FIXME
 let g:python3_host_prog = '/usr/bin/python3'
+" FIXME hard code python path
 if (g:system=="mac")
   let g:python3_host_prog = '~/.pyenv/versions/neovim/bin/python3'
 endif
@@ -223,8 +223,7 @@ set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\
 " ============================ specific file type ===========================
 autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab ai
 autocmd FileType vim,json,yaml,javascript,html,xhtml,xml,css,vue setlocal ts=2 sts=2 sw=2 expandtab
-" autocmd BufRead,BufNew *.md,*.mkd,*.markdown  setlocal filetype=markdown.mkd
-" autocmd BufRead,BufNew *.conf setlocal filetype=json
+au! BufNewFile,BufRead *.conf setf json
 
 " ============================ key map ============================
 nnoremap k gk
@@ -329,8 +328,8 @@ endfunction
 nnoremap <silent> <leader>sW :Ag \b<C-R><C-W>\b<CR>
 nnoremap <silent> <leader>sA :Ag <C-R><C-W><CR>
 
-" vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
-" vnoremap <leader>sw y:Ag <C-R>=escape(@",'/\')<CR><CR>
+" vnoremap <leader>sW y:grep! '<C-R>"' .<cr>:cw<cr>
+" vnoremap <leader>sW y:Ag <C-R>=escape(@",'/\')<CR><CR>
 
 "command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
 "nnoremap <leader>ss :Search<Space>''<left>
@@ -506,8 +505,8 @@ nmap <unique> <leader>si :LeaderfRgInteractive<CR>
 noremap <leader>ts :<C-U>Leaderf! rg --recall<CR>
 nmap <unique> <leader>sa <Plug>LeaderfRgCwordLiteralNoBoundary<CR>
 nmap <unique> <leader>sw <Plug>LeaderfRgCwordLiteralBoundary<CR>
-vmap <unique> <leader>sa <Plug>LeaderfRgVisualLiteralNoBoundary
-vmap <unique> <leader>sw <Plug>LeaderfRgVisualLiteralBoundary
+vmap <unique> <leader>sa <Plug>LeaderfRgVisualLiteralNoBoundary<CR>
+vmap <unique> <leader>sw <Plug>LeaderfRgVisualLiteralBoundary<CR>
 
 " noremap <leader>st :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
 " noremap <leader>tt :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
