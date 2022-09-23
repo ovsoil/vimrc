@@ -41,6 +41,7 @@ endif
 " leader
 let mapleader = "\<Space>"
 let g:mapleader = "\<Space>"
+nnoremap <leader>rv :source $MYVIMRC<CR>
 
 " base
 set nocompatible                " don't bother with vi compatibility
@@ -92,6 +93,7 @@ call dein#add('honza/vim-snippets')
 " pro
 call dein#add('ovsoil/vsearch.vim')
 call dein#add('jiangmiao/auto-pairs')
+" call dein#add('Raimondi/delimitMate')
 call dein#add('michaeljsmith/vim-indent-object')
 call dein#add('gaving/vim-textobj-argument')
 call dein#add('luochen1990/rainbow')
@@ -118,6 +120,11 @@ if (g:system!="unix")
   call dein#add('tyru/open-browser.vim')
   call dein#add('weirongxu/plantuml-previewer.vim')
 endif
+
+call dein#add('kana/vim-operator-user')
+call dein#add('rhysd/vim-clang-format', {
+                \ 'on_ft' : ['c', 'cpp' ],
+                \ })
 
 " plugins to try:
 " grep - Ag or ripgrep
@@ -500,8 +507,8 @@ noremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
 xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
 noremap go :<C-U>Leaderf! rg --recall<CR>
 
-nmap <unique> <leader>ss :Leaderf<Space>rg<Space>-e<Space>""<left>
-nmap <unique> <leader>si :LeaderfRgInteractive<CR>
+nmap <leader>ss :Leaderf<Space>rg<Space>-e<Space>""<left>
+nmap <leader>si :LeaderfRgInteractive<CR>
 noremap <leader>ts :<C-U>Leaderf! rg --recall<CR>
 nmap <unique> <leader>sa <Plug>LeaderfRgCwordLiteralNoBoundary<CR>
 nmap <unique> <leader>sw <Plug>LeaderfRgCwordLiteralBoundary<CR>
@@ -672,10 +679,6 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
 
-" Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
 augroup mygroup
   autocmd!
   " Setup formatexpr specified filetype(s).
@@ -742,6 +745,20 @@ nnoremap <silent><nowait> <space>lk  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>tl  :<C-u>CocListResume<CR>
 
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+" nmap <C-K> :py3file ~/.local/bin/clang-format.py<cr>
+" imap <C-K> <c-o>:py3file ~/.local/bin/clang-format.py<cr>
+
+autocmd FileType c,cpp,objc map <buffer><Leader>f <Plug>(operator-clang-format)
+" Toggle auto clang formatting:
+nmap <Leader>tc :ClangFormatAutoToggle<CR>
+
+let g:clang_format#detect_style_file = 1
+let g:clang_format#auto_format = 1
+let g:clang_format#auto_format_on_insert_leave = 0
+let g:clang_format#auto_formatexpr = 1
 
 " development
 nmap <leader>fa :CocCommand clangd.switchSourceHeader <cr>
