@@ -69,6 +69,8 @@ call dein#begin('~/.cache/dein')
 call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
 
 call dein#add('lifepillar/vim-gruvbox8')
+call dein#add('morhetz/gruvbox')
+call dein#add('sainnhe/gruvbox-material')
 
 call dein#add('Shougo/defx.nvim')
 if has('nvim')
@@ -126,6 +128,7 @@ call dein#add('rhysd/vim-clang-format', {
                 \ 'on_ft' : ['c', 'cpp' ],
                 \ })
 
+" call dein#add('skanehira/preview-markdown.vim')
 " plugins to try:
 " grep - Ag or ripgrep
 " debug - vimspector
@@ -134,12 +137,12 @@ call dein#add('rhysd/vim-clang-format', {
 
 call dein#end()
 
-" call map(dein#check_clean(), { _, val -> delete(val, 'rf') })
-" call dein#recache_runtimepath()
+call map(dein#check_clean(), { _, val -> delete(val, 'rf') })
+call dein#recache_runtimepath()
 
-" if dein#check_install()
- " call dein#install()
-" endif
+if dein#check_install()
+ call dein#install()
+endif
 "dein end-------------------------
 
 " movement
@@ -214,7 +217,7 @@ autocmd FileType json syntax match Comment +\/\/.\+$+
 " ============================ theme and status line ============================
 " theme
 set background=dark
-colorscheme gruvbox8
+colorscheme gruvbox
 
 " set mark column color
 " set cursorcolumn
@@ -649,6 +652,14 @@ endfunction
 " format on enter, <cr> could be remapped by other vim plugin
 " inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
                               " \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+autocmd VimLeavePre * :call coc#rpc#kill()
+autocmd VimLeave * if get(g:, 'coc_process_pid', 0) | call system('kill -9 -'.g:coc_process_pid) | endif
+
+" ctrl-space 触发补全
+inoremap <silent><expr> <c-space> coc#refresh()
+set pumblend=15
+set pumheight=15
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
