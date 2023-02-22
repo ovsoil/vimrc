@@ -63,10 +63,28 @@ set history=1000                " lines of history
 filetype on
 filetype plugin indent on       " enable filetype plugins
 
+" auto install dein
+let $CACHE = expand('~/.cache')
+if !isdirectory($CACHE)
+  call mkdir($CACHE, 'p')
+endif
+if &runtimepath !~# '/dein.vim'
+  let s:dein_dir = fnamemodify('dein.vim', ':p')
+  if !isdirectory(s:dein_dir)
+    let s:dein_dir = $CACHE . '/dein/repos/github.com/Shougo/dein.vim'
+    if !isdirectory(s:dein_dir)
+      execute '!git clone https://github.com/Shougo/dein.vim' s:dein_dir
+    endif
+  endif
+  execute 'set runtimepath^=' . substitute(
+        \ fnamemodify(s:dein_dir, ':p') , '[/\\]$', '', '')
+endif
 "dein begin-----------------------------
-set runtimepath+=~/.cache/dein/repos/github.com/Shougo/dein.vim
-call dein#begin('~/.cache/dein')
-call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
+let s:dein_base = '~/.cache/dein/'
+let s:dein_src = '~/.cache/dein/repos/github.com/Shougo/dein.vim'
+" execute 'set runtimepath+=' . s:dein_src
+call dein#begin(s:dein_base)
+call dein#add(s:dein_src)
 
 call dein#add('lifepillar/vim-gruvbox8')
 call dein#add('morhetz/gruvbox')
@@ -102,13 +120,19 @@ call dein#add('luochen1990/rainbow')
 call dein#add('vim-airline/vim-airline')
 call dein#add('APZelos/blamer.nvim')
 call dein#add('dyng/ctrlsf.vim')
-call dein#add('mtdl9/vim-log-highlighting')
+" call dein#add('mtdl9/vim-log-highlighting')
 call dein#add('easymotion/vim-easymotion')
 call dein#add('dhruvasagar/vim-zoom')
 
 " git
 call dein#add('tpope/vim-fugitive')
 call dein#add('mhinz/vim-signify')
+
+" markdown
+call dein#add('ellisonleao/glow.nvim')
+" call dein#add('skanehira/preview-markdown.vim')
+call dein#add('iamcco/markdown-preview.nvim', {'on_ft': ['markdown', 'pandoc.markdown', 'rmd'],
+					\ 'build': 'sh -c "cd app && yarn install"' })
 
 " development
 " call dein#add('ludovicchabant/vim-gutentags')
@@ -128,7 +152,6 @@ call dein#add('rhysd/vim-clang-format', {
                 \ 'on_ft' : ['c', 'cpp' ],
                 \ })
 
-" call dein#add('skanehira/preview-markdown.vim')
 " plugins to try:
 " grep - Ag or ripgrep
 " debug - vimspector
@@ -213,6 +236,7 @@ endif
 
 " json comment highlighting
 autocmd FileType json syntax match Comment +\/\/.\+$+
+let g:vim_json_conceal = 0
 
 " ============================ theme and status line ============================
 " theme
@@ -558,7 +582,7 @@ call defx#custom#option('_', {
 	\ 'split': 'vertical',
 	\ 'direction': 'topleft',
 	\ 'show_ignored_files': 0,
-  \ 'ignored_files':'.*,*.png,*.hdr,bin,pkg',
+  \ 'ignored_files':'.*,*.png,*.hdr,pkg',
 	\ 'columns': 'indent:git:icons:filename',
 	\ 'root_marker': ' ',
 	\ 'profile': 1,
@@ -814,8 +838,22 @@ nmap <leader>gf :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find t
 nmap <leader>gi :cs find i ^<C-R>=expand("<cfile>")<cr>$<cr>:copen<cr>  " Find files #including this file
 nmap <leader>ga :cs find a <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find places where this symbol is assigned a value
 
-if has('nvim') == 0
-  lua require('lua/plugins/diffview')
-endif
+" if has('nvim') == 1
+" lua require('lua/plugins/diffview')
+lua << EOF
+require('glow').setup({
+  glow_path = "/usr/bin/glow",
+  install_path = "~/.local/bin",
+  border = "shadow",
+  style = "light",
+  pager = false,
+  width = 80,
+  height = 100,
+  width_ratio = 0.7,
+  height_ratio = 0.7,
+})
+EOF
+" endif
 
 let tlist_pyrex_settings='python;c:classe;m:memder;f:function'
+autocmd FileType markdown setl conceallevel=0
