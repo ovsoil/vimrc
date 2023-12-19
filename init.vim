@@ -91,16 +91,14 @@ call dein#add('morhetz/gruvbox')
 call dein#add('sainnhe/gruvbox-material')
 
 call dein#add('Shougo/defx.nvim')
-if has('nvim')
+if !has('nvim')
   call dein#add('roxma/nvim-yarp')
   call dein#add('roxma/vim-hug-neovim-rpc')
-  call dein#add('nvim-lua/plenary.nvim')
-  call dein#add('sindrets/diffview.nvim')
 endif
 
 call dein#add('junegunn/fzf', { 'build': './install --all', 'merged': 0 }) 
 call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
-call dein#add('Yggdroot/LeaderF')
+call dein#add('Yggdroot/LeaderF', {'hook_post_update': ':LeaderfInstallCExtension'})
 call dein#add('Yggdroot/indentLine')
 
 call dein#add('ojroques/vim-oscyank')
@@ -129,12 +127,13 @@ call dein#add('tpope/vim-fugitive')
 call dein#add('mhinz/vim-signify')
 
 " markdown
-call dein#add('ellisonleao/glow.nvim')
 " call dein#add('skanehira/preview-markdown.vim')
 call dein#add('iamcco/markdown-preview.nvim', {'on_ft': ['markdown', 'pandoc.markdown', 'rmd'],
 					\ 'build': 'sh -c "cd app && yarn install"' })
 
 " development
+call dein#add('nvim-lua/plenary.nvim')
+call dein#add('sindrets/diffview.nvim')
 " call dein#add('ludovicchabant/vim-gutentags')
 call dein#add('octol/vim-cpp-enhanced-highlight')
 call dein#add('neoclide/coc.nvim', { 'merged': 0, 'rev': 'release' })
@@ -211,6 +210,7 @@ set wildignore=*.o,*~,*.pyc,*.class,*.swp,*.bak,*.pyc,.svn
 set backspace=indent,eol,start  " make that backspace key work the way it should
 set whichwrap+=<,>,h,l
 " set mouse=a                   " enable basic mouse behavior such as resizing buffers.
+set mouse=
 set shortmess+=c                " Don't pass messages to |ins-completion-menu|.
 
 " fold
@@ -267,13 +267,20 @@ nnoremap gj j
 nnoremap H ^
 nnoremap L $
 
-nmap <leader>wj <C-W>j
-nmap <leader>wk <C-W>k
-nmap <leader>wh <C-W>h
-nmap <leader>wl <C-W>l
-nmap <leader>ws :split<CR>
-nmap <leader>wv :vs<CR>
-nmap <leader>wc :close<CR>
+tnoremap <Esc> <C-\><C-n>
+autocmd! FileType fzf tnoremap <buffer> <Esc> <c-c>
+tnoremap <leader>q :bd!
+" tnoremap <C-w> <C-\><C-n><C-w>
+tnoremap <leader>wh <C-\><C-N><C-w>h
+tnoremap <leader>wj <C-\><C-N><C-w>j
+tnoremap <leader>wk <C-\><C-N><C-w>k
+tnoremap <leader>wl <C-\><C-N><C-w>l
+nnoremap <leader>wh <C-w>h
+nnoremap <leader>wj <C-w>j
+nnoremap <leader>wk <C-w>k
+nnoremap <leader>wl <C-w>l
+nnoremap <leader>ws :split<CR>
+nnoremap <leader>wv :vs<CR>
 
 au InsertLeave * set nopaste
 
@@ -283,6 +290,15 @@ nnoremap <silent> N Nzz
 nnoremap <silent> * *zz
 nnoremap <silent> # #zz
 nnoremap <silent> g* g*zz
+
+function! GlowPreview()
+  " let l:currentWindow=winnr()
+  :set scrollbind
+  :vs | :te ls % | entr -c glow %
+  :set scrollbind
+  " exe l:currentWindow . "wincmd w"
+endfunction
+command! -nargs=0 Glow call GlowPreview()
 
 " remove highlight
 " noremap <silent><leader>/ :nohls<CR>
@@ -307,9 +323,6 @@ cnoremap <C-k> <t_ku>
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 
-vnoremap <leader>dd "+d
-nmap <leader>yy "+yy
-vmap <leader>yy "+y
 nmap <leader>pp "+p
 vmap <leader>pp "+p
 nmap <leader>pP "+P
@@ -317,7 +330,13 @@ vmap <leader>pP "+P
 map <leader>p "0p
 au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
 "nmap <leader>= <Esc>:%!python -m json.tool<cr>
-autocmd TextYankPost * if v:event.operator is 'y' && v:event.regname is '+' | execute 'OSCYankReg +' | endif
+" vnoremap <leader>dd "+d
+" nmap <leader>yy "+yy
+" vmap <leader>yy "+y
+" autocmd TextYankPost * if v:event.operator is 'y' && v:event.regname is '+' | execute 'OSCYankRegister +' | endif
+nmap <leader>y <Plug>OSCYankOperator
+nmap <leader>yy <leader>y_
+vmap <leader>y <Plug>OSCYankVisual
 
 " Delete the blank space or Windows ^M at trail of line
 func! DeleteTrailingWS()
@@ -337,14 +356,56 @@ imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<cr>
 if executable('ag')             " The Silver Searcher
   set grepprg=ag\ --nogroup\ --nocolor
 else
-  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
+  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn','third_party'}
 endif
 
-" replace selected text
-vnoremap <leader>rs ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
-vnoremap <leader>rS ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
-nnoremap <leader>rs :%s/<C-R><C-W>//gc"<left><left><left><left>
-nnoremap <leader>rS :%s/<C-R><C-W>//g"<left><left><left>
+" replace current word or selected in current buffer
+vnoremap <leader>rb ""y:%s#<C-R>=escape(@", '/\')<cr>##gc<left><Left><Left>
+vnoremap <leader>rB ""y:%s#<C-R>=escape(@", '/\')<cr>##g<left><Left><Left>
+nnoremap <leader>rb :%s#<C-R><C-W>##gc<left><left><left>
+nnoremap <leader>rB :%s#<C-R><C-W>##g"<left><left><left>
+
+function! GgrepReplace(word)
+  exec printf("Ggrep! -q -I %s ", a:word)
+  call feedkeys(":cdo %s#" . a:word . "##gc\<left>\<left>\<left>", 'n')
+endf
+function! GgrepReplace1(word)
+  exec printf("Ggrep! -q -I %s ", a:word)
+  call feedkeys(":cdo %s#.a:word.##g\<left>\<left>", 'n')
+endf
+" replace in current project
+noremap <leader>rr :call GgrepReplace('')<left><left>
+noremap <leader>rR :call GgrepReplace1('')<left><left>
+" replace current word or selected in current project
+vnoremap <leader>rp :call GgrepReplace(leaderf#Rg#visual())<cr>
+vnoremap <leader>rP :call GgrepReplace1(leaderf#Rg#visual())<cr>
+nnoremap <leader>rp :call GgrepReplace(expand("<cword>"))<cr>
+nnoremap <leader>rP :call GgrepReplace1(expand("<cword>"))<cr>
+nnoremap <leader>ru :cdo normal u<cr>
+
+function! LeaderRgReplace(word)
+  exec printf("Leaderf! rg -e %s ", a:word)
+  exec g:Lf_py "rgExplManager.outputToQflist()"
+  exec g:Lf_py "rgExplManager.quit()"
+  if empty(filter(getwininfo(), 'v:val.quickfix'))
+    copen
+  endif
+  call feedkeys(":cdo %s#".a:word."##gc\<left>\<left>\<left>", 'n')
+endf
+function! LeaderRgReplace1(word)
+  exec printf("Leaderf! rg -e %s ", a:word)
+  exec g:Lf_py "rgExplManager.outputToQflist()"
+  exec g:Lf_py "rgExplManager.quit()"
+  if empty(filter(getwininfo(), 'v:val.quickfix'))
+    copen
+  endif
+  call feedkeys(":cdo %s#".a:word."##g\<left>\<left>", 'n')
+endf
+" replace current word or selected in current dir
+vnoremap <leader>rf :call LeaderRgReplace(leaderf#Rg#visual())<cr>
+vnoremap <leader>rF :call LeaderRgReplace1(leaderf#Rg#visual())<cr>
+nnoremap <leader>rf :call LeaderRgReplace(expand("<cword>"))<cr>
+nnoremap <leader>rF :call LeaderRgReplace1(expand("<cword>"))<cr>
 
 function! s:get_visual_selection()
     " Why is this not a built-in Vim script function?!
@@ -385,7 +446,27 @@ nmap <leader>bp :bprevious<cr>
 nmap <leader>bd ::bdelete<cr>
 nmap <leader>b<tab> :b#<cr>
 
+nmap <leader>q :q<cr>
+nmap <leader>qq :qall<cr>
+nmap <leader>x :w<cr>
+nmap <leader>xx :wall<cr>
+nmap <leader>xq :wqall<cr>
+
 nmap <leader>tb :BlamerToggle <cr>
+
+function! ToggleQuickFix()
+  if empty(filter(getwininfo(), 'v:val.quickfix'))
+    copen
+  else
+    cclose
+  endif
+endfunction
+nmap <silent> <leader>tq :call ToggleQuickFix()<cr>
+augroup QuickFix
+  autocmd!
+  autocmd FileType qf setlocal winfixwidth
+  autocmd BufWinEnter * if &buftype == 'quickfix' | wincmd J | endif
+augroup END
 
 " plugin ----------------------------------------------------------------
 " rainbow
@@ -455,7 +536,6 @@ nmap <Leader>ff :Files <cr>
 nmap <Leader>fp :GFiles --cached --others --exclude-standard<cr>
 nmap <leader>fr :History <cr>
 nmap <leader>fb :Buffers <cr>
-nmap <leader>bb :Buffers <cr>
 nmap <leader>st :BTags <cr>
 nmap <leader>sS :Rg<cr>
 nmap <leader>sc :History: <cr>
@@ -467,7 +547,7 @@ xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
 
 function! RipgrepFzf(query, fullscreen)
-  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -F %s || true'
   let initial_command = printf(command_fmt, shellescape(a:query))
   let reload_command = printf(command_fmt, '{q}')
   let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
@@ -475,6 +555,11 @@ function! RipgrepFzf(query, fullscreen)
 endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
+command! -bang -nargs=* GGrep
+  \ call fzf#vim#grep(
+  \   'git grep --line-number -- '.fzf#shellescape(<q-args>),
+  \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
 
 " leaderf
 " ---
@@ -523,7 +608,7 @@ let g:Lf_NormalMap = {
     \ "Mru":    [["<ESC>", ':exec g:Lf_py "mruExplManager.quit()"<CR>']],
     \ }
 noremap <leader>fx :<C-U><C-R>=printf("Leaderf file --no-ignore %s", "")<CR><CR>
-" noremap <leader>bb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+noremap <leader>bb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
 noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
 noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
 noremap <leader>fc :LeaderfMruCwd<CR>
@@ -535,12 +620,19 @@ xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
 noremap go :<C-U>Leaderf! rg --recall<CR>
 
 nmap <leader>ss :Leaderf<Space>rg<Space>-e<Space>""<left>
+nmap <leader>sp :<C-U><C-R>=printf('Ggrep! -q -I ""')<CR><left>
 nmap <leader>si :LeaderfRgInteractive<CR>
-noremap <leader>ts :<C-U>Leaderf! rg --recall<CR>
+noremap <leader>ts :<C-U>Leaderf rg --recall<CR>
 nmap <unique> <leader>sa <Plug>LeaderfRgCwordLiteralNoBoundary<CR>
 nmap <unique> <leader>sw <Plug>LeaderfRgCwordLiteralBoundary<CR>
 vmap <unique> <leader>sa <Plug>LeaderfRgVisualLiteralNoBoundary<CR>
-vmap <unique> <leader>sw <Plug>LeaderfRgVisualLiteralBoundary<CR>
+" vmap <unique> <leader>sw <Plug>LeaderfRgVisualLiteralBoundary<CR>
+vmap <leader>sw :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR><CR>
+
+function! LeaderfGgrep(search_pattern)
+    exec printf("Ggrep! -I -q %s", a:search_pattern)
+endfunction
+command! -nargs=+ LeaderfGgrep call LeaderfGgrep(<q-args>)
 
 " noremap <leader>st :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
 " noremap <leader>tt :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
@@ -549,6 +641,7 @@ noremap <leader>sd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand
 noremap <leader>sj :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
 noremap <leader>sk :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
 noremap <leader>sf :LeaderfFunction<CR>
+noremap <leader>sq :LeaderfQuickFix<CR>
 
 " CtrlSF
 " nnoremap <leader>ss :CtrlSF<Space>""<left>
@@ -635,7 +728,7 @@ function! s:defx_my_settings() abort
     setl signcolumn=no
     " setl nonumber
     " Define mappings
-    nnoremap <silent><buffer><expr> <CR>    defx#do_action('drop')
+    nnoremap <silent><buffer><expr> <CR>    defx#do_action('multi', ['drop', 'change_vim_cwd'])
     nnoremap <silent><buffer><expr> c       defx#do_action('copy')
     nnoremap <silent><buffer><expr> m       defx#do_action('move')
     nnoremap <silent><buffer><expr> p       defx#do_action('paste')
@@ -658,8 +751,8 @@ function! s:defx_my_settings() abort
     nnoremap <silent><buffer><expr> yy		defx#do_action('yank_path')
     nnoremap <silent><buffer><expr> .		defx#do_action('toggle_ignored_files')
     nnoremap <silent><buffer><expr> ;		defx#do_action('repeat')
-    nnoremap <silent><buffer><expr> u		defx#do_action('cd', ['..'])
-    nnoremap <silent><buffer><expr> ~		defx#do_action('cd')
+    nnoremap <silent><buffer><expr> u		defx#do_action('multi', ['cd', ['..'], 'change_vim_cwd'])
+    nnoremap <silent><buffer><expr> ~		defx#do_action('multi', ['cd', 'change_vim_cwd'])
     nnoremap <silent><buffer><expr> q		defx#do_action('quit')
     nnoremap <silent><buffer><expr> <Space>	defx#do_action('toggle_select') . 'j'
     nnoremap <silent><buffer><expr> *		defx#do_action('toggle_select_all')
@@ -681,9 +774,11 @@ autocmd VimLeavePre * :call coc#rpc#kill()
 autocmd VimLeave * if get(g:, 'coc_process_pid', 0) | call system('kill -9 -'.g:coc_process_pid) | endif
 
 " ctrl-space 触发补全
-inoremap <silent><expr> <c-space> coc#refresh()
+" inoremap <silent><expr> <c-space> coc#refresh()
 set pumblend=15
 set pumheight=15
+" inoremap <silent><expr> <C-n> coc#pum#visible() ? coc#pum#next(0) : "\<C-n>"
+" inoremap <silent><expr> <C-p> coc#pum#visible() ? coc#pum#prev(0) : "\<C-p>"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -791,15 +886,17 @@ autocmd FileType c,cpp,objc map <buffer><Leader>f <Plug>(operator-clang-format)
 nmap <Leader>tc :ClangFormatAutoToggle<CR>
 
 let g:clang_format#detect_style_file = 1
-let g:clang_format#auto_format = 1
+let g:clang_format#auto_format = 0
 let g:clang_format#auto_format_on_insert_leave = 0
-let g:clang_format#auto_formatexpr = 1
+let g:clang_format#auto_formatexpr = 0
 
 " development
 nmap <leader>fa :CocCommand clangd.switchSourceHeader <cr>
 set tagfunc=CocTagFunc
 
 let g:NERDSpaceDelims = 1
+let g:NERDCompactSexyComs = 1
+let g:NERDDefaultAlign = 'left'
 
 " ctags
 " how to generate C++ tags: !ctags -R --c++-kinds=+px --fields=+iaS --extra=+q .
@@ -827,7 +924,7 @@ function! LoadCscope()
 endfunction
 autocmd BufRead,BufEnter *.cpp,*.hpp,*.go, call LoadCscope()
 
-set cscopequickfix=s-,g-,c-,t-,e-,f-,i-,d-
+" set cscopequickfix=s-,g-,c-,t-,e-,f-,i-,d-
 nmap <leader>gs :cs find s <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this C symbol
 nmap <leader>gg :cs find g <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find this definition
 nmap <leader>gd :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>    " Find functions called by this function
@@ -838,22 +935,7 @@ nmap <leader>gf :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find t
 nmap <leader>gi :cs find i ^<C-R>=expand("<cfile>")<cr>$<cr>:copen<cr>  " Find files #including this file
 nmap <leader>ga :cs find a <C-R>=expand("<cfile>")<cr><cr>:copen<cr>    " Find places where this symbol is assigned a value
 
-" if has('nvim') == 1
-" lua require('lua/plugins/diffview')
-lua << EOF
-require('glow').setup({
-  glow_path = "/usr/bin/glow",
-  install_path = "~/.local/bin",
-  border = "shadow",
-  style = "light",
-  pager = false,
-  width = 80,
-  height = 100,
-  width_ratio = 0.7,
-  height_ratio = 0.7,
-})
-EOF
-" endif
-
 let tlist_pyrex_settings='python;c:classe;m:memder;f:function'
-autocmd FileType markdown setl conceallevel=0
+let g:markdown_syntax_conceal=0
+let g:vim_json_conceal=0
+autocmd TermOpen * IndentLinesDisable
