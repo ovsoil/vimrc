@@ -285,6 +285,17 @@ nnoremap <leader>wv :vs<CR>
 
 au InsertLeave * set nopaste
 
+function! OpenFileAtLine(arg)
+    let parts = split(a:arg, ':')
+    if len(parts) > 1
+        execute 'e' parts[0]
+        execute parts[1]
+    else
+        execute 'e' a:arg
+    endif
+endfunction
+command! -nargs=1 E call OpenFileAtLine(<f-args>)
+
 "Keep search pattern at the center of the screen."
 nnoremap <silent> n nzz
 nnoremap <silent> N Nzz
@@ -361,8 +372,8 @@ else
 endif
 
 " replace current word or selected in current buffer
-vnoremap <leader>rb ""y:%s#<C-R>=escape(@", '/\')<cr>##gc<left><Left><Left>
-vnoremap <leader>rB ""y:%s#<C-R>=escape(@", '/\')<cr>##g<left><Left><Left>
+vnoremap <leader>rb ""y:%s#\V<C-R>=escape(@", '/\')<cr>##gc<left><Left><Left>
+vnoremap <leader>rB ""y:%s#\V<C-R>=escape(@", '/\')<cr>##g<left><Left><Left>
 nnoremap <leader>rb :%s#<C-R><C-W>##gc<left><left><left>
 nnoremap <leader>rB :%s#<C-R><C-W>##g"<left><left><left>
 
@@ -372,7 +383,7 @@ function! GgrepReplace(word)
 endf
 function! GgrepReplace1(word)
   exec printf("Ggrep! -q -I %s ", a:word)
-  call feedkeys(":cdo %s#.a:word.##g\<left>\<left>", 'n')
+  call feedkeys(":cdo %s#" . a:word . "##g\<left>\<left>", 'n')
 endf
 " replace in current project
 noremap <leader>rr :call GgrepReplace('')<left><left>
@@ -403,7 +414,7 @@ function! LeaderRgReplace1(word)
   call feedkeys(":cdo %s#".a:word."##g\<left>\<left>", 'n')
 endf
 " replace current word or selected in current dir
-vnoremap <leader>rf :call LeaderRgReplace(leaderf#Rg#visual())<cr>
+vnoremap <leader>rf :call LeaderRgReplace(leaderf#visual())<cr>
 vnoremap <leader>rF :call LeaderRgReplace1(leaderf#Rg#visual())<cr>
 nnoremap <leader>rf :call LeaderRgReplace(expand("<cword>"))<cr>
 nnoremap <leader>rF :call LeaderRgReplace1(expand("<cword>"))<cr>
@@ -595,7 +606,7 @@ let g:Lf_WildIgnore = {
 let g:Lf_CacheDirectory = expand('~/.cache/nvim')
 let g:Lf_GtagsAutoGenerate = 1    " use `Leaderf gtags --update` generate if 0
 let g:Lf_GtagsSource = 1
-let g:Lf_Gtagsconf = '/usr/local/share/gtags/gtags.conf'
+let g:Lf_Gtagsconf = expand('~/.local/share/gtags/gtags.conf')
 let g:Lf_Gtagslabel = 'native-pygments'
 " let g:Lf_GtagsGutentags = 1
 
@@ -629,6 +640,7 @@ nmap <unique> <leader>sw <Plug>LeaderfRgCwordLiteralBoundary<CR>
 vmap <unique> <leader>sa <Plug>LeaderfRgVisualLiteralNoBoundary<CR>
 " vmap <unique> <leader>sw <Plug>LeaderfRgVisualLiteralBoundary<CR>
 vmap <leader>sw :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR><CR>
+vmap <leader>ss :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
 
 function! LeaderfGgrep(search_pattern)
     exec printf("Ggrep! -I -q %s", a:search_pattern)
