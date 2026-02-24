@@ -17,14 +17,14 @@ endif
 let g:python3_host_prog = '/usr/bin/python3'
 " FIXME hard code python path
 if (g:system=="mac")
-  let g:python3_host_prog = '~/.pyenv/versions/neovim/bin/python3'
+  let g:python3_host_prog = '~/.pyenv/shims/python3'
 endif
 
 set nocompatible
 " Use utf-8 if Vim was complied with multi-byte support
 if has("multi_byte")
   if &termencoding == ""
-    let &termencoding = &encoding
+    " let &termencoding = &encoding
   endif
   set encoding=utf-8
   setglobal fileencoding=utf-8
@@ -86,7 +86,7 @@ let s:dein_src = '~/.cache/dein/repos/github.com/Shougo/dein.vim'
 call dein#begin(s:dein_base)
 call dein#add(s:dein_src)
 
-call dein#add('https://wsdjeg.net/git/dein-ui.vim/')
+" call dein#add('https://wsdjeg.net/git/dein-ui.vim/')
 call dein#add('lifepillar/vim-gruvbox8')
 call dein#add('morhetz/gruvbox')
 call dein#add('sainnhe/gruvbox-material')
@@ -604,7 +604,7 @@ let g:Lf_WildIgnore = {
         \}
 
 let g:Lf_CacheDirectory = expand('~/.cache/nvim')
-let g:Lf_GtagsAutoGenerate = 1    " use `Leaderf gtags --update` generate if 0
+let g:Lf_GtagsAutoGenerate = 0    " use `Leaderf gtags --update` generate if 0
 let g:Lf_GtagsSource = 1
 let g:Lf_Gtagsconf = expand('~/.local/share/gtags/gtags.conf')
 let g:Lf_Gtagslabel = 'native-pygments'
