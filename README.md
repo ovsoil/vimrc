@@ -1,253 +1,274 @@
 # vimrc
 
-A powerful Neovim / Vim config with Spacemacs-like keybindings.
+Neovim / Vim 配置，采用 Spacemacs 风格快捷键。
 
-## Configurations
+## 配置文件
 
-| File | Editor | Plugin Manager | Use Case |
-|------|--------|---------------|----------|
-| `init.lua` | Neovim 0.10+ | lazy.nvim | Primary Neovim config (Lua) |
-| `init.vim` | Neovim | dein.vim | Legacy Neovim config |
-| `vimrc-dev` | Vim 8+ | vim-plug | Vim config |
-| `vimrc-server` | Vim | None | Minimal config for servers (no plugins) |
+| 文件 | 编辑器 | 插件管理 | 用途 |
+|------|--------|----------|------|
+| `init.lua` | Neovim 0.10+ | lazy.nvim | 主力 Neovim 配置（Lua） |
+| `vimrc-server` | Vim | 无 | 服务器极简配置（无插件） |
 
-## Install
+## 一键安装
 
-1. Prerequisites
+```bash
+git clone https://github.com/ovsoil/vimrc.git ~/Develop/vimrc
+bash ~/Develop/vimrc/install.sh
+```
+
+脚本会自动完成以下工作：
+- 安装系统依赖（neovim、node.js、python3、ripgrep、tree-sitter-cli 等）
+- 软链接配置到 `~/.config/nvim`（已有配置自动备份）
+- 安装所有插件并编译 treesitter 解析器
+- 支持 macOS（Homebrew）和 Ubuntu（apt + PPA）
+- GitHub 访问不畅时自动重试
+
+## 手动安装
+
+1. 安装依赖
 
     ```bash
     # macOS
-    brew install neovim ripgrep fzf
+    brew install neovim ripgrep node python3
+    pip3 install pynvim
+    npm install -g tree-sitter-cli
 
-    # Ubuntu/Debian
-    sudo apt-get install neovim ripgrep fzf
+    # Ubuntu
+    sudo add-apt-repository ppa:neovim-ppa/unstable
+    sudo apt-get install neovim ripgrep python3 python3-pip nodejs npm make gcc
+    pip3 install pynvim
+    sudo npm install -g tree-sitter-cli
     ```
 
-2. Clone and link
+2. 部署配置
 
     ```bash
-    git clone https://github.com/ovsoil/vimrc.git ~/repo/vimrc
-    ln -s ~/repo/vimrc ~/.config/nvim
+    ln -sf ~/Develop/vimrc ~/.config/nvim
     ```
 
-3. Open Neovim — lazy.nvim will auto-install all plugins.
+3. 打开 Neovim，lazy.nvim 会自动安装所有插件。
 
-## Plugin Management (lazy.nvim)
+## 插件管理
 
 ```vim
-:Lazy          " Open lazy.nvim UI
-:Lazy sync     " Install / update / clean
+:Lazy          " 打开插件管理界面
+:Lazy sync     " 安装 / 更新 / 清理
+:checkhealth   " 检查环境健康状态
 ```
 
-## Leader Key
+## Leader 键
 
-`<Space>` is the leader key. Most commands follow `<leader><category><action>`.
+`<Space>` 为 Leader 键，大部分命令遵循 `<leader><分类><动作>` 模式。
 
-## Keymap Reference
+## 快捷键参考
 
-### File (`<leader>f`)
+### 文件 (`<leader>f`)
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>ff` | n | Find files |
-| `<leader>fp` | n | Git tracked files |
-| `<leader>fx` | n | Find files (no ignore) |
-| `<leader>fr` | n | Recent files |
-| `<leader>fc` | n | MRU (cwd only) |
-| `<leader>fb` | n | Buffers |
-| `<leader>fl` | n | Buffer lines (fuzzy) |
-| `<leader>fa` | n | Switch source/header (clangd) |
-| `<leader>fj` | n | Reveal current file in Defx |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>ff` | n | 查找文件 |
+| `<leader>fp` | n | Git 跟踪的文件 |
+| `<leader>fx` | n | 查找文件（含忽略文件） |
+| `<leader>fr` | n | 最近文件 |
+| `<leader>fc` | n | 当前目录最近文件 |
+| `<leader>fb` | n | 缓冲区列表 |
+| `<leader>fl` | n | 当前缓冲区行搜索 |
+| `<leader>fa` | n | 切换源文件/头文件（clangd） |
+| `<leader>fj` | n | 在 Defx 中定位当前文件 |
 
-### Buffer (`<leader>b`)
+### 缓冲区 (`<leader>b`)
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>bn` | n | Next buffer |
-| `<leader>bp` | n | Previous buffer |
-| `<leader>bd` | n | Delete buffer |
-| `<leader>b<tab>` | n | Switch to last buffer |
-| `<leader>bb` | n | Buffer list |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>bn` | n | 下一个缓冲区 |
+| `<leader>bp` | n | 上一个缓冲区 |
+| `<leader>bd` | n | 关闭缓冲区 |
+| `<leader>b<tab>` | n | 切换到上一个缓冲区 |
+| `<leader>bb` | n | 缓冲区列表 |
 
-### Window (`<leader>w`)
+### 窗口 (`<leader>w`)
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>wh/j/k/l` | n, t | Navigate windows |
-| `<leader>ws` | n | Horizontal split |
-| `<leader>wv` | n | Vertical split |
-| `<C-w>m` | n | Toggle zoom |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>wh/j/k/l` | n, t | 窗口导航 |
+| `<leader>ws` | n | 水平分屏 |
+| `<leader>wv` | n | 垂直分屏 |
+| `<C-w>m` | n | 切换窗口最大化 |
 
-### Search (`<leader>s`)
+### 搜索 (`<leader>s`)
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>ss` | n | Live grep (rg) |
-| `<leader>ss` | v | Live grep with selection (editable) |
-| `<leader>sa` | n | Grep cword |
-| `<leader>sa` | v | Grep selection |
-| `<leader>sw` | n | Grep cword (word boundary) |
-| `<leader>sw` | v | Grep selection |
-| `<leader>sp` | n | Git grep (interactive) |
-| `<leader>st` | n | Treesitter symbols |
-| `<leader>sq` | n | Quickfix list |
-| `<leader>sc` | n | Command history |
-| `<leader>s/` | n | Search history |
-| `<leader>sr` | n | LSP references |
-| `<leader>sd` | n | LSP definitions |
-| `<C-B>` | n | Grep cword in buffer |
-| `<C-F>` | n | Grep cword in project |
-| `gf` | v | Grep visual selection |
-| `go` | n | Resume last search |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>ss` | n | 实时搜索（rg） |
+| `<leader>ss` | v | 搜索选中文本（可编辑） |
+| `<leader>sa` | n | 搜索光标下的词 |
+| `<leader>sa` | v | 搜索选中文本 |
+| `<leader>sw` | n | 搜索光标下的词（全词匹配） |
+| `<leader>sw` | v | 搜索选中文本 |
+| `<leader>sp` | n | Git grep（交互式） |
+| `<leader>st` | n | Treesitter 符号 |
+| `<leader>sq` | n | Quickfix 列表 |
+| `<leader>sc` | n | 命令历史 |
+| `<leader>s/` | n | 搜索历史 |
+| `<leader>sr` | n | LSP 引用 |
+| `<leader>sd` | n | LSP 定义 |
+| `<C-B>` | n | 在当前缓冲区搜索光标词 |
+| `<C-F>` | n | 在项目中搜索光标词 |
+| `gf` | v | 搜索选中文本 |
+| `go` | n | 恢复上次搜索 |
 
-### Replace (`<leader>r`) — grug-far.nvim
+### 替换 (`<leader>r`) — grug-far.nvim
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>rr` | n | Open search & replace (interactive) |
-| `<leader>rw` | n | Replace word (cword + word boundary) |
-| `<leader>rw` | v | Replace selection (word boundary) |
-| `<leader>ra` | n | Replace text (cword, no boundary) |
-| `<leader>ra` | v | Replace selection (no boundary) |
-| `<leader>rW` | n | Replace cWORD (whitespace-delimited) |
-| `<leader>rb` | n | Replace cword in current file |
-| `<leader>rb` | v | Replace selection in current file |
-| `<leader>rv` | n | Reload vimrc |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>rr` | n | 打开搜索替换（交互式） |
+| `<leader>rw` | n | 替换光标词（全词匹配） |
+| `<leader>rw` | v | 替换选中文本（全词匹配） |
+| `<leader>ra` | n | 替换光标词（无边界） |
+| `<leader>ra` | v | 替换选中文本（无边界） |
+| `<leader>rW` | n | 替换光标下的 WORD |
+| `<leader>rb` | n | 在当前文件中替换光标词 |
+| `<leader>rb` | v | 在当前文件中替换选中文本 |
 
-grug-far buffer keymaps (localleader = `<Space>`):
+### 注释 (`<leader>c`)
 
-| Mapping | Description |
-|---------|-------------|
-| `<localleader>r` | Execute replace |
-| `<localleader>q` | Send to quickfix |
-| `<localleader>s` | Sync all locations |
-| `<localleader>l` | Sync current line |
-| `<localleader>f` | Refresh |
-| `<localleader>t` | Open history |
-| `<localleader>e` | Swap engine |
-| `<localleader>p` | Toggle show command |
-| `<enter>` | Goto location |
-| `q` / `<Esc>` | Close |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>cc` | n | 切换行注释 |
+| `<leader>cc` | v | 切换选区注释 |
+| `<leader>cb` | n | 切换块注释 |
+| `<leader>cb` | v | 切换选区块注释 |
+| `<leader>cA` | n | 在行尾追加注释 |
+| `<leader>co` | n | 在下方插入注释行 |
+| `<leader>cO` | n | 在上方插入注释行 |
+| `gcc` | n | 切换行注释 |
+| `gc` | n, v | 切换注释 |
+| `gbc` | n | 切换块注释 |
 
-### Toggle (`<leader>t`)
+### 开关 (`<leader>t`)
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>tf` / `<F2>` | n | Toggle Defx file explorer |
-| `<leader>ts` | n | Resume last search |
-| `<leader>tq` | n | Toggle quickfix window |
-| `<leader>tb` | n | Toggle git blame |
-| `<leader>tl` | n | Resume CocList |
-| `<leader>td` | n | Toggle diffview files panel |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>tf` / `<F2>` | n | 切换 Defx 文件浏览器 |
+| `<leader>ts` | n | 恢复上次搜索 |
+| `<leader>tq` | n | 切换 Quickfix 窗口 |
+| `<leader>tb` | n | 切换 Git blame |
+| `<leader>tl` | n | 恢复 CocList |
+| `<leader>td` | n | 切换 Diffview 文件面板 |
+| `<leader>tc` | n | 切换自动 clang-format |
 
 ### Git (`<leader>h` / `<leader>d`)
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>hs` | n, v | Stage hunk |
-| `<leader>hr` | n, v | Reset hunk |
-| `<leader>hu` | n | Undo stage hunk |
-| `<leader>hp` | n | Preview hunk |
-| `<leader>hd` | n | Diff this |
-| `<leader>dv` | n | Diffview open |
-| `<leader>dh` | n | File history |
-| `<leader>dc` | n | Diffview close |
-| `]c` / `[c` | n | Next / prev hunk |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>hs` | n, v | 暂存 hunk |
+| `<leader>hr` | n, v | 重置 hunk |
+| `<leader>hu` | n | 撤销暂存 hunk |
+| `<leader>hp` | n | 预览 hunk |
+| `<leader>hd` | n | Diff 当前文件 |
+| `<leader>dv` | n | 打开 Diffview |
+| `<leader>dh` | n | 文件历史 |
+| `<leader>dc` | n | 关闭 Diffview |
+| `]c` / `[c` | n | 下一个 / 上一个 hunk |
 
-### LSP / Code (coc.nvim)
+### LSP / 代码 (coc.nvim)
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `gd` | n | Go to definition |
-| `gr` | n | Find references |
-| `gy` | n | Go to type definition |
-| `gi` | n | Go to implementation |
-| `K` | n | Show documentation |
-| `<leader>rn` | n | Rename symbol |
-| `<leader>f` | n, x | Format selected |
-| `<leader>a` | n, x | Code action (selected) |
-| `<leader>ac` | n | Code action |
-| `<leader>qf` | n | Quick fix |
-| `[g` / `]g` | n | Prev / next diagnostic |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `gd` | n | 跳转到定义 |
+| `gr` | n | 查找引用 |
+| `gy` | n | 跳转到类型定义 |
+| `gi` | n | 跳转到实现 |
+| `K` | n | 显示文档 |
+| `<leader>rn` | n | 重命名符号 |
+| `<leader>f` | n, x | 格式化选区 |
+| `<leader>a` | n, x | 代码动作（选区） |
+| `<leader>ac` | n | 代码动作 |
+| `<leader>qf` | n | 快速修复 |
+| `[g` / `]g` | n | 上一个 / 下一个诊断 |
 
 ### CocList (`<leader>l`)
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>la` | n | Diagnostics |
-| `<leader>le` | n | Extensions |
-| `<leader>lc` | n | Commands |
-| `<leader>lo` | n | Outline |
-| `<leader>lT` | n | Symbols |
-| `<leader>lj` / `<leader>lk` | n | Next / prev item |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>la` | n | 诊断列表 |
+| `<leader>le` | n | 扩展列表 |
+| `<leader>lc` | n | 命令列表 |
+| `<leader>lo` | n | 大纲 |
+| `<leader>lT` | n | 符号 |
+| `<leader>lj` / `<leader>lk` | n | 下一个 / 上一个项目 |
 
-### Edit
+### 编辑
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>db` | n | Delete trailing whitespace |
-| `<leader>dm` | n | Delete Windows ^M |
-| `<leader>y` | n, v | Yank to system clipboard |
-| `<leader>yy` | n | Yank line to clipboard |
-| `<leader>pp` | n, v | Paste from clipboard |
-| `<leader>pP` | n, v | Paste before from clipboard |
-| `<leader>p` | n, v | Paste from yank register |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>db` | n | 删除行尾空白 |
+| `<leader>dm` | n | 删除 Windows ^M 字符 |
+| `<leader>y` | n, v | 复制到系统剪贴板 |
+| `<leader>yy` | n | 复制整行到剪贴板 |
+| `<leader>pp` | n, v | 从剪贴板粘贴 |
+| `<leader>pP` | n, v | 从剪贴板粘贴到光标前 |
+| `<leader>p` | n, v | 从 yank 寄存器粘贴 |
 
-### Quick Actions
+### 快捷操作
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader>q` | n | Close window |
-| `<leader>qq` | n | Quit all |
-| `<leader>x` | n | Save |
-| `<leader>xx` | n | Save all |
-| `<leader>xq` | n | Save and quit all |
-| `<leader><CR>` | n | Clear search highlight |
-| `<leader>zz` | n | Toggle fold all |
-| `;` | n | Enter command mode |
-| `<leader><tab>` | n | Show keymaps |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader>q` | n | 关闭窗口 |
+| `<leader>qq` | n | 全部退出 |
+| `<leader>x` | n | 保存 |
+| `<leader>xx` | n | 全部保存 |
+| `<leader>xq` | n | 保存并退出 |
+| `<leader><CR>` | n | 清除搜索高亮 |
+| `<leader>zz` | n | 切换全部折叠 |
+| `<leader>rv` | n | 重新加载配置 |
+| `;` | n | 进入命令模式 |
+| `<leader><tab>` | n | 显示快捷键列表 |
 
-### Insert Mode
+### 插入模式
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<C-d><C-d>` | i | Insert date |
-| `<C-t><C-t>` | i | Insert time |
-| `<C-c><C-c>` | i | Calculate expression |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<C-d><C-d>` | i | 插入日期 |
+| `<C-t><C-t>` | i | 插入时间 |
+| `<C-c><C-c>` | i | 计算表达式 |
 
-### Movement
+### 移动
 
-| Mapping | Mode | Description |
-|---------|------|-------------|
-| `<leader><leader>w` | n | Hop word |
-| `<leader><leader>f` | n | Hop char |
-| `<leader><leader>j` | n | Hop line down |
-| `<leader><leader>k` | n | Hop line up |
-| `<leader><leader>h` | n | Hop line backward |
-| `<leader><leader>l` | n | Hop line forward |
-| `H` / `L` | n | Line start / end |
+| 快捷键 | 模式 | 说明 |
+|--------|------|------|
+| `<leader><leader>w` | n | Hop 跳转到词 |
+| `<leader><leader>f` | n | Hop 跳转到字符 |
+| `<leader><leader>j` | n | Hop 向下跳行 |
+| `<leader><leader>k` | n | Hop 向上跳行 |
+| `<leader><leader>h` | n | Hop 行内向左 |
+| `<leader><leader>l` | n | Hop 行内向右 |
+| `H` / `L` | n | 行首 / 行尾 |
 
-## Defx Keymaps (buffer-local)
+## Defx 快捷键（缓冲区内）
 
-| Key | Description |
-|-----|-------------|
-| `h` / `l` | Navigate up / open |
-| `o` | Toggle tree |
-| `E` | Open in vsplit |
-| `K` / `N` | Create directory / file |
-| `d` / `r` | Delete / rename |
-| `yy` | Yank path |
-| `P` | Preview |
-| `x` | Execute system command |
-| `.` | Toggle hidden files |
-| `u` | Go to parent directory |
+| 按键 | 说明 |
+|------|------|
+| `h` / `l` | 向上导航 / 打开 |
+| `o` | 切换树展开 |
+| `E` | 垂直分屏打开 |
+| `K` / `N` | 新建目录 / 文件 |
+| `d` / `r` | 删除 / 重命名 |
+| `yy` | 复制路径 |
+| `P` | 预览 |
+| `x` | 执行系统命令 |
+| `.` | 切换隐藏文件 |
+| `u` | 进入上级目录 |
 
-## Dependencies
+## 依赖
 
-Required:
-- [ripgrep](https://github.com/BurntSushi/ripgrep) (rg) — search backend
-- [Node.js](https://nodejs.org) — for coc.nvim
+必需：
+- [ripgrep](https://github.com/BurntSushi/ripgrep) (rg) — 搜索后端
+- [Node.js](https://nodejs.org) — coc.nvim 需要
+- Python3 + pynvim — defx.nvim 需要
+- tree-sitter-cli — treesitter 解析器编译需要
 
-Optional:
-- `clangd` — C/C++ language server
-- `glow` — Markdown preview
+可选：
+- `clangd` — C/C++ 语言服务器
+- `pyright` — Python 语言服务器
+- `glow` — Markdown 终端预览

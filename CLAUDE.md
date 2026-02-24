@@ -1,66 +1,71 @@
 # CLAUDE.md
 
-Project context for AI assistants working on this Neovim configuration.
+AI 助手在本 Neovim 配置项目中的工作上下文。
 
-## Project Overview
+## 项目概述
 
-Native Lua Neovim configuration with Spacemacs-style keybindings. Plugin manager: lazy.nvim.
+原生 Lua Neovim 配置，采用 Spacemacs 风格快捷键。插件管理器：lazy.nvim。
 
-## Directory Structure
+## 语言约定
+
+- 文档文件（README.md、CLAUDE.md 等）使用**中文**
+- 代码注释和脚本注释使用**英文**
+
+## 目录结构
 
 ```
-init.lua              -- Entry point: leader key, load config modules, bootstrap lazy.nvim
-vimrc-server          -- Standalone minimal vim config (no plugins)
+init.lua              -- 入口：leader 键、加载配置模块、引导 lazy.nvim
+install.sh            -- 一键安装脚本（macOS / Ubuntu）
+vimrc-server          -- 独立的极简 vim 配置（无插件）
 lua/
   config/
-    options.lua       -- vim.opt settings (encoding, indent, search, UI, clipboard)
-    keymaps.lua       -- Global keymaps (non-plugin)
-    autocmds.lua      -- Autocommands (cursor restore, filetype indent, yank highlight)
+    options.lua       -- vim.opt 设置（编码、缩进、搜索、UI、剪贴板）
+    keymaps.lua       -- 全局快捷键（非插件）
+    autocmds.lua      -- 自动命令（光标恢复、文件类型缩进、复制高亮）
   plugins/
-    ui.lua            -- Colorscheme (gruvbox), statusline (lualine), indent guides
-    editor.lua        -- Comment, surround, autopairs, hop, zoom, indent text object
-    telescope.lua     -- Fuzzy finder and search
-    grug-far.lua      -- Search & replace (ripgrep-based)
-    coc.lua           -- LSP via coc.nvim (clangd, pyright)
-    git.lua           -- Fugitive, gitsigns, blamer, diffview
-    defx.lua          -- File explorer
+    ui.lua            -- 配色（gruvbox）、状态栏（lualine）、缩进线
+    editor.lua        -- 注释、surround、自动括号、hop、zoom、缩进文本对象
+    telescope.lua     -- 模糊搜索
+    grug-far.lua      -- 搜索替换（基于 ripgrep）
+    coc.lua           -- LSP（coc.nvim：clangd、pyright）
+    git.lua           -- Fugitive、gitsigns、blamer、diffview
+    defx.lua          -- 文件浏览器
     treesitter.lua    -- Treesitter
-    coding.lua        -- Clang-format, markdown preview
+    coding.lua        -- Clang-format、Markdown 预览
 ```
 
-## Font Requirements
+## 字体要求
 
-- Font: **Monaco for Powerline**
-- Non-ASCII font: **Monaco for Powerline** (same)
-- Powerline separator characters (U+E0B0–E0B3) are available and used in lualine
-- **No Nerd Font icons** — this font does not include Nerd Font glyphs
-- All plugin configs must disable Nerd Font icons and avoid Unicode symbols beyond basic/Powerline range
-- Acceptable special characters: ASCII, basic Unicode box-drawing (│, ─), Powerline separators (U+E0B0–E0B3)
+- 字体：**Monaco for Powerline**
+- 非 ASCII 字体：**Monaco for Powerline**（同上）
+- Powerline 分隔符（U+E0B0–E0B3）可用，用于 lualine
+- **无 Nerd Font 图标** — 此字体不含 Nerd Font 字形
+- 所有插件配置必须禁用 Nerd Font 图标，避免使用基本/Powerline 范围外的 Unicode 符号
+- 可接受的特殊字符：ASCII、基础 Unicode 制表符（│、─）、Powerline 分隔符（U+E0B0–E0B3）
 
-## Key Conventions
+## 快捷键约定
 
-- Leader: `<Space>`
-- Localleader: `<Space>`
-- Keybinding pattern: `<leader><category><action>` (Spacemacs-style)
-- Categories: `f` (file), `b` (buffer), `w` (window), `s` (search), `r` (replace), `t` (toggle), `h` (git hunk), `d` (diff), `l` (CocList), `p` (paste), `y` (yank)
-- Plugin UI should be minimal: no unnecessary decorative icons or characters
+- Leader：`<Space>`
+- Localleader：`<Space>`
+- 快捷键模式：`<leader><分类><动作>`（Spacemacs 风格）
+- 分类：`f`（文件）、`b`（缓冲区）、`w`（窗口）、`s`（搜索）、`r`（替换）、`c`（注释）、`t`（开关）、`h`（git hunk）、`d`（diff）、`l`（CocList）、`p`（粘贴）、`y`（复制）
+- 插件 UI 保持简洁：无不必要的装饰图标或字符
 
-## Plugin Patterns
+## 插件模式
 
-- All plugins use lazy.nvim spec format in `lua/plugins/*.lua`
-- Plugins are lazy-loaded where possible via `cmd`, `keys`, `event`
-- lualine: `icons_enabled = false`, uses Powerline separators only
-- grug-far: `icons.enabled = false`, `spinnerStates = false`
-- diffview: uses simple ASCII/Unicode fold indicators (▸ / ▾)
+- 所有插件使用 lazy.nvim spec 格式，位于 `lua/plugins/*.lua`
+- 尽可能通过 `cmd`、`keys`、`event` 延迟加载
+- lualine：`icons_enabled = false`，仅使用 Powerline 分隔符
+- grug-far：`icons.enabled = false`、`spinnerStates = false`
+- diffview：使用简单 ASCII/Unicode 折叠指示符（▸ / ▾）
 
 ## LSP
 
-- Via coc.nvim (not native LSP)
-- Configured servers: clangd, pyright
-- Config file: `coc-settings.json`
+- 通过 coc.nvim（非原生 LSP）
+- 已配置的语言服务器：clangd、pyright
+- 配置文件：`coc-settings.json`
 
-## Search & Replace Architecture
+## 搜索替换架构
 
-- Search: Telescope (live_grep, grep_string, find_files)
-- Replace: grug-far.nvim with ripgrep engine
-- Legacy cdo-based replace has been fully removed
+- 搜索：Telescope（live_grep、grep_string、find_files）
+- 替换：grug-far.nvim + ripgrep 引擎

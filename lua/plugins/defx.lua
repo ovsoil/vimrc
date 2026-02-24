@@ -1,6 +1,7 @@
 return {
   {
     "Shougo/defx.nvim",
+    build = ":UpdateRemotePlugins",
     dependencies = {
       "kristijanhusak/defx-git",
     },
