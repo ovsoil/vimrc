@@ -53,7 +53,6 @@ A powerful Neovim / Vim config with Spacemacs-like keybindings.
 | `<leader>fp` | n | Git tracked files |
 | `<leader>fx` | n | Find files (no ignore) |
 | `<leader>fr` | n | Recent files |
-| `<leader>fm` | n | MRU |
 | `<leader>fc` | n | MRU (cwd only) |
 | `<leader>fb` | n | Buffers |
 | `<leader>fl` | n | Buffer lines (fuzzy) |
@@ -84,15 +83,13 @@ A powerful Neovim / Vim config with Spacemacs-like keybindings.
 | Mapping | Mode | Description |
 |---------|------|-------------|
 | `<leader>ss` | n | Live grep (rg) |
-| `<leader>ss` | v | Live grep with selection |
+| `<leader>ss` | v | Live grep with selection (editable) |
 | `<leader>sa` | n | Grep cword |
 | `<leader>sa` | v | Grep selection |
 | `<leader>sw` | n | Grep cword (word boundary) |
 | `<leader>sw` | v | Grep selection |
 | `<leader>sp` | n | Git grep (interactive) |
-| `<leader>si` | n | Live grep (interactive) |
 | `<leader>st` | n | Treesitter symbols |
-| `<leader>sf` | n | Functions / symbols |
 | `<leader>sq` | n | Quickfix list |
 | `<leader>sc` | n | Command history |
 | `<leader>s/` | n | Search history |
@@ -107,12 +104,14 @@ A powerful Neovim / Vim config with Spacemacs-like keybindings.
 
 | Mapping | Mode | Description |
 |---------|------|-------------|
-| `<leader>rr` | n | Open search & replace |
-| `<leader>rw` | n | Replace cword (project), cursor on Replace |
-| `<leader>rw` | v | Replace selection (project), cursor on Replace |
-| `<leader>rW` | n | Replace cWORD (project), cursor on Replace |
-| `<leader>rb` | n | Replace cword in current file, cursor on Replace |
-| `<leader>rb` | v | Replace selection in current file, cursor on Replace |
+| `<leader>rr` | n | Open search & replace (interactive) |
+| `<leader>rw` | n | Replace word (cword + word boundary) |
+| `<leader>rw` | v | Replace selection (word boundary) |
+| `<leader>ra` | n | Replace text (cword, no boundary) |
+| `<leader>ra` | v | Replace selection (no boundary) |
+| `<leader>rW` | n | Replace cWORD (whitespace-delimited) |
+| `<leader>rb` | n | Replace cword in current file |
+| `<leader>rb` | v | Replace selection in current file |
 | `<leader>rv` | n | Reload vimrc |
 
 grug-far buffer keymaps (localleader = `<Space>`):
@@ -128,7 +127,7 @@ grug-far buffer keymaps (localleader = `<Space>`):
 | `<localleader>e` | Swap engine |
 | `<localleader>p` | Toggle show command |
 | `<enter>` | Goto location |
-| `q` | Close |
+| `q` / `<Esc>` | Close |
 
 ### Toggle (`<leader>t`)
 
