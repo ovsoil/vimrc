@@ -21,22 +21,6 @@ return {
     end,
   },
 
-  -- ALE (lazy loaded, toggle on demand)
-  {
-    "dense-analysis/ale",
-    cmd = { "ALEToggle", "ALEEnable", "ALEDisable" },
-    keys = {
-      { "<leader>ta", "<cmd>ALEToggle<CR>", desc = "Toggle ALE" },
-    },
-  },
-
-  -- UltiSnips + vim-snippets (for coc-snippets compatibility)
-  {
-    "SirVer/ultisnips",
-    dependencies = { "honza/vim-snippets" },
-    event = "InsertEnter",
-  },
-
   -- Markdown preview (needs node, skipped on headless servers)
   {
     "iamcco/markdown-preview.nvim",
@@ -47,17 +31,5 @@ return {
     keys = {
       { "<leader>mp", "<cmd>MarkdownPreviewToggle<CR>", ft = "markdown", desc = "Toggle markdown preview" },
     },
-  },
-
-  -- PlantUML support (needs browser, skipped on headless servers)
-  {
-    "aklt/plantuml-syntax",
-    ft = "plantuml",
-  },
-  {
-    "weirongxu/plantuml-previewer.vim",
-    dependencies = { "tyru/open-browser.vim" },
-    ft = "plantuml",
-    cond = function() return vim.env.DISPLAY ~= nil or vim.g.system == "mac" end,
   },
 }

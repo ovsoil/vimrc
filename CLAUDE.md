@@ -10,21 +10,22 @@ Native Lua Neovim configuration with Spacemacs-style keybindings. Plugin manager
 
 ```
 init.lua              -- Entry point: leader key, load config modules, bootstrap lazy.nvim
+vimrc-server          -- Standalone minimal vim config (no plugins)
 lua/
   config/
     options.lua       -- vim.opt settings (encoding, indent, search, UI, clipboard)
     keymaps.lua       -- Global keymaps (non-plugin)
     autocmds.lua      -- Autocommands (cursor restore, filetype indent, yank highlight)
   plugins/
-    ui.lua            -- Colorscheme (gruvbox), statusline (lualine), indent guides, rainbow
-    editor.lua        -- Comment, surround, autopairs, hop, zoom, text objects
+    ui.lua            -- Colorscheme (gruvbox), statusline (lualine), indent guides
+    editor.lua        -- Comment, surround, autopairs, hop, zoom, indent text object
     telescope.lua     -- Fuzzy finder and search
     grug-far.lua      -- Search & replace (ripgrep-based)
     coc.lua           -- LSP via coc.nvim (clangd, pyright)
     git.lua           -- Fugitive, gitsigns, blamer, diffview
     defx.lua          -- File explorer
     treesitter.lua    -- Treesitter
-    coding.lua        -- Coding utilities
+    coding.lua        -- Clang-format, markdown preview
 ```
 
 ## Font Requirements

@@ -1,10 +1,7 @@
 " ============================================================================
-" simple vim config without any plugins
+" Simple vim config without any plugins
 " Maintainer: ovsoil
 "       hxyumail@gmail.com
-"       http://ovsoil.com
-" Create Date:
-"       01/09/2015
 " ============================================================================
 
 " leader
@@ -13,71 +10,77 @@ let g:mapleader = "\<Space>"
 
 " syntax
 syntax on
-
-" history : how many lines of history VIM has to remember
-set history=2000
-
-" filetype
 filetype on
-" Enable filetype plugins
 filetype plugin on
 filetype indent on
 
+" encoding
+set encoding=utf-8
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+set ffs=unix,dos,mac
+set formatoptions+=mB
 
 " base
-set nocompatible                " don't bother with vi compatibility
-set autoread                    " reload files when changed on disk, i.e. via `git checkout`
+set nocompatible
+set autoread
 set shortmess=atI
-
-set magic                       " For regular expressions turn magic on
-set title                       " change the terminal's title
-set nobackup                    " do not keep a backup file
-
-set novisualbell                " turn off visual bell
-set noerrorbells                " don't beep
-set visualbell t_vb=            " turn off error beep/flash
+set magic
+set title
+set nobackup
+set novisualbell
+set noerrorbells
+set visualbell t_vb=
 set t_vb=
 set tm=500
+set history=2000
 
-
-" show location
-" set cursorcolumn
+" ui
 set cursorline
-
-
-" movement
-set scrolloff=7                 " keep 3 lines when scrolling
-
-
-" show
-set ruler                       " show the current row and column
-set number                      " show line numbers
+set scrolloff=7
+set ruler
+set number
 set nowrap
-set showcmd                     " display incomplete commands
-set showmode                    " display current modes
-set showmatch                   " jump to matches when entering parentheses
-set matchtime=2                 " tenths of a second to show the matching parenthesis
+set showcmd
+set showmode
+set showmatch
+set matchtime=2
+set laststatus=2
+set background=dark
+colorscheme desert
 
+hi! link SignColumn   LineNr
+hi! link ShowMarksHLl DiffAdd
+hi! link ShowMarksHLu DiffChange
+
+set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
 
 " search
-set hlsearch                    " highlight searches
-set incsearch                   " do incremental searching, search as you type
-set ignorecase                  " ignore case when searching
-set smartcase                   " no ignorecase if Uppercase char present
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
 
-
-" tab
-set expandtab                   " expand tabs to spaces
+" tab/indent
+set expandtab
 set smarttab
 set shiftround
-
-" indent
-set autoindent smartindent shiftround
+set autoindent
+set smartindent
 set shiftwidth=4
 set tabstop=4
-set softtabstop=4                " insert mode tab and backspace use 4 spaces
+set softtabstop=4
 
-" NOT SUPPORT
+" select & complete
+set selection=inclusive
+set completeopt=longest,menu
+set wildmenu
+set wildmode=longest,list,full
+set wildignore=*.o,*~,*.pyc,*.class
+
+" others
+set backspace=indent,eol,start
+set whichwrap+=<,>,h,l
+
 " fold
 set foldenable
 set foldmethod=indent
@@ -94,94 +97,29 @@ fun! ToggleFold()
     endif
 endfun
 
-" encoding
-set encoding=utf-8
-set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
-set termencoding=utf-8
-set ffs=unix,dos,mac
-set formatoptions+=m
-set formatoptions+=B
+" grep
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --smart-case
+elseif executable('ag')
+  set grepprg=ag\ --nogroup\ --nocolor
+else
+  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
+endif
 
-" select & complete
-set selection=inclusive
-set selectmode=mouse,key
-
-set completeopt=longest,menu
-set wildmenu                           " show a navigable menu for tab completion"
-set wildmode=longest,list,full
-set wildignore=*.o,*~,*.pyc,*.class
-
-" others
-set backspace=indent,eol,start  " make that backspace key work the way it should
-set whichwrap+=<,>,h,l
-
-" if this not work ,make sure .viminfo is writable for you
+" restore cursor position
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
-" NOT SUPPORT
-" Enable basic mouse behavior such as resizing buffers.
-" set mouse=a
+au InsertLeave * set nopaste
 
-
-" ============================ theme and status line ============================
-
-" theme
-set background=dark
-colorscheme desert
-
-" set mark column color
-hi! link SignColumn   LineNr
-hi! link ShowMarksHLl DiffAdd
-hi! link ShowMarksHLu DiffChange
-
-" status line
-set laststatus=2   " Always show the status line - use 2 lines for the status bar
-set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
-" set statusline=
-" set statusline+=%2*%-3.3n%0*/ " buffer number
-" set statusline+=%f/ " file name
-" set statusline+=%h%1*%m%r%w%0* " flag
-" set statusline+=[
-" if v:version >= 600
-"     set statusline+=%{strlen(&ft)?&ft:'none'}, " filetype
-"     set statusline+=%{&encoding}, " encoding
-" endif
-" set statusline+=%{&fileformat}] " file format
-" if filereadable(expand("$VIM/vimfiles/plugin/vimbuddy.vim"))
-"     set statusline+=/ %{VimBuddy()} " vim buddy
-" endif
-" set statusline+=%= " right align
-" set statusline+=%2*0x%-8B/ " current char
-"set statusline+=%-14.(%l,%c%V%)/ %<%P " offset
-
-
-" ============================ specific file type ===========================
+" ============================ filetype ============================
 
 autocmd FileType python set tabstop=4 shiftwidth=4 expandtab ai
-autocmd FileType ruby set tabstop=2 shiftwidth=2 softtabstop=2 expandtab ai
-autocmd BufRead,BufNew *.md,*.mkd,*.markdown  set filetype=markdown.mkd
+autocmd FileType vim,json,yaml,javascript,html,xhtml,xml,css,vue,lua setlocal ts=2 sts=2 sw=2 expandtab
+autocmd BufRead,BufNew *.md,*.mkd,*.markdown set filetype=markdown.mkd
 
-autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
-function! AutoSetFileHead()
-    " .sh
-    if &filetype == 'sh'
-        call setline(1, "\#!/bin/bash")
-    endif
-
-    " python
-    if &filetype == 'python'
-        call setline(1, "\#!/usr/bin/env python")
-        call append(1, "\# encoding: utf-8")
-    endif
-
-    normal G
-    normal o
-    normal o
-endfunc
-
-autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+autocmd FileType c,cpp,java,go,php,javascript,python,rust,xml,yml,perl autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 fun! <SID>StripTrailingWhitespaces()
     let l = line(".")
     let c = col(".")
@@ -189,85 +127,78 @@ fun! <SID>StripTrailingWhitespaces()
     call cursor(l, c)
 endfun
 
+autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
+function! AutoSetFileHead()
+    if &filetype == 'sh'
+        call setline(1, "\#!/bin/bash")
+    endif
+    if &filetype == 'python'
+        call setline(1, "\#!/usr/bin/env python")
+        call append(1, "\# encoding: utf-8")
+    endif
+    normal G
+    normal o
+    normal o
+endfunc
+
 " ============================ key map ============================
 
+" movement
 nnoremap k gk
 nnoremap gk k
 nnoremap j gj
 nnoremap gj j
+nnoremap H ^
+nnoremap L $
 
+" window
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
+" toggle
 nnoremap <F2> :set nu! nu?<CR>
 nnoremap <F3> :set list! list?<CR>
 nnoremap <F4> :set wrap! wrap?<CR>
-set pastetoggle=<F5>            "    when in insert mode, press <F5> to go to
-                                "    paste mode, where you can paste mass data
-                                "    that won't be autoindented
-au InsertLeave * set nopaste
+set pastetoggle=<F5>
 nnoremap <F6> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
 
-" kj replace Esc
-" inoremap kj <Esc>
-
-" Quickly close the current window
-" nnoremap <leader>q :q<CR>
-" Quickly save the current file
-" nnoremap <leader>w :w<CR>
-
-" select all
-" map <Leader>sa ggVG"
-
-" remap U to <C-r> for easier redo
+" remap U to redo
 nnoremap U <C-r>
 
-" Swap implementations of ` and ' jump to markers
-" By default, ' jumps to the marked line, ` jumps to the marked line and
-" column, so swap them
+" swap ' and `
 nnoremap ' `
 nnoremap ` '
 
-" switch # *
-" nnoremap # *
-" nnoremap * #
-
-"Keep search pattern at the center of the screen."
+" keep search at center
 nnoremap <silent> n nzz
 nnoremap <silent> N Nzz
 nnoremap <silent> * *zz
 nnoremap <silent> # #zz
 nnoremap <silent> g* g*zz
 
-" remove highlight
-" noremap <silent><leader>/ :nohls<CR>
+" clear highlight
 nnoremap <leader><cr> :nohl<cr>
 
-"Reselect visual block after indent/outdent.调整缩进后自动选中，方便再次操作
+" reselect after indent
 vnoremap < <gv
 vnoremap > >gv
 
-" y$ -> Y Make Y behave like other capitals
+" Y = y$
 map Y y$
 
-"Map ; to : and save a million keystrokes
-" ex mode commands made easy 用于快速进入命令行
+" ; to :
 nnoremap ; :
 
-" save
+" sudo save
 cmap w!! w !sudo tee >/dev/null %
 
-" command mode, ctrl-a to head， ctrl-e to tail
-cnoremap <C-j> <t_kd>
-cnoremap <C-k> <t_ku>
+" command mode navigation
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 
-
-nmap <leader>dd "+d
-vmap <leader>dd "+d
+" clipboard
 nmap <leader>yy "+yy
 vmap <leader>yy "+y
 nmap <leader>pp "+p
@@ -275,10 +206,8 @@ vmap <leader>pp "+p
 nmap <leader>pP "+P
 vmap <leader>pP "+P
 map <leader>p "0p
-au InsertLeave * set nopaste                    " Disbale paste mode when leaving insert mode
-nmap <leader>= <Esc>:%!python -m json.tool<cr>
 
-" Delete the blank space or Windows ^M at trail of line
+" trailing whitespace
 func! DeleteTrailingWS()
   exe "normal mz"
   %s/\s\+$//ge
@@ -286,24 +215,17 @@ func! DeleteTrailingWS()
 endfunc
 nmap <leader>db :call DeleteTrailingWS()<cr>
 nmap <leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-" autocmd BufWrite *.py :call DeleteTrailingWS()
-" autocmd BufWrite *.coffee :call DeleteTrailingWS()
-" insert some usefull text
+
+" insert helpers
 imap <silent> <C-D><C-D> <C-R>=strftime("%e %b %Y")<cr>
 imap <silent> <C-T><C-T> <C-R>=strftime("%l:%M %p")<cr>
 imap <silent> <C-C><C-C> <C-R>=string(eval(input("Calculate: ")))<cr>
 
-if executable('ag')             " The Silver Searcher
-  set grepprg=ag\ --nogroup\ --nocolor
-else
-  set grepprg=grep\ -nrI\ --exclude-dir={CVS,'.bzr','.git','.hg','.svn'}
-endif
+" visual star search
 let s:save_cpo = &cpo | set cpo&vim
 if !exists('g:VeryLiteral')
   let g:VeryLiteral = 0
 endif
-
-
 function! s:VSetSearch(cmd)
   let old_reg = getreg('"')
   let old_regtype = getregtype('"')
@@ -326,32 +248,21 @@ function! s:VSetSearch(cmd)
 endfunction
 vnoremap <silent> * :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>
 vnoremap <silent> # :<C-U>call <SID>VSetSearch('?')<cr>?<C-R>/<cr>
-vmap <kMultiply> *
-nmap <silent> <Plug>VLToggle :let g:VeryLiteral = !g:VeryLiteral
-      \\| echo "VeryLiteral " . (g:VeryLiteral ? "On" : "Off")<cr>
-if !hasmapto("<Plug>VLToggle")
-  nmap <unique> <Leader>vl <Plug>VLToggle
-endif
 let &cpo = s:save_cpo | unlet s:save_cpo
 
-" highlight but not search the word at cursor
+" highlight without jumping
 nnoremap <leader>h :let @/='\<<C-R>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
-" highlight but not search the selected text
 vnoremap <leader>h :<C-U>call <SID>VSetSearch('/')<cr>/<C-R>/<cr>N
 
-" replace selected text
+" replace
 vnoremap <leader>sr ""y:%s/<C-R>=escape(@", '/\')<cr>//gc<left><Left><Left>
-vnoremap <leader>sR ""y:%s/<C-R>=escape(@", '/\')<cr>//g<Left><Left>
-nnoremap <leader>sr :%s/<C-R><C-W>//gc"<left><left><left><left>
-nnoremap <leader>sr :%s/<C-R><C-W>//g"<left><left><left>
+nnoremap <leader>sr :%s/<C-R><C-W>//gc<left><left><left>
 
-" grep the word at cursor in current dir
+" grep word at cursor
 nnoremap <leader>sw :grep! "\b<C-R><C-W>\b"<cr>:cw<cr>
 vnoremap <leader>sw y:grep! '<C-R>"' .<cr>:cw<cr>
 
-command! -nargs=+ -complete=file -bar Search silent! grep! <args>|cwindow|redraw!
-nnoremap <leader>ss :Search<Space>''<left>
-
+" yank/paste go to end
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]

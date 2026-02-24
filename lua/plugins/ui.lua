@@ -68,22 +68,4 @@ return {
     end,
   },
 
-  -- Rainbow delimiters (treesitter-based)
-  {
-    "HiPhish/rainbow-delimiters.nvim",
-    event = "VeryLazy",
-    config = function()
-      local rainbow = require("rainbow-delimiters")
-      vim.g.rainbow_delimiters = {
-        strategy = {
-          [""] = rainbow.strategy["global"],
-          vim = rainbow.strategy["local"],
-        },
-        query = {
-          [""] = "rainbow-delimiters",
-          lua = "rainbow-blocks",
-        },
-      }
-    end,
-  },
 }

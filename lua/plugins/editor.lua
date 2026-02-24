@@ -53,9 +53,6 @@ return {
   -- Indent text object
   { "michaeljsmith/vim-indent-object", event = "VeryLazy" },
 
-  -- Argument text object
-  { "gaving/vim-textobj-argument", event = "VeryLazy" },
-
   -- Visual star search
   { "ovsoil/vsearch.vim", event = "VeryLazy" },
 }
