@@ -9,6 +9,13 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- Gracefully handle missing treesitter parsers (built-in ftplugins call
+-- vim.treesitter.start() which errors before nvim-treesitter installs parsers)
+local _ts_start = vim.treesitter.start
+vim.treesitter.start = function(bufnr, lang)
+  pcall(_ts_start, bufnr, lang)
+end
+
 -- Load core config
 require("config.options")
 require("config.keymaps")
@@ -30,6 +37,7 @@ require("lazy").setup("plugins", {
   install = { colorscheme = { "gruvbox" } },
   checker = { enabled = false },
   change_detection = { notify = false },
+  rocks = { enabled = false },
   performance = {
     rtp = {
       disabled_plugins = {

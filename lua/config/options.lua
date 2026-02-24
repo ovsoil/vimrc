@@ -10,6 +10,11 @@ elseif vim.fn.has("unix") == 1 then
   end
 end
 
+-- Disable unused providers (coc.nvim/markdown-preview use their own node process)
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
+
 -- Python provider
 if vim.g.system == "mac" then
   vim.g.python3_host_prog = vim.fn.expand("~/.pyenv/shims/python3")
