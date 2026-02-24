@@ -11,55 +11,47 @@ return {
     },
     cmd = "Telescope",
     keys = {
-      -- File finding (was fzf :Files / LeaderF file)
+      -- File finding
       { "<leader>ff", "<cmd>Telescope find_files<CR>", desc = "Find files" },
       { "<leader>fp", "<cmd>Telescope git_files<CR>", desc = "Git files" },
       { "<leader>fx", function() require("telescope.builtin").find_files({ no_ignore = true }) end, desc = "Find files (no ignore)" },
       { "<leader>fr", "<cmd>Telescope oldfiles<CR>", desc = "Recent files" },
-      { "<leader>fm", "<cmd>Telescope oldfiles<CR>", desc = "MRU" },
       { "<leader>fc", function() require("telescope.builtin").oldfiles({ cwd_only = true }) end, desc = "MRU (cwd)" },
       { "<leader>fb", "<cmd>Telescope buffers<CR>", desc = "Buffers" },
       { "<leader>bb", "<cmd>Telescope buffers<CR>", desc = "Buffers" },
+      { "<leader>fl", "<cmd>Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer lines" },
 
       -- Search (normal mode)
       { "<leader>ss", "<cmd>Telescope live_grep<CR>", desc = "Live grep" },
-      { "<leader>sS", "<cmd>Telescope live_grep<CR>", desc = "Live grep" },
-      { "<leader>si", "<cmd>Telescope live_grep<CR>", desc = "Live grep (interactive)" },
       { "<leader>sa", "<cmd>Telescope grep_string<CR>", desc = "Grep cword" },
       { "<leader>sw", function() require("telescope.builtin").grep_string({ word_match = "-w" }) end, desc = "Grep cword (word boundary)" },
-      { "<leader>sW", function() require("telescope.builtin").grep_string({ word_match = "-w" }) end, desc = "Grep cword (word boundary)" },
-      { "<leader>sA", "<cmd>Telescope grep_string<CR>", desc = "Grep cword" },
 
-      -- Search (visual mode) — yank to register z first, then grep
+      -- Search (visual mode)
+      { "<leader>ss", '"zy<cmd>lua require("telescope.builtin").live_grep({ default_text = vim.fn.getreg("z") })<CR>', mode = "v", desc = "Grep selection (editable)" },
       { "<leader>sa", '"zy<cmd>lua require("telescope.builtin").grep_string({ search = vim.fn.getreg("z") })<CR>', mode = "v", desc = "Grep selection" },
       { "<leader>sw", '"zy<cmd>lua require("telescope.builtin").grep_string({ search = vim.fn.getreg("z") })<CR>', mode = "v", desc = "Grep selection" },
-      { "<leader>ss", '"zy<cmd>lua require("telescope.builtin").live_grep({ default_text = vim.fn.getreg("z") })<CR>', mode = "v", desc = "Grep selection (editable)" },
 
-      -- Grep in current buffer / project
+      -- Quick grep
       { "<C-B>", function() require("telescope.builtin").current_buffer_fuzzy_find({ default_text = vim.fn.expand("<cword>") }) end, desc = "Grep cword in buffer" },
       { "<C-F>", "<cmd>Telescope grep_string<CR>", desc = "Grep cword in project" },
       { "gf", '"zy<cmd>lua require("telescope.builtin").grep_string({ search = vim.fn.getreg("z") })<CR>', mode = "v", desc = "Grep visual selection" },
 
-      -- Resume last search (replaces LeaderF --recall)
+      -- Resume
       { "go", "<cmd>Telescope resume<CR>", desc = "Resume last search" },
       { "<leader>ts", "<cmd>Telescope resume<CR>", desc = "Resume last search" },
 
-      -- Buffer lines (was LeaderF line)
-      { "<leader>fl", "<cmd>Telescope current_buffer_fuzzy_find<CR>", desc = "Buffer lines" },
-
-      -- Tags / Symbols
+      -- Symbols / Quickfix
       { "<leader>st", "<cmd>Telescope treesitter<CR>", desc = "Treesitter symbols" },
-      { "<leader>sf", "<cmd>Telescope treesitter<CR>", desc = "Functions / symbols" },
       { "<leader>sq", "<cmd>Telescope quickfix<CR>", desc = "Quickfix list" },
 
       -- History
       { "<leader>sc", "<cmd>Telescope command_history<CR>", desc = "Command history" },
       { "<leader>s/", "<cmd>Telescope search_history<CR>", desc = "Search history" },
 
-      -- Keymaps (was fzf-maps)
+      -- Keymaps
       { "<leader><tab>", "<cmd>Telescope keymaps<CR>", desc = "Keymaps" },
 
-      -- LSP references/definition (replaces LeaderF gtags)
+      -- LSP
       { "<leader>sr", "<cmd>Telescope lsp_references<CR>", desc = "LSP references" },
       { "<leader>sd", "<cmd>Telescope lsp_definitions<CR>", desc = "LSP definitions" },
     },

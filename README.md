@@ -1,250 +1,254 @@
 # vimrc
-A powerful vim config file for developer.
-keymap similar with spacemacs
 
-## Description
+A powerful Neovim / Vim config with Spacemacs-like keybindings.
 
-Four configuration files serve different use cases:
+## Configurations
 
 | File | Editor | Plugin Manager | Use Case |
 |------|--------|---------------|----------|
+| `init.lua` | Neovim 0.10+ | lazy.nvim | Primary Neovim config (Lua) |
 | `init.vim` | Neovim | dein.vim | Legacy Neovim config |
 | `vimrc-dev` | Vim 8+ | vim-plug | Vim config |
 | `vimrc-server` | Vim | None | Minimal config for servers (no plugins) |
 
-## Install | Upgrade
+## Install
 
 1. Prerequisites
 
-    * [Neovim](https://neovim.io) (recommended) or Vim 8+
-    * System dependencies:
     ```bash
-    # Ubuntu/Debian
-    sudo apt-get install exuberant-ctags git ripgrep silversearcher-ag fzf
-
     # macOS
-    brew install ctags ripgrep ag fzf
+    brew install neovim ripgrep fzf
+
+    # Ubuntu/Debian
+    sudo apt-get install neovim ripgrep fzf
     ```
 
-    * For Neovim Python support:
-    ```bash
-    pip install pynvim
-    ```
-
-2. Clone this repo, and create a soft symbolic links which target the vimrc file which you want to use
+2. Clone and link
 
     ```bash
-    git clone https://github.com/ovsoil/vimrc.git $HOME/repo/vimrc
-    # neovim with dein.vim (legacy)
-    ln -s $HOME/repo/vimrc/init.vim $HOME/.config/nvim/init.vim
-    # vim 8+
-    ln -s $HOME/repo/vimrc/vimrc-dev $HOME/.vimrc
+    git clone https://github.com/ovsoil/vimrc.git ~/repo/vimrc
+    ln -s ~/repo/vimrc ~/.config/nvim
     ```
 
-3. Open Neovim/Vim and it will continue the installation by itself. Wait for it to finish... and Done!
+3. Open Neovim — lazy.nvim will auto-install all plugins.
 
-## Plugin Management
-
-### init.vim (dein.vim - Neovim)
+## Plugin Management (lazy.nvim)
 
 ```vim
-:call dein#install()      " Install missing plugins
-:call dein#update()       " Update all plugins
-:call dein#check_clean()  " Remove unused plugins
-:DeinUpdate               " Update via UI
+:Lazy          " Open lazy.nvim UI
+:Lazy sync     " Install / update / clean
 ```
 
-### vimrc-dev (vim-plug - Vim)
+## Leader Key
 
-```vim
-:PlugInstall              " Install plugins
-:PlugUpdate               " Update plugins
-:PlugClean                " Remove unused plugins
-```
-
-## Features
-
-A powerful vim config file with Spacemacs-like keybindings.
-
-### Key Features
-
-* Easy search/replace/highlight with multiple backends (LeaderF rg, fzf, git grep)
-* Clipboard support with OSC yank
-* Multiple file explorers (Defx, fzf)
-* LSP support via coc.nvim (clangd, pyright)
-* Git integration (fugitive, signify)
-* Markdown rendering
-* Rainbow parentheses
-* Blame info display
-* Quickfix toggle
-
-### Leader Key
-
-`<Space>` is the leader key (Spacemacs-style). Most commands follow the pattern `<leader><category><action>`.
+`<Space>` is the leader key. Most commands follow `<leader><category><action>`.
 
 ## Keymap Reference
 
-### File Operations (`<leader>f`)
+### File (`<leader>f`)
 
-| Mapping | Description |
-|---------|-------------|
-| `<leader>ff` | Find files |
-| `<leader>fp` | Git tracked files |
-| `<leader>fr` | Recent files |
-| `<leader>fb` | Buffers |
-| `<leader>fa` | clangd.switchSourceHeader |
-| `<leader>fj` | expand current file in Defx |
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>ff` | n | Find files |
+| `<leader>fp` | n | Git tracked files |
+| `<leader>fx` | n | Find files (no ignore) |
+| `<leader>fr` | n | Recent files |
+| `<leader>fm` | n | MRU |
+| `<leader>fc` | n | MRU (cwd only) |
+| `<leader>fb` | n | Buffers |
+| `<leader>fl` | n | Buffer lines (fuzzy) |
+| `<leader>fa` | n | Switch source/header (clangd) |
+| `<leader>fj` | n | Reveal current file in Defx |
 
-### Buffer Operations (`<leader>b`)
+### Buffer (`<leader>b`)
 
-| Mapping | Description |
-|---------|-------------|
-| `<leader>bn` | Next buffer |
-| `<leader>bp` | Previous buffer |
-| `<leader>bd` | Delete buffer |
-| `<leader>b<tab>` | Switch to last buffer |
-| `<leader>bb` | Buffer list (LeaderF) |
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>bn` | n | Next buffer |
+| `<leader>bp` | n | Previous buffer |
+| `<leader>bd` | n | Delete buffer |
+| `<leader>b<tab>` | n | Switch to last buffer |
+| `<leader>bb` | n | Buffer list |
 
-### Window Navigation (`<leader>w`)
+### Window (`<leader>w`)
 
-| Mapping | Description |
-|---------|-------------|
-| `<leader>wj` | Navigate to down window |
-| `<leader>wk` | Navigate to up window |
-| `<leader>wh` | Navigate to left window |
-| `<leader>wl` | Navigate to right window |
-| `<leader>ws` | Split window |
-| `<leader>wv` | Vertical split |
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>wh/j/k/l` | n, t | Navigate windows |
+| `<leader>ws` | n | Horizontal split |
+| `<leader>wv` | n | Vertical split |
+| `<C-w>m` | n | Toggle zoom |
 
 ### Search (`<leader>s`)
 
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>ss` | n | Live grep (rg) |
+| `<leader>ss` | v | Live grep with selection |
+| `<leader>sa` | n | Grep cword |
+| `<leader>sa` | v | Grep selection |
+| `<leader>sw` | n | Grep cword (word boundary) |
+| `<leader>sw` | v | Grep selection |
+| `<leader>sp` | n | Git grep (interactive) |
+| `<leader>si` | n | Live grep (interactive) |
+| `<leader>st` | n | Treesitter symbols |
+| `<leader>sf` | n | Functions / symbols |
+| `<leader>sq` | n | Quickfix list |
+| `<leader>sc` | n | Command history |
+| `<leader>s/` | n | Search history |
+| `<leader>sr` | n | LSP references |
+| `<leader>sd` | n | LSP definitions |
+| `<C-B>` | n | Grep cword in buffer |
+| `<C-F>` | n | Grep cword in project |
+| `gf` | v | Grep visual selection |
+| `go` | n | Resume last search |
+
+### Replace (`<leader>r`) — grug-far.nvim
+
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>rr` | n | Open search & replace |
+| `<leader>rw` | n | Replace cword (project), cursor on Replace |
+| `<leader>rw` | v | Replace selection (project), cursor on Replace |
+| `<leader>rW` | n | Replace cWORD (project), cursor on Replace |
+| `<leader>rb` | n | Replace cword in current file, cursor on Replace |
+| `<leader>rb` | v | Replace selection in current file, cursor on Replace |
+| `<leader>rv` | n | Reload vimrc |
+
+grug-far buffer keymaps (localleader = `<Space>`):
+
 | Mapping | Description |
 |---------|-------------|
-| `<leader>ss` | Search with rg, include hide file; set the search command in vim command line, wait user to input the search text|
-| `<leader>sw` | Search word under cursor |
-| `<leader>sp` | Git grep (fzf Ggrep) |
-| `<leader>st` | Buffer tags (BTags) |
-| `<leader>sc` | Command history |
-| `<leader>sr` | Gtags reverse search |
-| `<leader>sd` | Gtags definition |
+| `<localleader>r` | Execute replace |
+| `<localleader>q` | Send to quickfix |
+| `<localleader>s` | Sync all locations |
+| `<localleader>l` | Sync current line |
+| `<localleader>f` | Refresh |
+| `<localleader>t` | Open history |
+| `<localleader>e` | Swap engine |
+| `<localleader>p` | Toggle show command |
+| `<enter>` | Goto location |
+| `q` | Close |
 
 ### Toggle (`<leader>t`)
 
-| Mapping | Description |
-|---------|-------------|
-| `<leader>tf` | Toggle file explorer (Defx) , and expand to current file|
-| `<leader>ts` | Recall the last search or show the last search result |
-| `<leader>tq` | Toggle quickfix window |
-| `<leader>tb` | Toggle git blame (Blamer) |
-### Replace (`<leader>r`)
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>tf` / `<F2>` | n | Toggle Defx file explorer |
+| `<leader>ts` | n | Resume last search |
+| `<leader>tq` | n | Toggle quickfix window |
+| `<leader>tb` | n | Toggle git blame |
+| `<leader>tl` | n | Resume CocList |
+| `<leader>td` | n | Toggle diffview files panel |
 
-| Mapping | Description |
-|---------|-------------|
-| `<leader>rb` | Replace in buffer (with confirm) |
-| `<leader>rB` | Replace in buffer (no confirm) |
-| `<leader>rr` | Replace in project (git grep, with confirm) |
-| `<leader>rR` | Replace in project (no confirm) |
-| `<leader>rf` | Replace in directory (LeaderF rg, with confirm) |
-| `<leader>rF` | Replace in directory (no confirm) |
+### Git (`<leader>h` / `<leader>d`)
 
-### Git/Cscope (`<leader>g`)
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>hs` | n, v | Stage hunk |
+| `<leader>hr` | n, v | Reset hunk |
+| `<leader>hu` | n | Undo stage hunk |
+| `<leader>hp` | n | Preview hunk |
+| `<leader>hd` | n | Diff this |
+| `<leader>dv` | n | Diffview open |
+| `<leader>dh` | n | File history |
+| `<leader>dc` | n | Diffview close |
+| `]c` / `[c` | n | Next / prev hunk |
 
-| Mapping | Description |
-|---------|-------------|
-| `<leader>gs` | Find C symbol |
-| `<leader>gg` | Find definition |
-| `<leader>gd` | Functions called by this |
-| `<leader>gc` | Functions calling this |
-| `<leader>gt` | Find text string |
-| `<leader>ge` | Egrep pattern |
-| `<leader>gf` | Find this file |
-| `<leader>gi` | Files including this file |
-| `<leader>ga` | Find assignment |
+### LSP / Code (coc.nvim)
 
-### LSP/Code (coc.nvim)
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `gd` | n | Go to definition |
+| `gr` | n | Find references |
+| `gy` | n | Go to type definition |
+| `gi` | n | Go to implementation |
+| `K` | n | Show documentation |
+| `<leader>rn` | n | Rename symbol |
+| `<leader>f` | n, x | Format selected |
+| `<leader>a` | n, x | Code action (selected) |
+| `<leader>ac` | n | Code action |
+| `<leader>qf` | n | Quick fix |
+| `[g` / `]g` | n | Prev / next diagnostic |
 
-| Mapping | Description |
-|---------|-------------|
-| `gd` | Go to definition |
-| `gr` | Find references |
-| `gy` | Go to type definition |
-| `gi` | Go to implementation |
-| `K` | Show documentation |
-| `<leader>rn` | Rename symbol |
-| `<leader>f` | Format selected (visual mode) |
-| `<leader>ac` | Code action |
-| `<leader>qf` | Quick fix |
+### CocList (`<leader>l`)
+
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>la` | n | Diagnostics |
+| `<leader>le` | n | Extensions |
+| `<leader>lc` | n | Commands |
+| `<leader>lo` | n | Outline |
+| `<leader>lT` | n | Symbols |
+| `<leader>lj` / `<leader>lk` | n | Next / prev item |
 
 ### Edit
 
-| Mapping | Description |
-|---------|-------------|
-| `<leader>db` | Delete trailing whitespace |
-| `<leader>dm` | Delete Windows ^M |
-| `<leader>pt` | Toggle paste mode |
-| `<leader>y` | OSC yank operator |
-| `<leader>yy` | Yank line |
-| `<leader>pp` | Paste from clipboard |
-
-### Insert Mode
-
-| Mapping | Description |
-|---------|-------------|
-| `<C-d><C-d>` | Insert date |
-| `<C-t><C-t>` | Insert time |
-| `<C-c><C-c>` | Calculate expression |
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>db` | n | Delete trailing whitespace |
+| `<leader>dm` | n | Delete Windows ^M |
+| `<leader>y` | n, v | Yank to system clipboard |
+| `<leader>yy` | n | Yank line to clipboard |
+| `<leader>pp` | n, v | Paste from clipboard |
+| `<leader>pP` | n, v | Paste before from clipboard |
+| `<leader>p` | n, v | Paste from yank register |
 
 ### Quick Actions
 
-| Mapping | Description |
-|---------|-------------|
-| `<leader>q` | Close buffer |
-| `<leader>qq` | Quit all |
-| `<leader>x` | Save |
-| `<leader>xx` | Save all |
-| `<leader>xq` | Save and quit all |
-| `<leader>rv` | Reload vimrc |
-| `<leader><cr>` | Clear search highlight |
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader>q` | n | Close window |
+| `<leader>qq` | n | Quit all |
+| `<leader>x` | n | Save |
+| `<leader>xx` | n | Save all |
+| `<leader>xq` | n | Save and quit all |
+| `<leader><CR>` | n | Clear search highlight |
+| `<leader>zz` | n | Toggle fold all |
+| `;` | n | Enter command mode |
+| `<leader><tab>` | n | Show keymaps |
 
-## Defx Keymap (File Explorer)
+### Insert Mode
+
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<C-d><C-d>` | i | Insert date |
+| `<C-t><C-t>` | i | Insert time |
+| `<C-c><C-c>` | i | Calculate expression |
+
+### Movement
+
+| Mapping | Mode | Description |
+|---------|------|-------------|
+| `<leader><leader>w` | n | Hop word |
+| `<leader><leader>f` | n | Hop char |
+| `<leader><leader>j` | n | Hop line down |
+| `<leader><leader>k` | n | Hop line up |
+| `<leader><leader>h` | n | Hop line backward |
+| `<leader><leader>l` | n | Hop line forward |
+| `H` / `L` | n | Line start / end |
+
+## Defx Keymaps (buffer-local)
 
 | Key | Description |
 |-----|-------------|
-| `h/l` | Navigate up/open directory |
-| `E` | Open in vertical split |
-| `K/N` | Create directory/file |
-| `d/r` | Delete/rename |
-| `yy` | Yank path |
+| `h` / `l` | Navigate up / open |
 | `o` | Toggle tree |
-| `p` | Preview |
+| `E` | Open in vsplit |
+| `K` / `N` | Create directory / file |
+| `d` / `r` | Delete / rename |
+| `yy` | Yank path |
+| `P` | Preview |
 | `x` | Execute system command |
+| `.` | Toggle hidden files |
+| `u` | Go to parent directory |
 
 ## Dependencies
 
-Required tools:
+Required:
+- [ripgrep](https://github.com/BurntSushi/ripgrep) (rg) — search backend
+- [Node.js](https://nodejs.org) — for coc.nvim
 
-* `ripgrep` (rg) - Search tool
-* `ag` (the_silver_searcher) - Alternative search
-* `ctags` - Tag generation
-* `fzf` - Fuzzy finder
-* `clangd` - C/C++ language server (at `/bin/clangd-18`)
-* `global` (gtags) - GNU global (optional)
-
-Optional tools:
-
-* `glow` - Markdown preview
-
-## LSP Configuration
-
-LSP servers are configured in `coc-settings.json`:
-- **clangd** for C/C++ at `/bin/clangd-18`
-- **pyright** for Python
-
-## Custom Functions
-
-* `LoadCscope()` - Auto-loads cscope.out for C++/Go
-* `GgrepReplace()` - Project-wide replace using git grep
-* `LeaderRgReplace()` - Project-wide replace using LeaderF rg
-* `ToggleQuickFix()` - Toggle quickfix window
-* `GlowPreview()` - Markdown preview using glow
-* `ToggleFold()` - Toggle code folding
+Optional:
+- `clangd` — C/C++ language server
+- `glow` — Markdown preview
