@@ -7,6 +7,13 @@ return {
       { "gc", mode = { "n", "v" }, desc = "Toggle comment" },
       { "gbc", mode = "n", desc = "Toggle block comment" },
       { "gb", mode = { "n", "v" }, desc = "Toggle block comment" },
+      { "<leader>cc", function() require("Comment.api").toggle.linewise.current() end, desc = "Toggle line comment" },
+      { "<leader>cc", "<ESC><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>", mode = "v", desc = "Toggle comment" },
+      { "<leader>cb", function() require("Comment.api").toggle.blockwise.current() end, desc = "Toggle block comment" },
+      { "<leader>cb", "<ESC><cmd>lua require('Comment.api').toggle.blockwise(vim.fn.visualmode())<CR>", mode = "v", desc = "Toggle block comment" },
+      { "<leader>cA", function() require("Comment.api").insert.linewise.eol() end, desc = "Comment at end of line" },
+      { "<leader>co", function() require("Comment.api").insert.linewise.below() end, desc = "Comment on line below" },
+      { "<leader>cO", function() require("Comment.api").insert.linewise.above() end, desc = "Comment on line above" },
     },
     opts = {
       padding = true,
